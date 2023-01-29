@@ -10,24 +10,31 @@ def read_config(section,item):
     return conf.get(section,item)
 
 def Menu():
-    choice=input('请选择：\n1.雪球买入\n2.雪球卖出')
+    user=login()
+    my_pos=position(user)
+    for item in my_pos:
+        print(item)
+    choice=input('请选择：\n1.雪球买入\n2.雪球卖出\n3.consult the position')
     if choice=='1':
-        user=login()
         quotation=easyquotation.use('sina')
         file_path=input('请输入股票的txt文件')
         stock=get_code(file_path)
         buy(stock,user,quotation)
     elif choice=='2':
-        user=login()
         adj_weight(user)
+    elif choice=='3':
+        pass
+
 
 
 def login():#雪球的登录
     user=easytrader.use('xq')#使用雪球
     login_cookie=read_config('cookies','xq')
+    combo=read_config('combo','Mbott13_12_1')
     user.prepare(
         cookies=login_cookie,
-        portfolio_code='ZH3162090',
+#        portfolio_code='ZH3162090',
+        portfolio_code=combo,
         portfolio_market='cn'
         )
     #print(user.position)
@@ -60,13 +67,24 @@ def buy(stock_list,user,quotation):
         user.buy(stock_code,price=price_now,amount=amount)
 
 def adj_weight(user):
-    pos=user.position
+#    pos=user.position#delete later
     for position in user.position:
         stock_code=position['stock_code'][2:]#提取股票代码的数字部分
         if len(user.position)>1:
             user.adjust_weight(stock_code,0)
         else:
             user.adjust_weight(stock_code,1)
+
+def position(user):#get position for specific combo
+    stock_name=[]
+    stock_code=[]
+    my_pos=[]
+    for position in user.position:
+        stock_code.append(position['stock_code'])#提取股票代码
+        stock_name.append(position['stock_name'])#name
+    for index in range(0,len(stock_code)):
+        my_pos.append(str(index+1)+'. '+stock_code[index]+'\t'+stock_name[index])
+    return my_pos
 
 
 if __name__=='__main__':

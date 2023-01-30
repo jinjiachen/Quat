@@ -3,18 +3,28 @@ import easyquotation
 from configparser import ConfigParser
 import os
 
-def read_config(section,item):
+def read_config(section,item):#获取配置文件中指定section下item的值
     conf=ConfigParser()
     path='/usr/local/src/Quat/config.ini'
+#    path='K:/config.ini'
     conf.read(path,encoding="utf-8")
     return conf.get(section,item)
 
+def load_config():#加载配置文件
+    conf=ConfigParser()
+    path='/usr/local/src/Quat/config.ini'
+#    path='K:/config.ini'
+    conf.read(path,encoding="utf-8")
+    return conf
+
+
 def Menu():
-    user=login()
-    my_pos=position(user)
-    for item in my_pos:
-        print(item)
-    choice=input('请选择：\n1.雪球买入\n2.雪球卖出\n3.consult the position')
+    combo_li=conf.options('combo')#获取combo这个section下的items,即组合的名称
+    index=input('请选择对应的组合:'+str(combo_li))
+    index=int(index)
+#    user=login(login_cookies,combo)
+    user=login(login_cookies,read_config('combo',combo_li[index]))#登录
+    choice=input('请选择：\n1.雪球买入\n2.雪球卖出\n3.查询持仓')
     if choice=='1':
         quotation=easyquotation.use('sina')
         file_path=input('请输入股票的txt文件')
@@ -23,17 +33,21 @@ def Menu():
     elif choice=='2':
         adj_weight(user)
     elif choice=='3':
+        my_pos=position(user)
+        for item in my_pos:
+            print(item)
         pass
 
 
 
-def login():#雪球的登录
+def login(login_cookies,combo):#雪球的登录
+    '''
+    login_cookies:雪球的cookies
+    combo:组合的名称
+    '''
     user=easytrader.use('xq')#使用雪球
-    login_cookie=read_config('cookies','xq')
-    combo=read_config('combo','Mbott13_12_1')
     user.prepare(
-        cookies=login_cookie,
-#        portfolio_code='ZH3162090',
+        cookies=login_cookies,
         portfolio_code=combo,
         portfolio_market='cn'
         )
@@ -88,4 +102,7 @@ def position(user):#get position for specific combo
 
 
 if __name__=='__main__':
+    login_cookies=read_config('cookies','xq')
+#    combo=read_config('combo','Mbott13_12_1')
+    conf=load_config()
     Menu()

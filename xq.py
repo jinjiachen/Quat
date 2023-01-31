@@ -3,17 +3,17 @@ import easyquotation
 from configparser import ConfigParser
 import os
 
-def read_config(section,item):#获取配置文件中指定section下item的值
-    conf=ConfigParser()
-    path='/usr/local/src/Quat/config.ini'
-#    path='K:/config.ini'
-    conf.read(path,encoding="utf-8")
-    return conf.get(section,item)
+
 
 def load_config():#加载配置文件
     conf=ConfigParser()
-    path='/usr/local/src/Quat/config.ini'
-#    path='K:/config.ini'
+    if os.name=='nt':
+        path='K:/config.ini'
+    elif os.name=='posix':
+        path='/usr/local/src/Quat/config.ini'
+    else:
+        print('no config file was found!')
+
     conf.read(path,encoding="utf-8")
     return conf
 
@@ -23,7 +23,7 @@ def Menu():
     index=input('请选择对应的组合:'+str(combo_li))
     index=int(index)
 #    user=login(login_cookies,combo)
-    user=login(login_cookies,read_config('combo',combo_li[index]))#登录
+    user=login(login_cookies,conf.get('combo',combo_li[index]))#登录
     choice=input('请选择：\n1.雪球买入\n2.雪球卖出\n3.查询持仓')
     if choice=='1':
         quotation=easyquotation.use('sina')
@@ -102,7 +102,6 @@ def position(user):#get position for specific combo
 
 
 if __name__=='__main__':
-    login_cookies=read_config('cookies','xq')
-#    combo=read_config('combo','Mbott13_12_1')
     conf=load_config()
+    login_cookies=conf.get('cookies','xq')
     Menu()

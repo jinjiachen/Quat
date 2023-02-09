@@ -5,10 +5,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import os
-from xq import read_config
+from xq import load_config
 
 def Initial():#初始化
-    my_token=read_config('tushare','account1')
+    conf=load_config()
+    my_token=conf.get('tushare','account1')
     ts.set_token(my_token)
     pro=ts.pro_api()
     return pro
@@ -77,7 +78,11 @@ def Menu():
         result=Suppress(freq2,int(n2))
 
 def SaveResult(filename,result):        
-    with open ('/usr/local/src/tushare/result/'+filename,'w') as f:
+    if os.name=='nt':
+        file_path='K:\\result\\'
+    elif os.name=='posix':
+        file_path='/usr/local/src/tushare/result/'
+    with open (file_path+filename,'w') as f:
         for i in result:
             details=StockDetails(i)
             Wait(50000)
@@ -277,7 +282,7 @@ if __name__ == '__main__':
     previous=int(now)-30000 #一年前的日期
     previous=str(previous) #转换成字符串
     sl=Stocklist() #股票列表
-    #sl=sl[100:400] #调试用，限制股票数量以减短时间
+#    sl=sl[100:130] #调试用，限制股票数量以减短时间
 
 
     Menu()
@@ -287,4 +292,3 @@ if __name__ == '__main__':
     #result=Trend('W',55,50) #调试用
     #result=Bottom('D',55,10,2) #调试用
     #SaveResult('test',result) #调试用
-

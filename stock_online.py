@@ -81,7 +81,8 @@ def SaveResult(filename,result):
     if os.name=='nt':
         file_path='K:\\result\\'
     elif os.name=='posix':
-        file_path='/usr/local/src/tushare/result/'
+#        file_path='/usr/local/src/tushare/result/'
+        file_path='/usr/local/src/Quat/result/'
     with open (file_path+filename,'w') as f:
         for i in result:
             details=StockDetails(i)

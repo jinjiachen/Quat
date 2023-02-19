@@ -241,7 +241,12 @@ def Bottom(freq,ma_s,n,m): #均线拐点
         count+=1 #每判断一个股票，计数加1
         print('进度:'+str(count)+'/'+str(total)) #显示已判断股票数的比例
         print('正在比对:'+i) #调试用
-        data=ts.pro_bar(ts_code=i,freq=freq,adj='qfq',start_date=previous,end_date=now,ma=[ma_s])
+        while True:
+            try:
+                data=ts.pro_bar(ts_code=i,freq=freq,adj='qfq',start_date=previous,end_date=now,ma=[ma_s])
+                break
+            except:
+                print("error occur, another try!")
         if data is None: #如果没有获取到任何数据，比如刚上市又还没上市的股票
             continue
         ma=data['ma'+str(ma_s)] #提取均线

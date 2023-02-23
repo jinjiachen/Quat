@@ -20,9 +20,10 @@ def load_config():#加载配置文件
 
 def Menu():
     combo_li=conf.options('combo')#获取combo这个section下的items,即组合的名称
-    index=input('请选择对应的组合:'+str(combo_li))
+    for i,combo in enumerate(combo_li):
+        print(str(i)+' --> '+combo)
+    index=input('请选择对应的组合:')
     index=int(index)
-#    user=login(login_cookies,combo)
     user=login(login_cookies,conf.get('combo',combo_li[index]))#登录
     choice=input('请选择：\n1.雪球买入\n2.雪球卖出\n3.查询持仓')
     if choice=='1':

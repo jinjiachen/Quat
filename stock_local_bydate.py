@@ -11,7 +11,8 @@ import pdb
 
 
 def Stocklist():#获取股票列表
-    sql="SELECT DISTINCT * FROM stock_basic"
+#    sql="SELECT DISTINCT * FROM stock_basic"
+    sql="SELECT DISTINCT ts_code FROM stock_basic"
     sl=pd.read_sql_query(sql, engine_ts)
     return sl
 #    print(sl) #调试用

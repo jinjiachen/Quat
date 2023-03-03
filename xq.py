@@ -105,7 +105,7 @@ def position(user,quotation):#get position for specific combo
     #获取持仓股票对应的涨跌幅
     for stock in stock_code:#遍历股票列表
         stock=stock[2:]#去除开头SH,SZ，保留数字部分
-        stock_info=quotation.real(stock.)#查询股票的价格信息
+        stock_info=quotation.real(stock)#查询股票的价格信息
         close=stock_info[stock]['close']#昨日收盘价
         now=stock_info[stock]['now']#当前价格
         cal_pct=round((now/close-1)*100,2)#计算涨跌幅

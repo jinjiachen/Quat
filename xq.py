@@ -34,7 +34,8 @@ def Menu():
     elif choice=='2':
         adj_weight(user)
     elif choice=='3':
-        my_pos=position(user)
+        quotation=easyquotation.use('sina')
+        my_pos=position(user,quotation)
         for item in my_pos:
             print(item)
         pass
@@ -90,15 +91,29 @@ def adj_weight(user):
         else:
             user.adjust_weight(stock_code,1)
 
-def position(user):#get position for specific combo
+def position(user,quotation):#get position for specific combo
+#    pos=user.position#delete later
+#    print(pos)
     stock_name=[]
     stock_code=[]
+    pct=[]
     my_pos=[]
     for position in user.position:
         stock_code.append(position['stock_code'])#提取股票代码
         stock_name.append(position['stock_name'])#name
+
+    #获取持仓股票对应的涨跌幅
+    for stock in stock_code:#遍历股票列表
+        stock=stock[2:]#去除开头SH,SZ，保留数字部分
+        stock_info=quotation.real(stock.)#查询股票的价格信息
+        close=stock_info[stock]['close']#昨日收盘价
+        now=stock_info[stock]['now']#当前价格
+        cal_pct=round((now/close-1)*100,2)#计算涨跌幅
+        pct.append(str(cal_pct))
+
+    #结果的收集
     for index in range(0,len(stock_code)):
-        my_pos.append(str(index+1)+'. '+stock_code[index]+'\t'+stock_name[index])
+        my_pos.append(str(index+1)+'. '+stock_code[index]+'\t'+stock_name[index]+'\t'+pct[index])
     return my_pos
 
 

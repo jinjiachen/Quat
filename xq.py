@@ -29,6 +29,9 @@ def Menu():
     if choice=='1':
         quotation=easyquotation.use('sina')
         file_path=input('请输入股票的txt文件')
+        if os.name=='posix':
+            file_path=file_path.replace('\'','')
+            print('revise path:',file_path)
         stock=get_code(file_path)
         buy(stock,user,quotation)
     elif choice=='2':

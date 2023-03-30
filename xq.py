@@ -2,6 +2,7 @@ import easytrader
 import easyquotation
 from configparser import ConfigParser
 import os
+import time
 
 
 
@@ -33,6 +34,7 @@ def Menu():
             file_path=file_path.replace('\'','')
             print('revise path:',file_path)
         stock=get_code(file_path)
+#        print('获取到的股票代码：',stock)
         buy(stock,user,quotation)
     elif choice=='2':
         adj_weight(user)
@@ -77,22 +79,32 @@ def buy(stock_list,user,quotation):
     current=user.balance[0]['current_balance']#现金余额
     current_splice=int(current/len(stock_list))#按照股票数量等分
     for stock_code in stock_list:
-        stock_code=stock_code.lower()
-        price_now=quotation.real(stock_code)[stock_code[2:]]['now']
-        if price_now==0:
-            pass
-        else:
-            amount=int((current_splice/price_now))
-        user.buy(stock_code,price=price_now,amount=amount)
+        while True:
+            try:
+                stock_code=stock_code.lower()
+                price_now=quotation.real(stock_code)[stock_code[2:]]['now']
+                if price_now==0:
+                    pass
+                else:
+                    amount=int((current_splice/price_now))
+                user.buy(stock_code,price=price_now,amount=amount)
+                break
+            except:
+                print('太过于频繁，等待后重试！')
+                time.sleep(5)
 
 def adj_weight(user):
 #    pos=user.position#delete later
     for position in user.position:
-        stock_code=position['stock_code'][2:]#提取股票代码的数字部分
-        if len(user.position)>1:
-            user.adjust_weight(stock_code,0)
-        else:
-            user.adjust_weight(stock_code,1)
+        try:
+            stock_code=position['stock_code'][2:]#提取股票代码的数字部分
+            if len(user.position)>1:
+                user.adjust_weight(stock_code,0)
+            else:
+                user.adjust_weight(stock_code,1)
+        except:
+            print('太过于频繁，等待后重试！')
+            time.sleep(5)
 
 def position(user,quotation):#get position for specific combo
 #    pos=user.position#delete later
@@ -123,4 +135,10 @@ def position(user,quotation):#get position for specific combo
 if __name__=='__main__':
     conf=load_config()
     login_cookies=conf.get('cookies','xq')
-    Menu()
+    while True:
+        Menu()
+        input('press ANY THING to contine!')
+        if os.name=='nt':
+            os.system('cls')
+        elif os.name=='posix':
+            os.system('clear')

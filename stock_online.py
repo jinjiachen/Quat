@@ -237,7 +237,10 @@ def Bottom(freq,ma_s,n,m): #均线拐点
     total=len(sl['ts_code']) #总上市股票数
     result=[]
     for i in sl['ts_code']:
-        os.system('clear')
+        if os.name=='posix':
+            os.system('clear')
+        elif os.name=='nt':
+            os.system('cls')
         count+=1 #每判断一个股票，计数加1
         print('进度:'+str(count)+'/'+str(total)) #显示已判断股票数的比例
         print('正在比对:'+i) #调试用

@@ -26,7 +26,7 @@ def Menu():
     index=input('请选择对应的组合:')
     index=int(index)
     user=login(login_cookies,conf.get('combo',combo_li[index]))#登录
-    choice=input('请选择：\n1.雪球买入\n2.雪球卖出\n3.查询持仓')
+    choice=input('请选择：\n1.雪球买入\n2.雪球卖出\n3.查询持仓\n4.卖出指定股票')
     if choice=='1':
         quotation=easyquotation.use('sina')
         file_path=input('请输入股票的txt文件')
@@ -43,7 +43,15 @@ def Menu():
         my_pos=position(user,quotation)
         for item in my_pos:
             print(item)
-        pass
+    elif choice=='4':
+        file_path=input('请输入股票的txt文件')
+        stock=get_code(file_path)
+        for code in stock:
+            try:
+                sell(user,code,0)
+                time.sleep(random.uniform(2,3))
+            except:
+                print('操作出错')
 
 
 
@@ -92,6 +100,24 @@ def buy(stock_list,user,quotation):
             except:
                 print('太过于频繁，等待后重试！')
                 time.sleep(5)
+                
+def sell(user,stock_code,amount):#卖出指定股票
+    flag=1#返回码，执行成功为0，不成功为1，默认为1
+
+    #判断股票是否在持仓中
+    my_pos=user.position
+#    for position in user.position:
+    for position in my_pos:
+        print('正在比对',position['stock_code'])
+        if stock_code in position['stock_code']:
+            print(f'找到持仓股票{stock_code},进行卖出操作！')
+
+            #如果股票在持仓中，则进行卖出操作
+            user.adjust_weight(stock_code,amount)
+            flag=0#卖出成功，返回0
+    if flag==1:
+        print(f'股票{stock_code}不在持仓中，不能进行卖出操作!')
+    return flag
 
 def adj_weight(user):
 #    pos=user.position#delete later

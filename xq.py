@@ -3,6 +3,7 @@ import easyquotation
 from configparser import ConfigParser
 import os
 import time
+import random
 
 
 
@@ -26,13 +27,10 @@ def Menu():
     index=input('请选择对应的组合:')
     index=int(index)
     user=login(login_cookies,conf.get('combo',combo_li[index]))#登录
-    choice=input('请选择：\n1.雪球买入\n2.雪球卖出\n3.查询持仓')
+    choice=input('请选择：\n1.雪球买入\n2.雪球卖出\n3.查询持仓\n4.卖出指定股票')
     if choice=='1':
         quotation=easyquotation.use('sina')
         file_path=input('请输入股票的txt文件')
-        if os.name=='posix':
-            file_path=file_path.replace('\'','')
-            print('revise path:',file_path)
         stock=get_code(file_path)
 #        print('获取到的股票代码：',stock)
         buy(stock,user,quotation)
@@ -43,7 +41,16 @@ def Menu():
         my_pos=position(user,quotation)
         for item in my_pos:
             print(item)
-        pass
+    elif choice=='4':
+        file_path=input('请输入股票的txt文件')
+        stock=get_code(file_path)
+        for code in stock:
+            try:
+                sell(user,code,0)
+                time.sleep(random.uniform(2,3))
+            except:
+                print('操作出错')
+
 
 
 
@@ -93,9 +100,28 @@ def buy(stock_list,user,quotation):
                 print('太过于频繁，等待后重试！')
                 time.sleep(5)
 
-def adj_weight(user):
+def sell(user,stock_code,amount):#卖出指定股票
+    flag=1#返回码，执行成功为0，不成功为1，默认为1
+
+    #判断股票是否在持仓中
+    my_pos=user.position
+#    for position in user.position:
+    for position in my_pos:
+        print('正在比对',position['stock_code'])
+        if stock_code in position['stock_code']:
+            print(f'找到持仓股票{stock_code},进行卖出操作！')
+
+            #如果股票在持仓中，则进行卖出操作
+            user.adjust_weight(stock_code,amount)
+            flag=0#卖出成功，返回0
+    if flag==1:
+        print(f'股票{stock_code}不在持仓中，不能进行卖出操作!')
+    return flag
+
+def adj_weight(user): #一键卖出持仓股票
 #    pos=user.position#delete later
     for position in user.position:
+        time.sleep(random.uniform(1,2))
         try:
             stock_code=position['stock_code'][2:]#提取股票代码的数字部分
             if len(user.position)>1:
@@ -104,7 +130,7 @@ def adj_weight(user):
                 user.adjust_weight(stock_code,1)
         except:
             print('太过于频繁，等待后重试！')
-            time.sleep(5)
+            time.sleep(3)
 
 def position(user,quotation):#get position for specific combo
 #    pos=user.position#delete later
@@ -138,7 +164,4 @@ if __name__=='__main__':
     while True:
         Menu()
         input('press ANY THING to contine!')
-        if os.name=='nt':
-            os.system('cls')
-        elif os.name=='posix':
-            os.system('clear')
+        os.system('cls')

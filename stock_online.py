@@ -5,11 +5,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import os
+import random
 from xq import load_config
 
 def Initial():#初始化
     conf=load_config()
-    my_token=conf.get('tushare','account1')
+    account_no=str(random.randint(1,6))#利用随机函数构造账户的序号
+    my_token=conf.get('tushare','account'+account_no)
     ts.set_token(my_token)
     pro=ts.pro_api()
     return pro
@@ -248,6 +250,9 @@ def Bottom(freq,ma_s,n,m): #均线拐点
             try:
                 data=ts.pro_bar(ts_code=i,freq=freq,adj='qfq',start_date=previous,end_date=now,ma=[ma_s])
                 break
+            except IOError:
+                print('IOError：正在尝试其他账号')
+                pro=Initial()
             except:
                 print("error occur, another try!")
         if data is None: #如果没有获取到任何数据，比如刚上市又还没上市的股票

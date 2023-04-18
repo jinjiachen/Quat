@@ -7,6 +7,7 @@ import time
 import os
 import random
 from xq import load_config
+from notification import notify
 
 def Initial():#初始化
     conf=load_config()
@@ -58,7 +59,8 @@ def Menu():
         m=input("均线拐头天数:")
         result=Bottom(freq,int(ma_s),int(n),int(m))
         filename=freq+'bottom'+ma_s+'_'+n+"_"+m+'_'+now+'.txt' #文件名
-        SaveResult(filename,result) #保存结果
+        content=SaveResult(filename,result) #保存结果
+        notify(filename,"".join(content))
     elif choice=='4':
         freq=input("请输入均线周期:")
         ma_s=input("请输入均线:")
@@ -93,6 +95,11 @@ def SaveResult(filename,result):
                 f.write(j)
             f.write('\n') 
         f.close()
+
+    with open (file_path+filename,'r') as f:
+        content=f.readlines()
+        f.close()
+    return content
 
 def StockDetails(ts_code):
     details=[] #记录股票详细信息
@@ -296,7 +303,7 @@ if __name__ == '__main__':
     previous=int(now)-30000 #一年前的日期
     previous=str(previous) #转换成字符串
     sl=Stocklist() #股票列表
-#    sl=sl[100:130] #调试用，限制股票数量以减短时间
+    sl=sl[1:1300] #调试用，限制股票数量以减短时间
 
 
     Menu()

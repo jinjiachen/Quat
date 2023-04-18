@@ -16,9 +16,12 @@ def notify(title,content):
     '''
     conf=load_config()#读取配置文件
     token=conf.get('pushplus','token')#获取配置文件中的token
-#    content='this is a test'
-#    title='debug'
-    url=f'http://www.pushplus.plus/send?token={token}&title={title}&content={content}'#构建get请求的地址
+    if isinstance(content,str):
+        url=f'http://www.pushplus.plus/send?token={token}&title={title}&content={content}'#构建get请求的地址
+    elif isinstance(content,list):
+        pass
+
+
     res=requests.get(url)#发送get请求
     print(res.status_code)
     print(res.url)

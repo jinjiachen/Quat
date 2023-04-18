@@ -9,7 +9,8 @@ import time
 def load_config():#加载配置文件
     conf=ConfigParser()
     if os.name=='nt':
-        path='K:/config.ini'
+#        path='K:/config.ini'
+        path=r'D:\Downloads\PortableGit-2.36.1-64-bit.7z\bin\Quat\config.ini'
     elif os.name=='posix':
         path='/usr/local/src/Quat/config.ini'
     else:

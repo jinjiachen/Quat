@@ -60,7 +60,7 @@ def Menu():
         result=Bottom(freq,int(ma_s),int(n),int(m))
         filename=freq+'bottom'+ma_s+'_'+n+"_"+m+'_'+now+'.txt' #文件名
         content=SaveResult(filename,result) #保存结果
-        notify(filename,"".join(content))
+        notify('post',filename,"".join(content))
     elif choice=='4':
         freq=input("请输入均线周期:")
         ma_s=input("请输入均线:")
@@ -103,7 +103,13 @@ def SaveResult(filename,result):
 
 def StockDetails(ts_code):
     details=[] #记录股票详细信息
-    tmp=pro.stock_basic(ts_code=ts_code) #获取DataFrame结构的信息
+    while True:
+        try:
+            tmp=pro.stock_basic(ts_code=ts_code) #获取DataFrame结构的信息
+            break
+        except:
+            print('获取股票详细信息失败，正在重试！')
+
     for i in tmp.loc[0]: #遍历DataFrame中的label:0
         if i!=None:
             details.append(i+'\t')
@@ -303,7 +309,7 @@ if __name__ == '__main__':
     previous=int(now)-30000 #一年前的日期
     previous=str(previous) #转换成字符串
     sl=Stocklist() #股票列表
-    sl=sl[1:1300] #调试用，限制股票数量以减短时间
+#    sl=sl[1:200] #调试用，限制股票数量以减短时间
 
 
     Menu()

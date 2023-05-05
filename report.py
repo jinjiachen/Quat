@@ -53,16 +53,7 @@ def sse():
     html=driver.page_source
     selector=etree.HTML(html)
     info=selector.xpath('//tbody/tr/td//text()')
-#    print(type(info))
     print(info)
-#    print(selector)
-#    test=driver.find_element(By.XPATH,'//tbody/tr[1]')
-#    print(test.text)
-#    print(driver.page_source)
-
-#    date_range=driver.find_element(By.XPATH,'//input[@class="form-control sse_input"]')#日期设置
-#    date_range.send_keys('2023-04-20 - 2023-04-20')
-#    date_range.submit()
 
 
 if __name__ == '__main__':

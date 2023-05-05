@@ -7,6 +7,7 @@ Date: 2024-04-20
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from lxml import etree
 import urllib
 import requests
@@ -31,6 +32,7 @@ def Driver():
     #driver=webdriver.Chrome(chrome_options=options,executable_path=path)
     #driver=webdriver.Chrome(path,chrome_options=options)
     driver=webdriver.Chrome(chrome_options=options)
+    driver.maximize_window()
     #driver.set_page_load_timeout(10)
     #driver.set_script_timeout(10)
     print('starting')
@@ -40,7 +42,14 @@ def Driver():
 def sse():
     url='http://www.sse.com.cn/disclosure/listedinfo/regular/'
     driver.get(url)
-    time.sleep(5)
+    time.sleep(3)
+    #以下是报告时间段的选择
+    driver.find_element(By.XPATH,'//input[@class="form-control sse_input"]').click()
+    driver.find_element(By.XPATH,'//div[@id="layui-laydate1"]/div[1]//td[@class="layui-this"]').click()#开始日期
+    driver.find_element(By.XPATH,'//div[@id="layui-laydate1"]/div[2]//i[@class="layui-icon laydate-icon laydate-prev-m"]').click()#往前一个月
+    driver.find_element(By.XPATH,'//div[@id="layui-laydate1"]/div[2]//td[@class="layui-this"]').click()#结束日期
+    driver.find_element(By.XPATH,'//span[@lay-type="confirm"]').click()#确定
+
     html=driver.page_source
 #    print(html)
     selector=etree.HTML(html)

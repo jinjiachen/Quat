@@ -50,6 +50,7 @@ def sse():
     driver.find_element(By.XPATH,'//div[@id="layui-laydate1"]/div[2]//td[@class="layui-this"]').click()#结束日期
     driver.find_element(By.XPATH,'//span[@lay-type="confirm"]').click()#确定
 
+    time.sleep(2)
     html=driver.page_source
     selector=etree.HTML(html)
     info=selector.xpath('//tbody/tr/td//text()')

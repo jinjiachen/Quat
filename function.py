@@ -1,6 +1,7 @@
 #coding=utf8
 import pandas as pd
 import numpy as np
+import easyquotation
 
 def Average(data,ma,length): #输入单个股票的行情数据，返回对应均线数据
     '''
@@ -47,3 +48,14 @@ def Split_line(words,figure): #分割线
         print('*'*20+words+'*'*20)
 
 #def FenHong(previous,post): #比较两个时间段间复权因子的变化，间接查找分红的股票
+
+def cal_pct(stock_code):#计算单个股票涨跌幅
+    '''
+    stock_code:股票代码
+    '''
+    quotation=easyquotation.use('sina')
+    stock_info=quotation.real(stock_code)#查询股票的价格信息
+    close=stock_info[stock_code]['close']#昨日收盘价
+    now=stock_info[stock_code]['now']#当前价格
+    pct=round((now/close-1)*100,2)#计算涨跌幅
+    return pct

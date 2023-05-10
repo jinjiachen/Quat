@@ -59,3 +59,13 @@ def cal_pct(stock_code):#计算单个股票涨跌幅
     now=stock_info[stock_code]['now']#当前价格
     pct=round((now/close-1)*100,2)#计算涨跌幅
     return pct
+
+
+def cal_pcts(stock_list):#计算一组股票的涨跌幅
+    '''
+    stock_list:股票代码的列表
+    '''
+    pcts=[]
+    for stock in stock_list:
+        pcts.append(cal_pct(stock[2:]))#对tushare股票代码进行处理，保留数字部分
+    return pcts

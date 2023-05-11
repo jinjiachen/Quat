@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import easyquotation
 import tushare as ts
+import os
 
 def Average(data,ma,length): #输入单个股票的行情数据，返回对应均线数据
     '''
@@ -80,7 +81,13 @@ def range_pcts(stock_list,start,end):#计算一个时间段内的涨跌幅
     '''
     pcts=[]
     for stock_code in stock_list:
-        df = ts.pro_bar(ts_code=stock_code, adj='qfq', start_date=start, end_date=end)
+        while True:
+            try:
+                df = ts.pro_bar(ts_code=stock_code, adj='qfq', start_date=start, end_date=end)
+                break
+            except IOError as e:
+                print(f'{e},正在重试')
+                continue
         value_end=df['close'][0]#区间终点的股价
         value_start=df['close'][len(df)-1]#区间起点的股价
 #        print('start',value_start)
@@ -88,6 +95,32 @@ def range_pcts(stock_list,start,end):#计算一个时间段内的涨跌幅
         pct=round((value_end/value_start-1)*100,2)
         pcts.append(pct)
     return pcts
+
+def average_pcts(pro,stock_list,start,end):#计算一段时间内的每一天的平均涨幅
+    '''
+    stock_list:一组股票代码
+    start:开始时间:20090101
+    end:结束时间:20090102
+    '''
+    ma_pcts=[]
+    trade_date=pro.trade_cal(exchange='', start_date=start, end_date=end)
+#    trade_date=trade_date.sort_index(axis=0,ascending=False)#降序排列，tushare日期由近及远，因此降序
+#    print(trade_date)
+    dates=list(range(0,len(trade_date)))
+    dates.sort(reverse=True)
+    print(dates)
+    for index in dates:
+#        print(trade_date['is_open'][index])
+#        print(type(trade_date['is_open'][index]))
+#        print(trade_date['is_open'][index]==1)
+#        print(trade_date['cal_date'][index])
+        if trade_date['is_open'][index]==1:#交易日
+            to_date=trade_date['cal_date'][index]
+            os.system('cls')
+            print(f'正在比对{to_date}/{end}')
+            pcts=range_pcts(stock_list,start,to_date)
+            ma_pcts.append(round(sum(pcts)/len(pcts),2))#计算平均值取2位小数
+    return ma_pcts
 
 
 def get_code(file_path):#提取致富代码

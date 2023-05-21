@@ -59,6 +59,9 @@ def Menu():
                 time.sleep(random.uniform(2,3))
             except:
                 print('操作出错')
+    elif choice=='da':
+        xq_post('delete',my_stocks())
+
 
 
 
@@ -168,7 +171,7 @@ def position(user,quotation):#get position for specific combo
         my_pos.append(str(index+1)+'. '+stock_code[index]+'\t'+stock_name[index]+'\t'+pct[index])
     return [my_pos,pcts_overall]#返回一个列表，分别为每个股票涨跌幅和综合涨幅
 
-def xq_post(method,stocklist):#通过模拟请求方式查询黄卡号
+def xq_post(method,stocklist):#模拟雪球的请求
     header={
                 'Accept':'application/json, text/plain, */*',
                 'Accept-Encoding':'gzip, deflate, br',
@@ -179,22 +182,16 @@ def xq_post(method,stocklist):#通过模拟请求方式查询黄卡号
                 'Refer':'https://xueqiu.com',
                 'User-Agent':'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1474.0'
                 }
-    if method=='delete':
+    if method=='delete':#删除所有自选股票
         url='https://stock.xueqiu.com/v5/stock/portfolio/stock/cancel.json'
-        for stock in stocklist:
-            data={
-                'symbols':stock,
-                }
-            print('正在删除持仓股票:',stock)
-            res=requests.post(url,headers=header,data=data)
     elif method=='add':
         url='https://stock.xueqiu.com/v5/stock/portfolio/stock/add.json'
-        for stock in stocklist:
-            data={
-                'symbols':stock,
-                }
-            print('正在增加股票:',stock)
-            res=requests.post(url,headers=header,data=data)
+    for stock in stocklist:
+        data={
+            'symbols':stock,
+            }
+        print(f'正在{method}股票:',stock)
+        res=requests.post(url,headers=header,data=data)
 
 
 #    while True:
@@ -212,7 +209,7 @@ def xq_post(method,stocklist):#通过模拟请求方式查询黄卡号
 #            print('连接超时，正在重新连接！')
 
 
-def my_stocks():
+def my_stocks():#获取自选股票的持仓
     url='https://stock.xueqiu.com/v5/stock/portfolio/stock/list.json?size=1000&category=1&pid=-1'
     header={
             'Accept':'application/json, text/plain, */*',
@@ -224,9 +221,9 @@ def my_stocks():
             'User-Agent':'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1474.0',
             }
 
-    res=requests.get(url,headers=header,timeout=5,verify=False)#方法2
-    res_json=json.loads(res.text)
-    content=res_json['data']['stocks']
+    res=requests.get(url,headers=header,timeout=5,verify=False)#get方法,返回json格式的字符串
+    res_json=json.loads(res.text)#加载字符串的json数据
+    content=res_json['data']['stocks']#获取股票信息列表
     stocklist=[]
     for code in content:
         stocklist.append(code['symbol'])

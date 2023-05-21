@@ -1,8 +1,13 @@
 import easytrader
 import easyquotation
+import requests
+from lxml import etree
 from configparser import ConfigParser
 import os
 import time
+import json
+from function import cal_pcts
+
 
 
 
@@ -42,8 +47,9 @@ def Menu():
     elif choice=='3':
         quotation=easyquotation.use('sina')
         my_pos=position(user,quotation)
-        for item in my_pos:
+        for item in my_pos[0]:
             print(item)
+        print('综合涨幅：',my_pos[1])
     elif choice=='4':
         file_path=input('请输入股票的txt文件')
         stock=get_code(file_path)
@@ -153,10 +159,77 @@ def position(user,quotation):#get position for specific combo
         cal_pct=round((now/close-1)*100,2)#计算涨跌幅
         pct.append(str(cal_pct))
 
+    #获取持仓的综合收益
+    pcts=cal_pcts(stock_code)#计算一组股票的涨跌幅
+    pcts_overall=sum(pcts)/len(pcts)
+
     #结果的收集
     for index in range(0,len(stock_code)):
         my_pos.append(str(index+1)+'. '+stock_code[index]+'\t'+stock_name[index]+'\t'+pct[index])
-    return my_pos
+    return [my_pos,pcts_overall]#返回一个列表，分别为每个股票涨跌幅和综合涨幅
+
+def xq_post(stocklist):#通过模拟请求方式查询黄卡号
+    url='https://stock.xueqiu.com/v5/stock/portfolio/stock/cancel.json'
+    header={
+            'Accept':'application/json, text/plain, */*',
+            'Accept-Encoding':'gzip, deflate, br',
+            'Accept-Language':'zh-CN,zh;q=0.9,en;q=0.8',
+#            'Content_Type':'application/x-www-form-urlencoded',
+            'Cookie':'xq_is_login=1; u=1034890038; s=d7120n05fq; bid=9cf084057a80c1e9d42896243ef0604a_legvardx; device_id=6e17e4a3e8450862becc9b2548f3cb54; snbim_minify=true; xq_a_token=644372bff1ab151b2cedfb15a59cd7817989a6fa; xqat=644372bff1ab151b2cedfb15a59cd7817989a6fa; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOjEwMzQ4OTAwMzgsImlzcyI6InVjIiwiZXhwIjoxNjg3MDU4NTk1LCJjdG0iOjE2ODQ0NjY1OTU2MzUsImNpZCI6ImQ5ZDBuNEFadXAifQ.c_QI6w6t7ieMvRqytij61YR_ua8QdSJVyWHc4oSSUT5wSYH22LjyDvvzDeRvZrRWzDxnqvIuEkMh3V2HENEWvXw1HaBExi1bwswpdp-fK-KuiDdnp1QAFDfwO0EBKIyo-cPnypkYqraKSVWbnM4PQOY5DhK-xF6LqCny1imkTsAMEhcd6lQjyiw7u7YRos3pkBZANYfEid5ujt4kw4Fn6gMwdquBLm5kqfVHxOKAUWxoQSr9PJ9fsFrCN48A-nEUy0WblRQyGPSePF0BJmEk-ONf4L0gt5Pf6dFPZipuhu-y451tM1eCGiyLxICG0gCG24seFaZSjntt2mK-g56Pvg; xq_r_token=d4f91c25aae6b42e1ada370d88ad1964c297204a; is_overseas=0',
+            'Origin':'https://xueqiu.com',
+            'Refer':'https://xueqiu.com',
+            'User-Agent':'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1474.0'
+            }
+
+    data={
+            'symbols':'SH605255',
+            }
+    res=requests.post(url,headers=header,data=data)
+
+    for stock in stocklist:
+        data={
+            'symbols':stock,
+            }
+        print('正在删除持仓股票:',stock)
+        res=requests.post(url,headers=header,data=data)
+
+
+#    while True:
+#            res=requests.post(url,headers=header,data=data)
+#            print(res.text)
+#        try:
+    #    res=requests.get(url,headers=header,params=data,verify=False)#方法1
+#            res=requests.post(url,headers=header,data=data)
+#            print(res.text)
+#            html=res.text
+#            selector=etree.HTML(html)#转化为lxml
+#            return selector
+#            break
+#        except:
+#            print('连接超时，正在重新连接！')
+
+
+def my_stocks():
+    url='https://stock.xueqiu.com/v5/stock/portfolio/stock/list.json?size=1000&category=1&pid=-1'
+    header={
+            'Accept':'application/json, text/plain, */*',
+            'Accept-Encoding':'gzip, deflate, br',
+            'Accept-Language':'zh-CN,zh;q=0.9,en;q=0.8',
+            'Cookie':'xq_is_login=1; u=1034890038; s=d7120n05fq; bid=9cf084057a80c1e9d42896243ef0604a_legvardx; device_id=6e17e4a3e8450862becc9b2548f3cb54; snbim_minify=true; xq_a_token=644372bff1ab151b2cedfb15a59cd7817989a6fa; xqat=644372bff1ab151b2cedfb15a59cd7817989a6fa; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOjEwMzQ4OTAwMzgsImlzcyI6InVjIiwiZXhwIjoxNjg3MDU4NTk1LCJjdG0iOjE2ODQ0NjY1OTU2MzUsImNpZCI6ImQ5ZDBuNEFadXAifQ.c_QI6w6t7ieMvRqytij61YR_ua8QdSJVyWHc4oSSUT5wSYH22LjyDvvzDeRvZrRWzDxnqvIuEkMh3V2HENEWvXw1HaBExi1bwswpdp-fK-KuiDdnp1QAFDfwO0EBKIyo-cPnypkYqraKSVWbnM4PQOY5DhK-xF6LqCny1imkTsAMEhcd6lQjyiw7u7YRos3pkBZANYfEid5ujt4kw4Fn6gMwdquBLm5kqfVHxOKAUWxoQSr9PJ9fsFrCN48A-nEUy0WblRQyGPSePF0BJmEk-ONf4L0gt5Pf6dFPZipuhu-y451tM1eCGiyLxICG0gCG24seFaZSjntt2mK-g56Pvg; xq_r_token=d4f91c25aae6b42e1ada370d88ad1964c297204a; is_overseas=0',
+            'Origin':'https://xueqiu.com',
+            'Refer':'https://xueqiu.com',
+            'User-Agent':'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1474.0',
+            }
+
+    res=requests.get(url,headers=header,timeout=5,verify=False)#方法2
+    res_json=json.loads(res.text)
+    content=res_json['data']['stocks']
+    stocklist=[]
+    for code in content:
+        stocklist.append(code['symbol'])
+#    print(res.text)
+    return stocklist 
+
 
 
 if __name__=='__main__':

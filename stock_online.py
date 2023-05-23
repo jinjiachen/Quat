@@ -8,6 +8,7 @@ import os
 import random
 from xq import load_config
 from notification import notify
+#from Anaysis import summary
 
 def Initial():#初始化
     conf=load_config()
@@ -44,6 +45,8 @@ def Menu():
         result=GoldenCross(freq,int(mas),int(mal),int(n),int(m))
         filename=freq+'cross'+mas+mal+'_'+n+'_'+m+'_'+now+'.txt' #文件名
         SaveResult(filename,result) #保存结果
+        content=SaveResult(filename,result) #保存结果
+        notify('post',filename,"".join(content))
     elif choice=="2":
         freq=input("请输入均线周期:")
         mas=input("请输入均线:")
@@ -51,7 +54,8 @@ def Menu():
         m=input("K线在多长时间内站上均线:")
         result=Suppress(freq,int(mas),int(n),int(m))
         filename=freq+'suppress'+mas+'_'+n+"_"+m+'_'+now+'.txt' #文件名
-        SaveResult(filename,result) #保存结果
+        content=SaveResult(filename,result) #保存结果
+        notify('post',filename,"".join(content))
     elif choice=='3':
         freq=input("请输入均线周期:")
         ma_s=input("请输入均线:")
@@ -69,6 +73,8 @@ def Menu():
         result=Suppress(freq,int(ma_s),int(n),int(m))
         filename=freq+'trend'+ma_s+'_'+n+"_"+m+'_'+now+'.txt' #文件名
         SaveResult(filename,result) #保存结果
+        content=SaveResult(filename,result) #保存结果
+        notify('post',filename,"".join(content))
     elif choice=='all':
         print("正在设定均线金叉模型参数:")
         freq1=input("请输入均线周期:")
@@ -90,7 +96,7 @@ def SaveResult(filename,result):
     with open (file_path+filename,'w') as f:
         for i in result:
             details=StockDetails(i)
-            Wait(50000)
+#            Wait(50000)
             for j in details:
                 f.write(j)
             f.write('\n') 
@@ -152,11 +158,22 @@ def GoldenCross(freq,mas,mal,n,m): #均线金叉
     total=len(sl['ts_code']) #总上市股票数
     result=[]
     for i in sl['ts_code']:
-        os.system('clear')
+        if os.name=='posix':
+            os.system('clear')
+        elif os.name=='nt':
+            os.system('cls')
         count+=1 #每判断一个股票，计数加1
         print('进度:'+str(count)+'/'+str(total)) #显示已判断股票数的比例
         print('正在比对:'+i) #调试用
-        data=ts.pro_bar(ts_code=i,freq=freq,adj='qfq',start_date=previous,end_date=now,ma=[mas,mal])
+        while True:
+            try:
+                data=ts.pro_bar(ts_code=i,freq=freq,adj='qfq',start_date=previous,end_date=now,ma=[mas,mal])
+                break
+            except IOError:
+                print('IOError：正在尝试其他账号')
+                pro=Initial()
+            except:
+                print("error occur, another try!")
         if data is None: #如果没有获取到任何数据，比如刚上市又还没上市的股票
             continue
         ma_s=data['ma'+str(mas)] #提取短期均线
@@ -177,10 +194,10 @@ def GoldenCross(freq,mas,mal,n,m): #均线金叉
                             result.append(i)
                     else:
                         break
-        if freq=='W':
-            Wait(20000) #等待一段时长，防止频率过快，受限于帐号积分
-        if freq=='M':
-            Wait(9000000) #等待一段时长，防止频率过快，受限于帐号积分
+#        if freq=='W':
+#            Wait(20000) #等待一段时长，防止频率过快，受限于帐号积分
+#        if freq=='M':
+#            Wait(9000000) #等待一段时长，防止频率过快，受限于帐号积分
     return result
 
 def Suppress(freq,mas,n,m): #K线站上均线模型
@@ -188,17 +205,28 @@ def Suppress(freq,mas,n,m): #K线站上均线模型
     total=len(sl['ts_code']) #总上市股票数
     result=[]
     for i in sl['ts_code']:
-        os.system('clear')
+        if os.name=='posix':
+            os.system('clear')
+        elif os.name=='nt':
+            os.system('cls')
         count+=1 #每判断一个股票，计数加1
         print('进度:'+str(count)+'/'+str(total)) #显示已判断股票数的比例
         print('正在比对:'+i) #调试用
-        data=ts.pro_bar(ts_code=i,freq=freq,adj='qfq',start_date=previous,end_date=now,ma=[mas])
+        while True:
+            try:
+                data=ts.pro_bar(ts_code=i,freq=freq,adj='qfq',start_date=previous,end_date=now,ma=[mas])
+                break
+            except IOError:
+                print('IOError：正在尝试其他账号')
+                pro=Initial()
+            except:
+                print("error occur, another try!")
 #        data1=ts.pro_bar(ts_code=i,freq='D',adj='qfq',start_date=previous,end_date=now,ma=[mas])
 #        data.to_csv('/tmp/online.csv')
 #        break
         if data is None: #如果没有获取到任何数据，比如刚上市又还没上市的股票
             continue
-        Wait(20000000) #等待一段时长，防止频率过快，受限于帐号积分
+#        Wait(20000000) #等待一段时长，防止频率过快，受限于帐号积分
         close=data['close']
         ma=data['ma'+str(mas)]
         if len(close)<n or len(ma)<n: #判断是否有空值
@@ -224,11 +252,22 @@ def Trend(freq,ma_s,n): #单调递增模型
     total=len(sl['ts_code']) #总上市股票数
     result=[]
     for i in sl['ts_code']:
-        os.system('clear')
+        if os.name=='posix':
+            os.system('clear')
+        elif os.name=='nt':
+            os.system('cls')
         count+=1 #每判断一个股票，计数加1
         print('进度:'+str(count)+'/'+str(total)) #显示已判断股票数的比例
         print('正在比对:'+i) #调试用
-        data=ts.pro_bar(ts_code=i,freq=freq,adj='qfq',start_date=previous,end_date=now,ma=[ma_s])
+        while True:
+            try:
+                data=ts.pro_bar(ts_code=i,freq=freq,adj='qfq',start_date=previous,end_date=now,ma=[ma_s])
+                break
+            except IOError:
+                print('IOError：正在尝试其他账号')
+                pro=Initial()
+            except:
+                print("error occur, another try!")
         if data is None: #如果没有获取到任何数据，比如刚上市又还没上市的股票
             continue
         ma=data['ma'+str(ma_s)]
@@ -240,10 +279,10 @@ def Trend(freq,ma_s,n): #单调递增模型
                 result.append(i)
                 break
             j+=1
-        if freq=='W':
-            Wait(5000000) #等待一段时长，防止频率过快，受限于帐号积分
-        if freq=='M':
-            Wait(5000000) #等待一段时长，防止频率过快，受限于帐号积分
+#        if freq=='W':
+#            Wait(5000000) #等待一段时长，防止频率过快，受限于帐号积分
+#        if freq=='M':
+#            Wait(5000000) #等待一段时长，防止频率过快，受限于帐号积分
     return result
                 
 
@@ -291,12 +330,12 @@ def Bottom(freq,ma_s,n,m): #均线拐点
                     result.append(i)
                     break #捕捉到致富代码，则退出循环，寻找下一个
 
-        if freq=='D':
-            Wait(5000000) #等待一段时长，防止频率过快，受限于帐号积分
-        if freq=='W':
-            Wait(500000) #等待一段时长，防止频率过快，受限于帐号积分
-        if freq=='M':
-            Wait(5000000) #等待一段时长，防止频率过快，受限于帐号积分
+#        if freq=='D':
+#            Wait(5000000) #等待一段时长，防止频率过快，受限于帐号积分
+#        if freq=='W':
+#            Wait(500000) #等待一段时长，防止频率过快，受限于帐号积分
+#        if freq=='M':
+#            Wait(5000000) #等待一段时长，防止频率过快，受限于帐号积分
     return result
 
 

@@ -60,7 +60,11 @@ def Menu():
             except:
                 print('操作出错')
     elif choice=='da':
-        xq_post('delete',my_stocks())
+        xq_post('delete',my_stocks())#删除所有雪球自选股
+    elif choice=='as':
+        file_path=input('输入股票列表文件:')
+        stocklist=get_code(file_path)#获取股票代码
+        xq_post('add',stocklist)#增加雪球自选股
 
 
 

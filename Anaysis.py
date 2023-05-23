@@ -3,7 +3,7 @@ import tushare as ts
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sqlalchemy import create_engine 
+#from sqlalchemy import create_engine 
 from stock_online import Initial
 
 
@@ -23,10 +23,36 @@ def PE(ts_code,start,end):
     df=pro.daily_basic(ts_code=ts_code,start_date=start,end_date=end)
     df['pe']
     
-def summary(file_path):
+def summary(file_path):#对结果文件总结
     with open(file_path,'r') as f:
         res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
         f.close()
     print(res)
+    ZB=0
+    ZXB=0
+    CYB=0
+    KCB=0
+    BJS=0
+    SZ=0
+    SH=0
     for stock_info in res:
         splice=stock_info.split('\t')
+        print(len(splice))
+        if len(splice)==8:
+            if splice[5]=='主板':
+                ZB+=1
+                if 'SZ' in splice[0]:
+                    SZ+=1
+                elif 'SH' in splice[0]:
+                    SH+=1
+            elif splice[5]=='创业板':
+                CYB+=1
+            elif splice[5]=='科创板':
+                KCB+=1
+            elif splice[5]=='中小板':
+                ZXB+=1
+        elif len(splice)==6 and '北交所' in stock_info:
+            BJS+=1
+
+    print(f'主板：{ZB}(其中：上证{SH},深圳{SZ})\n中小板{ZXB}\n创业板：{CYB}\n科创板：{KCB}\n北交所：{BJS}\n总共：{len(res)}')
+

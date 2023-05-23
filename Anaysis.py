@@ -27,7 +27,7 @@ def summary(file_path):#对结果文件总结
     with open(file_path,'r') as f:
         res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
         f.close()
-    print(res)
+#    print(res)
     ZB=0
     ZXB=0
     CYB=0
@@ -37,7 +37,7 @@ def summary(file_path):#对结果文件总结
     SH=0
     for stock_info in res:
         splice=stock_info.split('\t')
-        print(len(splice))
+#        print(len(splice))
         if len(splice)==8:
             if splice[5]=='主板':
                 ZB+=1
@@ -54,5 +54,7 @@ def summary(file_path):#对结果文件总结
         elif len(splice)==6 and '北交所' in stock_info:
             BJS+=1
 
-    print(f'主板：{ZB}(其中：上证{SH},深圳{SZ})\n中小板{ZXB}\n创业板：{CYB}\n科创板：{KCB}\n北交所：{BJS}\n总共：{len(res)}')
+    result=f'主板：{ZB}(其中：上证{SH},深圳{SZ})\n中小板{ZXB}\n创业板：{CYB}\n科创板：{KCB}\n北交所：{BJS}\n总共：{len(res)}'
+#    print(result)
+    return result
 

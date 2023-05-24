@@ -179,7 +179,9 @@ def GoldenCross(freq,mas,mal,n,m): #均线金叉
             continue
         ma_s=data['ma'+str(mas)] #提取短期均线
         ma_l=data['ma'+str(mal)] #提取长期均线
-        if len(ma_s)<n or len(ma_l)<n: #判断是否有空值
+        print(len(ma_s),len(ma_l))
+#        if len(ma_s)<n or len(ma_l)<n: #判断是否有空值
+        if len(ma_s)<=n or len(ma_l)<=n: #判断是否有空值
             continue
         if ma_s[0]>ma_l[0]: #判断短期均线是不是在长期均线上方
             j=1
@@ -349,7 +351,7 @@ if __name__ == '__main__':
     previous=int(now)-30000 #一年前的日期
     previous=str(previous) #转换成字符串
     sl=Stocklist() #股票列表
-#    sl=sl[1:200] #调试用，限制股票数量以减短时间
+#    sl=sl[500:520] #调试用，限制股票数量以减短时间
 
 
     Menu()

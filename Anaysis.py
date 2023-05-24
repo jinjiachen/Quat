@@ -18,9 +18,9 @@ def pct_chg(period, start, end):
     close_start=sql_consult(db,start)
     close_end=sql_consult(db,end)
 
-def PE(ts_code,start,end):
+def financial_indictor(ts_code='',trade_date):
     pro=Initial()
-    df=pro.daily_basic(ts_code=ts_code,start_date=start,end_date=end)
+    df=pro.daily_basic(ts_code='', trade_date=trade_date, fields='ts_code,trade_date,pe,pe_ttm,pb,dv_ratio,dv_ttm,turnover_rate')
     df['pe']
     
 def summary(file_path):#对结果文件总结
@@ -57,4 +57,10 @@ def summary(file_path):#对结果文件总结
     result=f'主板：{ZB}(其中：上证{SH},深圳{SZ})\n中小板{ZXB}\n创业板：{CYB}\n科创板：{KCB}\n北交所：{BJS}\n总共：{len(res)}'
 #    print(result)
     return result
+
+
+def daily_push():
+    now='20230524'
+    df=pro.index_dailybasic(trade_date=now, fields='ts_code,trade_date,turnover_rate,pe,pe_ttm,pb')
+    pass
 

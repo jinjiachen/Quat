@@ -12,8 +12,9 @@ from notification import notify
 
 def Initial():#初始化
     conf=load_config()
-    account_no=str(random.randint(1,6))#利用随机函数构造账户的序号
-    my_token=conf.get('tushare','account'+account_no)
+#    account_no=str(random.randint(1,6))#利用随机函数构造账户的序号
+#    my_token=conf.get('tushare','account'+account_no)
+    my_token=conf.get('tushare','account4')
     ts.set_token(my_token)
     pro=ts.pro_api()
     return pro

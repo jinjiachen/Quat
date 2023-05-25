@@ -18,7 +18,7 @@ def pct_chg(period, start, end):
     close_start=sql_consult(db,start)
     close_end=sql_consult(db,end)
 
-def financial_indictor(ts_code='',trade_date):
+def financial_indictor(ts_code,trade_date):
     pro=Initial()
     df=pro.daily_basic(ts_code='', trade_date=trade_date, fields='ts_code,trade_date,pe,pe_ttm,pb,dv_ratio,dv_ttm,turnover_rate')
     df['pe']
@@ -61,6 +61,21 @@ def summary(file_path):#对结果文件总结
 
 def daily_push():
     now='20230524'
-    df=pro.index_dailybasic(trade_date=now, fields='ts_code,trade_date,turnover_rate,pe,pe_ttm,pb')
+    df_SH=pro.index_dailybasic(ts_code='000001.SH', trade_date=now, fields='ts_code,trade_date,turnover_rate,pe,pe_ttm,pb')
+    pe_SH=df_SH['pe']
+    pe_ttm_SH=df_SH['pe_ttm']
+    pb_SH=df_SH['pb']
+
+    df_SZ=pro.index_dailybasic(ts_code='390001.SZ', trade_date=now, fields='ts_code,trade_date,turnover_rate,pe,pe_ttm,pb')
+    pe_SZ=df_SZ['pe']
+    pe_ttm_SZ=df_SZ['pe_ttm']
+    pb_SZ=df_SZ['pb']
     pass
 
+
+if __name__=='__main__':
+    choice=input('1.结果文件分析')
+    if choice=='1':
+        file_path=input('请输入文件路径:')
+        res=summary(file_path)
+        print(res)

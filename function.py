@@ -73,7 +73,7 @@ def cal_pcts(stock_list):#计算一组股票的涨跌幅
     return pcts
 
 
-def range_pcts(stock_list,start,end):#计算一个时间段内的涨跌幅
+def range_pcts(pro,stock_list,start,end):#计算一个时间段内的涨跌幅
     '''
     stock_list:一组股票代码
     start:开始时间:20090101
@@ -118,7 +118,7 @@ def average_pcts(pro,stock_list,start,end):#计算一段时间内的每一天的
             to_date=trade_date['cal_date'][index]
             os.system('cls')
             print(f'正在比对{to_date}/{end}')
-            pcts=range_pcts(stock_list,start,to_date)
+            pcts=range_pcts(pro,stock_list,start,to_date)
             ma_pcts.append(round(sum(pcts)/len(pcts),2))#计算平均值取2位小数
     return ma_pcts
 

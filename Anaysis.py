@@ -5,6 +5,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 #from sqlalchemy import create_engine 
 from stock_online import Initial
+from function import cal_pcts,range_pcts,average_pcts
+from function import get_code as gc_func
+from xq import get_code as gc_xq
 
 
 def sql_consult(db, date):
@@ -74,8 +77,31 @@ def daily_push():
 
 
 if __name__=='__main__':
-    choice=input('1.结果文件分析')
+    choice=input('1.结果文件分析\n2.一组股票的当日涨跌幅\n3.一组股票一段时间内的涨跌幅\n4.计算一段时间内每一天的平均涨跌幅')
     if choice=='1':
         file_path=input('请输入文件路径:')
         res=summary(file_path)
         print(res)
+    elif choice=='2':
+        file_path=input('请输入文件路径:')
+        stocklist=gc_xq(file_path)
+        pcts=cal_pcts(stocklist)
+        print('综合涨幅：',sum(pcts)/len(pcts))
+    elif choice=='3':
+        pro=Initial()
+        file_path=input('请输入文件路径:')
+        start=input('请输入开始时间')
+        end=input('请输入结束时间')
+        stocklist=gc_func(file_path)
+        pcts=range_pcts(pro,stocklist,start,end)
+        print(pcts)
+    elif choice=='4':
+        pro=Initial()
+        file_path=input('请输入文件路径:')
+        start=input('请输入开始时间')
+        end=input('请输入结束时间')
+        stocklist=gc_func(file_path)
+        pcts=average_pcts(pro,stocklist,start,end)
+        print(pcts)
+
+

@@ -177,13 +177,16 @@ def GoldenCross(freq,mas,mal,n,m): #均线金叉
                 print("error occur, another try!")
         if data is None: #如果没有获取到任何数据，比如刚上市又还没上市的股票
             continue
+        close=data['close']
         ma_s=data['ma'+str(mas)] #提取短期均线
         ma_l=data['ma'+str(mal)] #提取长期均线
         print(len(ma_s),len(ma_l))
 #        if len(ma_s)<n or len(ma_l)<n: #判断是否有空值
         if len(ma_s)<=n or len(ma_l)<=n: #判断是否有空值
             continue
-        if ma_s[0]>ma_l[0]: #判断短期均线是不是在长期均线上方
+        if close[0]<ma_s[0]:
+            continue
+        elif ma_s[0]>ma_l[0]: #判断短期均线是不是在长期均线上方
             j=1
             crosspoint=0 #初始值为0,假设1天内出现金叉的情况
             while j<=n: #判断之前的收盘价是不是在均线下文，以此寻找刚启动的行情

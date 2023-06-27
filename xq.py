@@ -181,7 +181,7 @@ def xq_post(method,stocklist):#模拟雪球的请求
                 'Accept-Encoding':'gzip, deflate, br',
                 'Accept-Language':'zh-CN,zh;q=0.9,en;q=0.8',
     #            'Content_Type':'application/x-www-form-urlencoded',
-                'Cookie':'xq_is_login=1; u=1034890038; s=d7120n05fq; bid=9cf084057a80c1e9d42896243ef0604a_legvardx; device_id=6e17e4a3e8450862becc9b2548f3cb54; snbim_minify=true; xq_a_token=644372bff1ab151b2cedfb15a59cd7817989a6fa; xqat=644372bff1ab151b2cedfb15a59cd7817989a6fa; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOjEwMzQ4OTAwMzgsImlzcyI6InVjIiwiZXhwIjoxNjg3MDU4NTk1LCJjdG0iOjE2ODQ0NjY1OTU2MzUsImNpZCI6ImQ5ZDBuNEFadXAifQ.c_QI6w6t7ieMvRqytij61YR_ua8QdSJVyWHc4oSSUT5wSYH22LjyDvvzDeRvZrRWzDxnqvIuEkMh3V2HENEWvXw1HaBExi1bwswpdp-fK-KuiDdnp1QAFDfwO0EBKIyo-cPnypkYqraKSVWbnM4PQOY5DhK-xF6LqCny1imkTsAMEhcd6lQjyiw7u7YRos3pkBZANYfEid5ujt4kw4Fn6gMwdquBLm5kqfVHxOKAUWxoQSr9PJ9fsFrCN48A-nEUy0WblRQyGPSePF0BJmEk-ONf4L0gt5Pf6dFPZipuhu-y451tM1eCGiyLxICG0gCG24seFaZSjntt2mK-g56Pvg; xq_r_token=d4f91c25aae6b42e1ada370d88ad1964c297204a; is_overseas=0',
+                'Cookie':login_cookies,
                 'Origin':'https://xueqiu.com',
                 'Refer':'https://xueqiu.com',
                 'User-Agent':'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1474.0'
@@ -219,7 +219,7 @@ def my_stocks():#获取自选股票的持仓
             'Accept':'application/json, text/plain, */*',
             'Accept-Encoding':'gzip, deflate, br',
             'Accept-Language':'zh-CN,zh;q=0.9,en;q=0.8',
-            'Cookie':'xq_is_login=1; u=1034890038; s=d7120n05fq; bid=9cf084057a80c1e9d42896243ef0604a_legvardx; device_id=6e17e4a3e8450862becc9b2548f3cb54; snbim_minify=true; xq_a_token=644372bff1ab151b2cedfb15a59cd7817989a6fa; xqat=644372bff1ab151b2cedfb15a59cd7817989a6fa; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOjEwMzQ4OTAwMzgsImlzcyI6InVjIiwiZXhwIjoxNjg3MDU4NTk1LCJjdG0iOjE2ODQ0NjY1OTU2MzUsImNpZCI6ImQ5ZDBuNEFadXAifQ.c_QI6w6t7ieMvRqytij61YR_ua8QdSJVyWHc4oSSUT5wSYH22LjyDvvzDeRvZrRWzDxnqvIuEkMh3V2HENEWvXw1HaBExi1bwswpdp-fK-KuiDdnp1QAFDfwO0EBKIyo-cPnypkYqraKSVWbnM4PQOY5DhK-xF6LqCny1imkTsAMEhcd6lQjyiw7u7YRos3pkBZANYfEid5ujt4kw4Fn6gMwdquBLm5kqfVHxOKAUWxoQSr9PJ9fsFrCN48A-nEUy0WblRQyGPSePF0BJmEk-ONf4L0gt5Pf6dFPZipuhu-y451tM1eCGiyLxICG0gCG24seFaZSjntt2mK-g56Pvg; xq_r_token=d4f91c25aae6b42e1ada370d88ad1964c297204a; is_overseas=0',
+            'Cookie':login_cookies,
             'Origin':'https://xueqiu.com',
             'Refer':'https://xueqiu.com',
             'User-Agent':'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1474.0',

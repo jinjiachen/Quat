@@ -94,7 +94,16 @@ def SaveResult(filename,result):
     elif os.name=='posix':
 #        file_path='/usr/local/src/tushare/result/'
         file_path='/usr/local/src/Quat/result/'
-    with open (file_path+filename,'w') as f:
+
+    if os.path.isdir(file_path+now):#判断路径是否存在，不存在就创建文件夹
+        print(f'路径{file_path+now}已存在')
+        pass
+    else:
+        print(f'正在创建路径{file_path+now}')
+        os.mkdir(file_path+now)
+
+    #写入文件
+    with open (os.path.abspath(file_path+now+'/'+filename),'w') as f:
         for i in result:
             details=StockDetails(i)
 #            Wait(50000)
@@ -103,7 +112,8 @@ def SaveResult(filename,result):
             f.write('\n') 
         f.close()
 
-    with open (file_path+filename,'r') as f:
+    #读取文件内容并返回，用于推送
+    with open (os.path.abspath(file_path+now+'/'+filename),'r') as f:
         content=f.readlines()
         f.close()
     return content
@@ -354,7 +364,7 @@ if __name__ == '__main__':
     previous=int(now)-30000 #一年前的日期
     previous=str(previous) #转换成字符串
     sl=Stocklist() #股票列表
-#    sl=sl[500:520] #调试用，限制股票数量以减短时间
+#    sl=sl[500:620] #调试用，限制股票数量以减短时间
 
 
     Menu()

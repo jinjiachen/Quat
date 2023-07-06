@@ -354,17 +354,23 @@ def Bottom(freq,ma_s,n,m): #均线拐点
 #            Wait(5000000) #等待一段时长，防止频率过快，受限于帐号积分
     return result
 
+def run_daily():
+    result=Bottom('D',13,15,2)
+    filename=f'Dbott13_15_2_{now}.txt'
+    content=SaveResult(filename,result) #保存结果
+    notify('post',filename,"".join(content))
 
+
+pro=Initial() #初始化
+now=time.strftime("%Y%m%d") #当前日期
+#now='20201230'
+previous=int(now)-30000 #一年前的日期
+previous=str(previous) #转换成字符串
+sl=Stocklist() #股票列表
+#    sl=sl[500:620] #调试用，限制股票数量以减短时间
 
 ####主程序####
 if __name__ == '__main__':
-    pro=Initial() #初始化
-    now=time.strftime("%Y%m%d") #当前日期
-    #now='20201230'
-    previous=int(now)-30000 #一年前的日期
-    previous=str(previous) #转换成字符串
-    sl=Stocklist() #股票列表
-#    sl=sl[500:620] #调试用，限制股票数量以减短时间
 
 
     Menu()

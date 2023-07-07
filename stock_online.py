@@ -355,11 +355,37 @@ def Bottom(freq,ma_s,n,m): #均线拐点
     return result
 
 def run_daily():
+    #Dbott13_15_1组合
+    result=Bottom('D',13,15,1)
+    filename=f'Dbott13_15_1_{now}.txt'
+    content=SaveResult(filename,result) #保存结果
+    notify('post',filename,"".join(content))
+
+    #Dbott13_15_2组合
     result=Bottom('D',13,15,2)
     filename=f'Dbott13_15_2_{now}.txt'
     content=SaveResult(filename,result) #保存结果
     notify('post',filename,"".join(content))
 
+
+    #Dbott13_15_3组合
+    result=Bottom('D',13,15,3)
+    filename=f'Dbott13_15_3_{now}.txt'
+    content=SaveResult(filename,result) #保存结果
+    notify('post',filename,"".join(content))
+
+
+    #Dsup13_15_0组合
+    result=Suppress('D',13,15,0)
+    filename=f'Dsuppress13_15_0_{now}.txt'
+    content=SaveResult(filename,result) #保存结果
+    notify('post',filename,"".join(content))
+
+    #Dsup13_15_1组合
+    result=Suppress('D',13,15,1)
+    filename=f'Dsuppress13_15_1_{now}.txt'
+    content=SaveResult(filename,result) #保存结果
+    notify('post',filename,"".join(content))
 
 pro=Initial() #初始化
 now=time.strftime("%Y%m%d") #当前日期

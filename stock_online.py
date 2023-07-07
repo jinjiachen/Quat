@@ -354,6 +354,39 @@ def Bottom(freq,ma_s,n,m): #均线拐点
 #            Wait(5000000) #等待一段时长，防止频率过快，受限于帐号积分
     return result
 
+
+def Quekou(): #向上跳空缺口
+    count=0 #计数
+#    global sl#调试
+#    sl=sl[700:820] #调试用，限制股票数量以减短时间
+    total=len(sl['ts_code']) #总上市股票数
+    result=[]
+    for i in sl['ts_code']:
+        if os.name=='posix':
+            os.system('clear')
+        elif os.name=='nt':
+            os.system('cls')
+        count+=1 #每判断一个股票，计数加1
+        print('进度:'+str(count)+'/'+str(total)) #显示已判断股票数的比例
+        print('正在比对:'+i) #调试用
+        while True:
+            try:
+                data=ts.pro_bar(ts_code=i,freq='D',adj='qfq',start_date=previous,end_date=now)
+                break
+            except IOError:
+                print('IOError：正在尝试其他账号')
+                pro=Initial()
+            except:
+                print("error occur, another try!")
+        if data is None: #如果没有获取到任何数据，比如刚上市又还没上市的股票
+            continue
+        high=data['high'] #提取最高价
+        low=data['low'] #提取最低价
+        if low[0]>high[1]:
+            result.append(i)
+    return result
+
+
 def run_daily():
     #Dbott13_15_1组合
     result=Bottom('D',13,15,1)

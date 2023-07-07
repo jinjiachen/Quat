@@ -35,6 +35,7 @@ def Menu():
     print("2.均线压制K线多时,K线站上均线模型")
     print("3.均线拐头模型")
     print("4.趋势模型")
+    print("5.向上跳空缺口")
     print("all:以上所有模型")
     choice=input()
     if choice=="1":
@@ -75,6 +76,11 @@ def Menu():
         filename=freq+'trend'+ma_s+'_'+n+"_"+m+'_'+now+'.txt' #文件名
         SaveResult(filename,result) #保存结果
         content=SaveResult(filename,result) #保存结果
+        notify('post',filename,"".join(content))
+    elif choice=='5':
+        result=Quekou()
+        filename=f'Quekou_{now}.txt'
+        SaveResult(filename,result) #保存结果
         notify('post',filename,"".join(content))
     elif choice=='all':
         print("正在设定均线金叉模型参数:")

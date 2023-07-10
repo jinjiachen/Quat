@@ -388,6 +388,8 @@ def Quekou(): #向上跳空缺口
             continue
         high=data['high'] #提取最高价
         low=data['low'] #提取最低价
+        if len(high)<2 and len(low)<2:
+            continue
         if low[0]>high[1]:
             result.append(i)
     return result

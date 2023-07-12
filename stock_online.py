@@ -80,7 +80,7 @@ def Menu():
     elif choice=='5':
         result=Quekou()
         filename=f'Quekou_{now}.txt'
-        SaveResult(filename,result) #保存结果
+        content=SaveResult(filename,result) #保存结果
         notify('post',filename,"".join(content))
     elif choice=='all':
         print("正在设定均线金叉模型参数:")

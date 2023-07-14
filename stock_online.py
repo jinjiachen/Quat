@@ -394,6 +394,16 @@ def Quekou(): #向上跳空缺口
             result.append(i)
     return result
 
+def low_p(date):
+    df = pro.daily_basic(ts_code='', trade_date=date, fields='ts_code,trade_date,pe,pb,total_mv')
+    p1=df['total_mv']/10000<30
+    p2=df['total_mv']/10000>20
+    df_wanted=df[p1][p2]
+#    print(df_wanted)
+    res=df_wanted.sort_values(by='total_mv',axis=0,ascending=True,inplace=False)
+    print(res)
+    return res[0:20]
+
 
 def run_daily():
     #Dbott13_15_1组合

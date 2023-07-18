@@ -438,9 +438,15 @@ def run_daily():
 #    content=SaveResult(filename,result) #保存结果
 #    notify('post',filename,"".join(content))
 
-    #Dsup13_15_0组合
+    #Dcross13_21_30_2组合
     result=GoldenCross('D',13,15,30,2)
     filename=f'Dcross13_21_30_2_{now}.txt'
+    content=SaveResult(filename,result) #保存结果
+    notify('post',filename,"".join(content))
+
+    #Quekou组合
+    result=Quekou()
+    filename=f'Quekou_{now}.txt'
     content=SaveResult(filename,result) #保存结果
     notify('post',filename,"".join(content))
 

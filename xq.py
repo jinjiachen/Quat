@@ -63,6 +63,9 @@ def Menu():
         xq_post('delete',my_stocks())#删除所有雪球自选股
     elif choice=='as':
         file_path=input('输入股票列表文件:')
+        if os.name=='posix':
+            file_path=file_path.replace('\' ','')
+            file_path=file_path.replace('\'','')
         stocklist=get_code(file_path)#获取股票代码
         xq_post('add',stocklist)#增加雪球自选股
 

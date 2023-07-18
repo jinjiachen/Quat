@@ -413,17 +413,17 @@ def run_daily():
     notify('post',filename,"".join(content))
 
     #Dbott13_15_2组合
-    result=Bottom('D',13,15,2)
-    filename=f'Dbott13_15_2_{now}.txt'
-    content=SaveResult(filename,result) #保存结果
-    notify('post',filename,"".join(content))
+#    result=Bottom('D',13,15,2)
+#    filename=f'Dbott13_15_2_{now}.txt'
+#    content=SaveResult(filename,result) #保存结果
+#    notify('post',filename,"".join(content))
 
 
     #Dbott13_15_3组合
-    result=Bottom('D',13,15,3)
-    filename=f'Dbott13_15_3_{now}.txt'
-    content=SaveResult(filename,result) #保存结果
-    notify('post',filename,"".join(content))
+#    result=Bottom('D',13,15,3)
+#    filename=f'Dbott13_15_3_{now}.txt'
+#    content=SaveResult(filename,result) #保存结果
+#    notify('post',filename,"".join(content))
 
 
     #Dsup13_15_0组合
@@ -433,8 +433,14 @@ def run_daily():
     notify('post',filename,"".join(content))
 
     #Dsup13_15_1组合
-    result=Suppress('D',13,15,1)
-    filename=f'Dsuppress13_15_1_{now}.txt'
+#    result=Suppress('D',13,15,1)
+#    filename=f'Dsuppress13_15_1_{now}.txt'
+#    content=SaveResult(filename,result) #保存结果
+#    notify('post',filename,"".join(content))
+
+    #Dsup13_15_0组合
+    result=GoldenCross('D',13,15,30,2)
+    filename=f'Dcross13_21_30_2_{now}.txt'
     content=SaveResult(filename,result) #保存结果
     notify('post',filename,"".join(content))
 

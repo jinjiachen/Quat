@@ -56,7 +56,36 @@ def sse():
     info=selector.xpath('//tbody/tr/td//text()')
     print(info)
 
+def sse_yjyg():
+    url='http://www.sse.com.cn/disclosure/listedinfo/announcement/'
+    driver.get(url)
+    driver.find_element(By.XPATH,'//div[@class="today_leftDate"]').click()#日期的选择
+    time.sleep(2)
+    driver.find_element(By.XPATH,'//div[@class="laydate-footer-btns"]/span[7]').click()#确定
+    driver.find_element(By.XPATH,'//div[@class="announceShow"]').click()#展开全部
+    driver.find_element(By.XPATH,'//div[@class="announceDiv "][8]').click()#9.业绩预告
+
+    time.sleep(2)
+    html=driver.page_source
+    selector=etree.HTML(html)
+    info=selector.xpath('//tbody/tr/td//text()')
+    res=[]
+    count=0
+    tmp=[]
+    for i in info:
+        tmp.append(i)
+        count+=1
+        if count==5:
+            res.append(tmp)
+            count=0#计算清零
+            tmp=[]#临时列表清零
+    return res 
+
 
 if __name__ == '__main__':
     driver=Driver()
-    sse()
+#    sse()
+    res=sse_yjyg()
+    for i in res:
+        print(i)
+    time.sleep(10)

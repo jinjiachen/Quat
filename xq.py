@@ -62,11 +62,24 @@ def Menu():
     elif choice=='da':
         xq_post('delete',my_stocks())#删除所有雪球自选股
     elif choice=='as':
-        file_path=input('输入股票列表文件:')
-        if os.name=='posix':
-            file_path=file_path.replace('\' ','')
-            file_path=file_path.replace('\'','')
-        stocklist=get_code(file_path)#获取股票代码
+        file_path=input('输入文件路径或文件夹路径:')
+        if os.path.isfile(file_path):#判断路径是否为文件
+            if os.name=='posix':
+                file_path=file_path.replace('\' ','')
+                file_path=file_path.replace('\'','')
+            stocklist=get_code(file_path)#获取股票代码
+        elif os.path.isdir(file_path):#判断是否为路径
+            stocklist=[]
+            for root,dirs,files in os.walk(file_path,topdown=False):#遍历路径下的文件和文件夹，返回root,dirs,files的三元元组
+                ###读取所有文件中的股票信息并存入stocklist
+                for file in files:#遍历所有文件
+#                    print(os.path.abspath(file_path+'/'+file))
+                    file=os.path.abspath(file_path+'/'+file)#构建文件的绝对路径
+                    stocks=get_code(file)#获取文件中的股票信息
+                    ###存储股票信息
+                    for stock in stocks:
+                        stocklist.append(stock)
+#                print(stocklist)
         xq_post('add',stocklist)#增加雪球自选股
 
 
@@ -191,7 +204,7 @@ def xq_post(method,stocklist):#模拟雪球的请求
                 }
     if method=='delete':#删除所有自选股票
         url='https://stock.xueqiu.com/v5/stock/portfolio/stock/cancel.json'
-    elif method=='add':
+    elif method=='add': #加入自选
         url='https://stock.xueqiu.com/v5/stock/portfolio/stock/add.json'
     for stock in stocklist:
         data={

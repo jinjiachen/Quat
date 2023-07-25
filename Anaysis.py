@@ -93,6 +93,8 @@ if __name__=='__main__':
             file_path=file_path.replace('\'','')
         stocklist=gc_xq(file_path)
         pcts=cal_pcts(stocklist)
+        for stock,pct in zip(stocklist,pcts):
+            print(stock,pct)
         print('综合涨幅：',sum(pcts)/len(pcts))
     elif choice=='3':
         pro=Initial()

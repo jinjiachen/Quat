@@ -59,8 +59,9 @@ def sse():
 def sse_yjyg():
     url='http://www.sse.com.cn/disclosure/listedinfo/announcement/'
     driver.get(url)
+    time.sleep(3)
     driver.find_element(By.XPATH,'//div[@class="today_leftDate"]').click()#日期的选择
-    time.sleep(2)
+    time.sleep(3)
     driver.find_element(By.XPATH,'//div[@class="laydate-footer-btns"]/span[7]').click()#确定
     driver.find_element(By.XPATH,'//div[@class="announceShow"]').click()#展开全部
     driver.find_element(By.XPATH,'//div[@class="announceDiv "][8]').click()#9.业绩预告
@@ -68,17 +69,17 @@ def sse_yjyg():
     time.sleep(2)
     html=driver.page_source
     selector=etree.HTML(html)
-    info=selector.xpath('//tbody/tr/td//text()')
+#    info=selector.xpath('//tbody/tr/td//text()')
+    line_info=selector.xpath('//tbody/tr')
+    print(len(line_info))
     res=[]
-    count=0
-    tmp=[]
-    for i in info:
-        tmp.append(i)
-        count+=1
-        if count==5:
-            res.append(tmp)
-            count=0#计算清零
-            tmp=[]#临时列表清零
+    for line in line_info:
+        print(type(line))
+        print(line)
+        print(etree.tostring(line,encoding='utf-8').decode('utf-8'))
+#        content=line.xpath('//tr//text()')
+#        print(content)
+    print(res)
     return res 
 
 
@@ -86,6 +87,4 @@ if __name__ == '__main__':
     driver=Driver()
 #    sse()
     res=sse_yjyg()
-    for i in res:
-        print(i)
     time.sleep(10)

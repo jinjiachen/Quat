@@ -19,8 +19,11 @@ def Initial():#初始化
     pro=ts.pro_api()
     return pro
 
-def Stocklist():#获取股票列表
-    sl=pro.stock_basic(exchange='',list_status='L',fields='ts_code')
+def Stocklist(mkt):#获取股票列表
+    '''
+    mkt:市场类别，如主板，创业板，科创板，北交所等
+    '''
+    sl=pro.stock_basic(exchange='',list_status='L',market=mkt,fields='ts_code,name')
     return sl
 #    print(sl) #调试用
 
@@ -455,7 +458,7 @@ now=time.strftime("%Y%m%d") #当前日期
 #now='20201230'
 previous=int(now)-30000 #一年前的日期
 previous=str(previous) #转换成字符串
-sl=Stocklist() #股票列表
+sl=Stocklist('主板,创业板') #股票列表
 #    sl=sl[500:620] #调试用，限制股票数量以减短时间
 
 ####主程序####

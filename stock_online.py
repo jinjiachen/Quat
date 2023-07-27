@@ -21,12 +21,28 @@ def Initial():#初始化
 
 def Stocklist(mkt):#获取股票列表
     '''
-    mkt:市场类别，如主板，创业板，科创板，北交所等
+    mkt:字符串，市场类别，如主板，创业板，科创板，北交所等
     '''
     sl=pro.stock_basic(exchange='',list_status='L',market=mkt,fields='ts_code,name')
     return sl
 #    print(sl) #调试用
 
+
+###过滤ST股票并记录
+def filter(sl):
+    '''
+    sl:stocklist,股票列表
+    '''
+    ST=[]#存储ST股
+    for stock_name in sl['name']:
+        if 'ST' in stock_name:
+            ST.append(stock_name)#记录ST
+            sl.drop(sl[sl['name']==stock_name].index,inplace=True)#用drop方法删除对应行数
+    print(ST)
+    return sl
+
+
+###此等待函数已经过时
 def Wait(n):
     i=0
     while i<n:
@@ -459,6 +475,7 @@ now=time.strftime("%Y%m%d") #当前日期
 previous=int(now)-30000 #一年前的日期
 previous=str(previous) #转换成字符串
 sl=Stocklist('主板,创业板') #股票列表
+sl=filter(sl)#过滤ST
 #    sl=sl[500:620] #调试用，限制股票数量以减短时间
 
 ####主程序####

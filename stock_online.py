@@ -475,6 +475,7 @@ now=time.strftime("%Y%m%d") #当前日期
 previous=int(now)-30000 #一年前的日期
 previous=str(previous) #转换成字符串
 sl=Stocklist('主板,创业板') #股票列表
+#sl=Stocklist('主板,创业板,科创板,北交所') #股票列表
 sl=filter(sl)#过滤ST
 #    sl=sl[500:620] #调试用，限制股票数量以减短时间
 

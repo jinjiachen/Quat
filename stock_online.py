@@ -38,7 +38,7 @@ def filter(sl):
         if 'ST' in stock_name:
             ST.append(stock_name)#记录ST
             sl.drop(sl[sl['name']==stock_name].index,inplace=True)#用drop方法删除对应行数
-    print(ST)
+#    print(ST)
     return sl
 
 

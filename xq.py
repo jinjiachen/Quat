@@ -63,11 +63,13 @@ def Menu():
         xq_post('delete',my_stocks())#删除所有雪球自选股
     elif choice=='as':
         file_path=input('输入文件路径或文件夹路径:')
+        if os.name=='posix':
+            file_path=file_path.replace('\' ','')
+            file_path=file_path.replace('\'','')
+            print('处理后的文件路径为',file_path)
         if os.path.isfile(file_path):#判断路径是否为文件
-            if os.name=='posix':
-                file_path=file_path.replace('\' ','')
-                file_path=file_path.replace('\'','')
             stocklist=get_code(file_path)#获取股票代码
+            print('待添加的股票列表',stocklist)
         elif os.path.isdir(file_path):#判断是否为路径
             stocklist=[]
             for root,dirs,files in os.walk(file_path,topdown=False):#遍历路径下的文件和文件夹，返回root,dirs,files的三元元组

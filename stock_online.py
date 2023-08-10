@@ -8,7 +8,7 @@ import os
 import random
 from xq import load_config
 from notification import notify
-#from Anaysis import summary
+from Anaysis import summary
 
 def Initial():#初始化
     conf=load_config()
@@ -131,7 +131,6 @@ def SaveResult(filename,result):
     with open (os.path.abspath(file_path+now+'/'+filename),'w') as f:
         for i in result:
             details=StockDetails(i)
-#            Wait(50000)
             for j in details:
                 f.write(j)
             f.write('\n') 
@@ -141,7 +140,10 @@ def SaveResult(filename,result):
     with open (os.path.abspath(file_path+now+'/'+filename),'r') as f:
         content=f.readlines()
         f.close()
-    return content
+
+    res=summary(os.path.abspath(file_path+now+'/'+filename))#对结果总结分析
+    res_tolist=res.split(' ')#将字符串变成列表)
+    return content+res_tolist
 
 def StockDetails(ts_code):
     details=[] #记录股票详细信息
@@ -477,7 +479,7 @@ previous=str(previous) #转换成字符串
 sl=Stocklist('主板,创业板') #股票列表
 #sl=Stocklist('主板,创业板,科创板,北交所') #股票列表
 sl=filter(sl)#过滤ST
-#    sl=sl[500:620] #调试用，限制股票数量以减短时间
+#sl=sl[500:620] #调试用，限制股票数量以减短时间
 
 ####主程序####
 if __name__ == '__main__':

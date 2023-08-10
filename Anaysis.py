@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 #from sqlalchemy import create_engine 
-from stock_online import Initial
 from function import cal_pcts,range_pcts,average_pcts
 from function import get_code as gc_func
 from xq import get_code as gc_xq
@@ -32,17 +31,19 @@ def summary(file_path):#对结果文件总结
         res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
         f.close()
 #    print(res)
-    ZB=0
-    ZXB=0
-    CYB=0
-    KCB=0
-    BJS=0
-    SZ=0
-    SH=0
+    ZB=0#主板
+    ZXB=0#中小板
+    CYB=0#创业板
+    KCB=0#科创板
+    BJS=0#北交所
+    SZ=0#深证
+    SH=0#上证
+    bankuai=[]#收集板块信息
     for stock_info in res:
         splice=stock_info.split('\t')
 #        print(len(splice))
         if len(splice)==8:
+            bankuai.append(splice[4])
             if splice[5]=='主板':
                 ZB+=1
                 if 'SZ' in splice[0]:
@@ -57,9 +58,11 @@ def summary(file_path):#对结果文件总结
                 ZXB+=1
         elif len(splice)==6 and '北交所' in stock_info:
             BJS+=1
-
-    result=f'主板：{ZB}(其中：上证{SH},深圳{SZ})\n中小板{ZXB}\n创业板：{CYB}\n科创板：{KCB}\n北交所：{BJS}\n总共：{len(res)}'
+    
+    bankuai_info=pd.value_counts(bankuai)#统计板块次数
+    result=f'主板：{ZB}(其中：上证{SH},深圳{SZ}) \n中小板{ZXB} \n创业板：{CYB} \n科创板：{KCB} \n北交所：{BJS} \n总共：{len(res)} \n----------------- \n{bankuai_info}'
 #    print(result)
+#    print(pd.value_counts(bankuai))
     return result
 
 
@@ -78,6 +81,7 @@ def daily_push():
 
 
 if __name__=='__main__':
+    from stock_online import Initial#防止循环引用模块的错误
     choice=input('1.结果文件分析\n2.一组股票的当日涨跌幅\n3.一组股票一段时间内的涨跌幅\n4.计算一段时间内每一天的平均涨跌幅')
     if choice=='1':
         file_path=input('请输入文件路径:')

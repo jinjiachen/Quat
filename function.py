@@ -4,6 +4,7 @@ import numpy as np
 import easyquotation
 import tushare as ts
 import os
+import time
 
 def Average(data,ma,length): #输入单个股票的行情数据，返回对应均线数据
     '''
@@ -131,3 +132,31 @@ def get_code(file_path):#提取致富代码
         for i in res:#遍历所有的结果
             stock_code.append(i.split('\t')[0])#提取结果中的致富代码
     return stock_code 
+
+
+###查询当天是否已经更新
+def is_updated(pro,date):
+    '''
+    pro:tushare的实例
+    date(str):查询的日期
+    '''
+    print(f'查询的日期为：{date}')
+    df=pro.daily(trade_date=date)
+    if len(df)==0:
+        return 'NO'
+    elif len(df)>0:
+        return 'YES'
+
+
+###定时运行指定函数
+def schedule(func,to_go):
+    '''
+    func:函数名
+    to_go(str):执行函数的时间
+    '''
+    while True:
+        print('当前时间：',time.strftime("%H:%M:%S"))
+        if time.strftime("%H:%M:%S")==to_go:
+            print('go!!!')
+            func()
+            break

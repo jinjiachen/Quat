@@ -89,10 +89,12 @@ def Menu():
     elif choice=='4':
         freq=input("请输入均线周期:")
         ma_s=input("请输入均线:")
-        n=input("请输入跨越的周期长度:")
+#        n=input("请输入跨越的周期长度:")
         m=input("均线趋势上扬时间:")
-        result=Suppress(freq,int(ma_s),int(n),int(m))
-        filename=freq+'trend'+ma_s+'_'+n+"_"+m+'_'+now+'.txt' #文件名
+#        result=Suppress(freq,int(ma_s),int(n),int(m))
+#        filename=freq+'trend'+ma_s+'_'+n+"_"+m+'_'+now+'.txt' #文件名
+        result=Trend(freq,int(ma_s),int(m))
+        filename=freq+'trend'+ma_s+'_'+m+'_'+now+'.txt' #文件名
         SaveResult(filename,result) #保存结果
         content=SaveResult(filename,result) #保存结果
         notify('post',filename,"".join(content))
@@ -290,6 +292,7 @@ def Suppress(freq,mas,n,m): #K线站上均线模型
                         break
     return result
 
+###指定均线在一段时间内单调递增
 def Trend(freq,ma_s,n): #单调递增模型
     count=0 #计数
     total=len(sl['ts_code']) #总上市股票数
@@ -322,10 +325,6 @@ def Trend(freq,ma_s,n): #单调递增模型
                 result.append(i)
                 break
             j+=1
-#        if freq=='W':
-#            Wait(5000000) #等待一段时长，防止频率过快，受限于帐号积分
-#        if freq=='M':
-#            Wait(5000000) #等待一段时长，防止频率过快，受限于帐号积分
     return result
                 
 
@@ -424,6 +423,45 @@ def low_p(date):
     res=df_wanted.sort_values(by='total_mv',axis=0,ascending=True,inplace=False)
     print(res)
     return res[0:20]
+
+
+###双均线策略，两条均线在指定时间内开口向上发散
+def double_ma(freq,ma_s,ma_l,duration):
+    '''
+    freq(str):均线的周期级别
+    ma_s(str):短期均线
+    ma_l(str):长期均线
+    duration(int):开口时间
+    '''
+    count=0 #计数
+    total=len(sl['ts_code']) #总上市股票数
+    result=[]
+    for i in sl['ts_code']:
+        if os.name=='posix':
+            os.system('clear')
+        elif os.name=='nt':
+            os.system('cls')
+        count+=1 #每判断一个股票，计数加1
+        print('进度:'+str(count)+'/'+str(total)) #显示已判断股票数的比例
+        print('正在比对:'+i) #调试用
+        previous=str(int(now)-(duration-1))
+        while True:
+            try:
+                data=ts.pro_bar(ts_code=i,freq=freq,adj='qfq',start_date=previous,end_date=now,ma=[ma_s,ma_l])
+                break
+            except IOError:
+                print('IOError：正在尝试其他账号')
+                pro=Initial()
+            except:
+                print("error occur, another try!")
+        if data is None: #如果没有获取到任何数据，比如刚上市又还没上市的股票
+            continue
+        Pmas=data['ma'+str(ma_s)] #提取短期均线
+        Pmal=data['ma'+str(ma_l)] #提取长期均线
+        delta=Pmas-Pmal#均线差
+        if len(Pmas)<duration or len(Pmal)<duration: #均线长度不得小于考核周期
+            continue
+    pass
 
 
 def run_daily():

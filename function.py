@@ -140,7 +140,7 @@ def is_updated(pro,date):
     pro:tushare的实例
     date(str):查询的日期
     '''
-    print(f'查询的日期为：{date}')
+    print(f'正在查询{date}是否更新')
     df=pro.daily(trade_date=date)
     if len(df)==0:
         return 'NO'

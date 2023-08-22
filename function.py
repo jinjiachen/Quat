@@ -135,12 +135,16 @@ def get_code(file_path):#提取致富代码
 
 
 ###查询当天是否已经更新
-def is_updated(pro,date):
+def is_updated(pro,content,date):
     '''
     pro:tushare的实例
+    content(str):查询股票还是指数
     date(str):查询的日期
     '''
-    df=pro.daily(trade_date=date)
+    if content=='stock':
+        df=pro.daily(trade_date=date)
+    elif content=='index':
+        df=pro.index_daily(ts_code='000001.SH',trade_date=date)
     if len(df)==0:
         print(f'{date}数据未更新')
         return 'NO'

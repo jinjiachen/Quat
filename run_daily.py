@@ -19,16 +19,19 @@ def daily_index():
     now=time.strftime("%Y%m%d") #当前日期
     pro=Initial()
     while True:
-        if is_updated(pro,'index',now)=='YES':
-            res=statistics(pro)
-            message=f'全市成交量：{res["amount"]}千亿,上证涨跌幅：{res["pct_sh"]}%,深证涨跌幅：{res["pct_sz"]}%'#构造字符串用于推送
-            notify('post',f'日报{now}',message.replace(',','\n'))
-            break
+        try:
+            if is_updated(pro,'index',now)=='YES':
+                res=statistics(pro)
+                message=f'全市成交量：{res["amount"]}千亿,上证涨跌幅：{res["pct_sh"]}%,深证涨跌幅：{res["pct_sz"]}%'#构造字符串用于推送
+                notify('post',f'日报{now}',message.replace(',','\n'))
+                break
+        except:
+            continue
 
 if __name__=='__main__':
     while True:
         print('当前时间：',time.strftime("%H:%M:%S"))
-        if time.strftime("%H:%M:%S")=='16:31:00':
+        if time.strftime("%H:%M:%S")=='15:55:00':
             time.sleep(3)
             print('go!!!')
             daily_index()

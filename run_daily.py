@@ -22,7 +22,7 @@ def daily_index():
         try:
             if is_updated(pro,'index',now)=='YES':
                 res=statistics(pro)
-                message=f'全市成交量：{res["amount"]}千亿,上证涨跌幅：{res["pct_sh"]}%,深证涨跌幅：{res["pct_sz"]}%'#构造字符串用于推送
+                message=f'全市成交量：{res["amount"]}千亿,上证涨跌幅：{res["pct_sh"]}% PE:{pe_sh},深证涨跌幅：{res["pct_sz"]}% PE:{pe_sz}'#构造字符串用于推送
                 notify('post',f'日报{now}',message.replace(',','\n'))
                 break
         except:
@@ -31,7 +31,8 @@ def daily_index():
 if __name__=='__main__':
     while True:
         print('当前时间：',time.strftime("%H:%M:%S"))
-        if time.strftime("%H:%M:%S")=='15:55:00':
+#        if time.strftime("%H:%M:%S")=='15:30:00':
+        if time.strftime("%H:%M:%S")=='16:30:00':
             time.sleep(3)
             print('go!!!')
             daily_index()

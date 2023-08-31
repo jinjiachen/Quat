@@ -32,10 +32,10 @@ if __name__=='__main__':
     while True:
         print('当前时间：',time.strftime("%H:%M:%S"))
 #        if time.strftime("%H:%M:%S")=='15:30:00':
-        if time.strftime("%H:%M:%S")=='16:30:00':
+        if time.strftime("%H:%M:%S")=='16:26:00':
             time.sleep(3)
             print('go!!!')
-            daily_index()
             daily_combo()
+            daily_index()
 #    schedule(daily_index,'15:15:00')
 #    schedule(daily_combo,'15:15:00')

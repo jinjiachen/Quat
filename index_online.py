@@ -8,12 +8,14 @@ import tushare as ts
 import pandas as pd
 import numpy as np
 import time
+import easyquotation
 from stock_online import Initial
 
 
 ###统计沪深两大指数的涨跌幅和成交量
 def statistics(pro,ptf='NO'):
     now=time.strftime("%Y%m%d") #当前日期
+#    now='20230831'
     df_sh=pro.index_daily(ts_code='000001.SH',trade_date=now,fields='pct_chg,amount')
     df_sz=pro.index_daily(ts_code='399001.SZ',trade_date=now,fields='pct_chg,amount')
     amount=(df_sh['amount']+df_sz['amount'])/10**8#上证深证总交易额（千亿元）
@@ -24,7 +26,26 @@ def statistics(pro,ptf='NO'):
     if ptf=='YES':
         print('上证PE：',pe_sh)
         print('深证PE：',pe_sz)
-    return {'amount':amount[0],'pct_sh':df_sh['pct_chg'][0],'pct_sz':df_sz['pct_chg'][0],'pe_sh':pe_sh[0],'pe_sz':pe_sz[0]}
+        print('成交量：',amount[0])
+        print('上证涨幅：',df_sh['pct_chg'][0])
+        print('深证涨幅：',df_sz['pct_chg'][0])
+    return {'amount':amount[0],'pct_sh':df_sh['pct_chg'][0],'pct_sz':df_sz['pct_chg'][0],'pe_sh':pe_sh.values[0],'pe_sz':pe_sz.values[0]}
+
+
+###通过easyquotation获取实时指数涨跌幅和成交量
+def live_index():
+    quo=easyquotation.use('sina')
+    stocklist=['sh000001','sz399001']
+    res=quo.stocks(stocklist)
+    total_vol=(res['000001']['volume']+res['399001']['volume'])/10**8#两市总成交量,单位亿
+    total_vol=round(total_vol,1)#圆整
+    sh_pct=(res['000001']['now']/res['000001']['close']-1)*100#计算涨跌幅
+    sh_pct=round(sh_pct,2)#圆整
+    sz_pct=(res['399001']['now']/res['399001']['close']-1)*100#计算涨跌幅
+    sz_pct=round(sz_pct,2)#圆整
+    return {'total_vol':total_vol,
+            'sh_pct':sh_pct,
+            'sz_pct':sz_pct}
 
 
 ###主程序

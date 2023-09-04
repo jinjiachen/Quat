@@ -165,3 +165,32 @@ def schedule(func,to_go):
             print('go!!!')
             func()
             break
+
+
+###计算指定路径下组合的涨跌幅
+def pcts_list(path):
+    '''
+    path(str):股票文件的路径
+    '''
+    pcts=[]
+    files=[f for f in os.listdir(path) if f.endswith('.txt')]#路径下的txt文件名
+    file_path=[os.path.join(path, filename) for filename in files]#合并路径和文件名，形成文件绝对路径
+    for txt in file_path:#遍历所有文件的绝对路径
+        stocklist=get_code(txt)
+        res=cal_pcts(stocklist)#每个股票的涨跌幅
+        if len(res)!=0:
+            pcts.append(sum(res)/len(res))#计算综合涨跌幅
+        elif len(res)==0:
+            pcts.append('NA')
+    return[files,pcts]#返回文件名和对应的综合涨跌幅
+
+
+###读取文件并提取股票代码，返回雪球格式的代码
+def get_code(file_path):#提取致富代码
+    with open(file_path,'r') as f:
+        res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
+        f.close()
+        stock_code=[] #构造空列表，用来存储股票代码
+        for i in res:#遍历所有的结果
+            stock_code.append(i.split('\t')[0].split('.')[1]+i.split('\t')[0].split('.')[0])#提取结果中的致富代码并作简单处理，如'sz000001'
+    return stock_code 

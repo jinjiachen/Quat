@@ -15,7 +15,7 @@ from stock_online import Initial
 ###统计沪深两大指数的涨跌幅和成交量
 def statistics(pro,ptf='NO'):
     now=time.strftime("%Y%m%d") #当前日期
-#    now='20230831'
+#    now='20230901'
     df_sh=pro.index_daily(ts_code='000001.SH',trade_date=now,fields='pct_chg,amount')
     df_sz=pro.index_daily(ts_code='399001.SZ',trade_date=now,fields='pct_chg,amount')
     amount=(df_sh['amount']+df_sz['amount'])/10**8#上证深证总交易额（千亿元）

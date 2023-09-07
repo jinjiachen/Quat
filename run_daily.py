@@ -17,16 +17,23 @@ def daily_combo():
 
 def daily_index():
     now=time.strftime("%Y%m%d") #当前日期
+#    now='20230906'
     pro=Initial()
     while True:
         try:
             if is_updated(pro,'index',now)=='YES':
-                res=statistics(pro)
-                message=f'全市成交量：{res["amount"]}千亿,上证涨跌幅：{res["pct_sh"]}% PE:{pe_sh},深证涨跌幅：{res["pct_sz"]}% PE:{pe_sz}'#构造字符串用于推送
+                pass
+                print('获取指数信息')
+                res=statistics(pro,now,ptf='NO')
+                print(res)
+                message=f'全市成交量：{res["amount"]}亿,上证涨跌幅：{res["pct_sh"]}% PE:{res["pe_sh"]},深证涨跌幅：{res["pct_sz"]}% PE:{res["pe_sz"]}'#构造字符串用于推送
+                print('构造的消息：',message)
                 notify('post',f'日报{now}',message.replace(',','\n'))
                 break
         except:
-            continue
+            print('请求出错正在重试！')
+            break
+#            continue
 
 ###获取当前指数信息
 def index_now():
@@ -38,8 +45,8 @@ def index_now():
 if __name__=='__main__':
     while True:
         print('当前时间：',time.strftime("%H:%M:%S"))
-        if time.strftime("%H:%M:%S")=='15:01:00':
-#        if time.strftime("%H:%M:%S")=='16:26:00':
+#        if time.strftime("%H:%M:%S")=='15:01:00':
+        if time.strftime("%H:%M:%S")=='15:10:00':
             time.sleep(3)
             print('go!!!')
             index_now()

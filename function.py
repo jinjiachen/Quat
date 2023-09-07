@@ -82,6 +82,7 @@ def range_pcts(pro,stock_list,start,end):#计算一个时间段内的涨跌幅
     '''
     pcts=[]
     for stock_code in stock_list:
+        print('正在处理',stock_code)
         while True:
             try:
                 df = ts.pro_bar(ts_code=stock_code, adj='qfq', start_date=start, end_date=end)

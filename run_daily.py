@@ -38,15 +38,19 @@ def daily_index():
 ###获取当前指数信息
 def index_now():
     res=live_index()
-    message=f'两市成交量：{res["total_vol"]}亿,上证涨跌幅：{res["sh_pct"]},深市涨跌幅：{res["sz_pct"]}'
+    message=f'两市成交量：{res["total_vol"]}亿,上证涨跌幅：{res["sh_pct"]},深市涨跌幅：{res["sz_pct"]},\
+    创业板涨跌幅：{res["cyb_pct"]},\
+    上证50涨跌幅：{res["sz_pct"]},\
+    中证1000涨跌幅：{res["zz1000"]},\
+    中证500涨跌幅：{res["zz500"]}'
     notify('post','简报',message.replace(',','\n'))
 
 
 if __name__=='__main__':
     while True:
         print('当前时间：',time.strftime("%H:%M:%S"))
-#        if time.strftime("%H:%M:%S")=='15:01:00':
-        if time.strftime("%H:%M:%S")=='15:10:00':
+        if time.strftime("%H:%M:%S")=='15:01:00':
+#        if time.strftime("%H:%M:%S")=='15:10:00':
             time.sleep(3)
             print('go!!!')
             index_now()

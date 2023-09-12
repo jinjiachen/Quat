@@ -37,17 +37,33 @@ def statistics(pro,date='',ptf='NO'):
 ###通过easyquotation获取实时指数涨跌幅和成交量
 def live_index():
     quo=easyquotation.use('sina')
-    stocklist=['sh000001','sz399001']
+    stocklist=['sh000001','sz399001','sz399006','sh000016','sh000852','sh000905']
     res=quo.stocks(stocklist)
+    #计算总成交量
     total_vol=(res['000001']['volume']+res['399001']['volume'])/10**8#两市总成交量,单位亿
     total_vol=round(total_vol,1)#圆整
-    sh_pct=(res['000001']['now']/res['000001']['close']-1)*100#计算涨跌幅
+
+    #计算成交量
+    sh_pct=(res['000001']['now']/res['000001']['close']-1)*100#计算上证涨跌幅
     sh_pct=round(sh_pct,2)#圆整
-    sz_pct=(res['399001']['now']/res['399001']['close']-1)*100#计算涨跌幅
+    sh50_pct=(res['000016']['now']/res['000016']['close']-1)*100#计算上证50涨跌幅
+    sh50_pct=round(sh50_pct,2)#圆整
+    sz_pct=(res['399001']['now']/res['399001']['close']-1)*100#计算深成涨跌幅
     sz_pct=round(sz_pct,2)#圆整
+    cyb_pct=(res['399006']['now']/res['399006']['close']-1)*100#计算创业板涨跌幅
+    cyb_pct=round(cyb_pct,2)#圆整
+    zz1000_pct=(res['000852']['now']/res['000852']['close']-1)*100#计算中证1000涨跌幅
+    zz1000_pct=round(zz1000_pct,2)#圆整
+    zz500_pct=(res['000905']['now']/res['000905']['close']-1)*100#计算中证1000涨跌幅
+    zz500_pct=round(zz500_pct,2)#圆整
     return {'total_vol':total_vol,
             'sh_pct':sh_pct,
-            'sz_pct':sz_pct}
+            'sz_pct':sz_pct,
+            'cyb_pct':cyb_pct,
+            'sh50':sh50_pct,
+            'zz1000':zz1000_pct,
+            'zz500':zz500_pct,
+            }
 
 
 ###主程序

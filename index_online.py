@@ -10,6 +10,7 @@ import numpy as np
 import time
 import easyquotation
 from stock_online import Initial
+from scipy.stats import percentileofscore
 
 
 ###统计沪深两大指数的涨跌幅和成交量
@@ -25,13 +26,28 @@ def statistics(pro,date='',ptf='NO'):
     df_index=pro.index_dailybasic(trade_date=now, fields='ts_code,trade_date,pe')#查询指数pe
     pe_sh=df_index[df_index['ts_code']=='000001.SH']['pe']#上证PE
     pe_sz=df_index[df_index['ts_code']=='399001.SZ']['pe']#深成PE
+    #上证
+    PEttm000001=index_percent(pro,'000001.sh','PE_ttm')
+    PB000001=index_percent(pro,'000001.sh','PB')
+    #深成
+    PEttm399001=index_percent(pro,'399001.sz','PE_ttm')
+    PB399001=index_percent(pro,'399001.sz','PB')
     if ptf=='YES':
         print('上证PE：',pe_sh)
         print('深证PE：',pe_sz)
         print('成交量：',amount[0])
         print('上证涨幅：',df_sh['pct_chg'][0])
         print('深证涨幅：',df_sz['pct_chg'][0])
-    return {'amount':amount[0],'pct_sh':df_sh['pct_chg'][0],'pct_sz':df_sz['pct_chg'][0],'pe_sh':pe_sh.values[0],'pe_sz':pe_sz.values[0]}
+    return {'amount':amount[0],\
+            'pct_sh':df_sh['pct_chg'][0],\
+            'pct_sz':df_sz['pct_chg'][0],\
+            'pe_sh':pe_sh.values[0],\
+            'pe_sz':pe_sz.values[0],\
+            'PEttm000001':PEttm000001,\
+            'PB000001':PB000001,\
+            'PEttm399001':PEttm399001,\
+            'PB399001':PB399001,
+        }
 
 
 ###通过easyquotation获取实时指数涨跌幅和成交量
@@ -64,6 +80,49 @@ def live_index():
             'zz1000':zz1000_pct,
             'zz500':zz500_pct,
             }
+
+
+###查询指数基本信息
+def index_info(pro):
+    df_index=pro.index_dailybasic(trade_date=now, fields='ts_code,trade_date,pe,pe_ttm,pb')#查询指数信息
+    pe_000001sh=df_index[df_index['ts_code']=='000001.SH']['pe']#上证PE
+    pettm_000001sh=df_index[df_index['ts_code']=='000001.SH']['pe_ttm']#上证PE_TTM
+    pb_000001sh=df_index[df_index['ts_code']=='000001.SH']['pb']#上证PB
+
+
+###查询PE百分数
+def index_percent(pro,index,style,ptf='NO'):
+    now=time.strftime("%Y%m%d") #当前日期
+    previous=str(int(now)-100000)#换算到10年前
+    df_now=pro.index_dailybasic(ts_code=index,trade_date=now, fields='ts_code,trade_date,pe,pe_ttm,pb')#查询指数信息
+    df_index=pro.index_dailybasic(ts_code=index,start_date=previous,end_date=now, fields='ts_code,trade_date,pe,pe_ttm,pb')#查询指数信息
+    if style=='PB':
+        pb=df_now['pb'][0]
+        pb_range=df_index['pb']
+        percent=percentileofscore(pb_range,pb)
+        percent=round(percent,2)
+        return [pb,percent]
+        if ptf=='YES':
+            print('PB:',pb)
+    elif style=='PE':
+        pe=df_now['pe'][0]
+        pe_range=df_index['pe']
+        percent=percentileofscore(pe_range,pe)
+        percent=round(percent,2)
+        return [pe,percent]
+        if ptf=='YES':
+            print('PE:',pe)
+    elif style=='PE_ttm':
+        pe=df_now['pe_ttm'][0]
+        pe_range=df_index['pe_ttm']
+        percent=percentileofscore(pe_range,pe)
+        percent=round(percent,2)
+        return [pe,percent]
+        if ptf=='YES':
+            print('PE_ttm:',pe)
+
+
+
 
 
 ###主程序

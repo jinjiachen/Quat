@@ -5,6 +5,7 @@ import easyquotation
 import tushare as ts
 import os
 import time
+from scipy.stats import percentileofscore
 
 def Average(data,ma,length): #输入单个股票的行情数据，返回对应均线数据
     '''
@@ -195,3 +196,24 @@ def get_code(file_path):#提取致富代码
         for i in res:#遍历所有的结果
             stock_code.append(i.split('\t')[0].split('.')[1]+i.split('\t')[0].split('.')[0])#提取结果中的致富代码并作简单处理，如'sz000001'
     return stock_code 
+
+
+###判断一组数据是否为单调递增
+def Monotonicity(numbers,reverse='False'):
+    '''
+    numbers(list):一组数据
+    '''
+    if reverse=='True':
+        numbers.reverse()
+    flag=''#初始标记
+    length=len(numbers)#数据的长度
+    for index in range(0,length-1):#长度为n的数据，索引为0到n-1,比对到n-2即可
+        if numbers[index]<numbers[index+1]:#当前位置和后一位做比较
+            flag=index
+            continue
+        else:
+            break
+    if flag==length-2:#当标记等于n-2索引时，即倒数第二位时，说明是单调递增的
+        return True
+    else:
+        return False

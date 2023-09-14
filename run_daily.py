@@ -26,9 +26,16 @@ def daily_index():
                 print('获取指数信息')
                 res=statistics(pro,now,ptf='NO')
                 print(res)
-                message=f'全市成交量：{res["amount"]}亿,上证涨跌幅：{res["pct_sh"]}% PE:{res["pe_sh"]},深证涨跌幅：{res["pct_sz"]}% PE:{res["pe_sz"]}'#构造字符串用于推送
+                message=f'全市成交量：{res["amount"]}亿,上证涨跌幅：{res["pct_sh"]}% PE:{res["PEttm000001"][0]} 10年百分位：{res["PEttm000001"][1]},PB:{res["PB000001"][0]} 10年百分位：{res["PB000001"][1]},深证涨跌幅：{res["pct_sz"]}% PE:{res["PEttm399001"][0]} 10年百分位：{res["PEttm399001"][1]},'#构造字符串用于推送
+                message=[
+                        f'全市成交量：{res["amount"]}亿',
+                        f'上证涨跌幅：{res["pct_sh"]}%',
+                        f'PE:{res["PEttm000001"][0]}-->10年百分位：{res["PEttm000001"][1]},PB:{res["PB000001"][0]}-->10年百分位：{res["PB000001"][1]}',
+                        f'深证涨跌幅：{res["pct_sz"]}%',
+                        f'PE:{res["PEttm399001"][0]}-->10年百分位：{res["PEttm399001"][1]},PB:{res["PB399001"][0]}-->10年百分位：{res["PB399001"][1]}',
+                        ]
                 print('构造的消息：',message)
-                notify('post',f'日报{now}',message.replace(',','\n'))
+                notify('post',f'日报{now}',"\n".join(message))
                 break
         except:
             print('请求出错正在重试！')
@@ -38,19 +45,23 @@ def daily_index():
 ###获取当前指数信息
 def index_now():
     res=live_index()
-    message=f'两市成交量：{res["total_vol"]}亿,上证涨跌幅：{res["sh_pct"]},深市涨跌幅：{res["sz_pct"]},\
-    创业板涨跌幅：{res["cyb_pct"]},\
-    上证50涨跌幅：{res["sz_pct"]},\
-    中证1000涨跌幅：{res["zz1000"]},\
-    中证500涨跌幅：{res["zz500"]}'
-    notify('post','简报',message.replace(',','\n'))
+    message=[f'两市成交量：{res["total_vol"]}亿',
+            f'上证涨跌幅：{res["sh_pct"]}',
+            f'深市涨跌幅：{res["sz_pct"]}',
+             f'创业板涨跌幅：{res["cyb_pct"]}',
+             f'上证50涨跌幅：{res["sz_pct"]}',
+             f'中证1000涨跌幅：{res["zz1000"]}',
+             f'中证500涨跌幅：{res["zz500"]}'
+            ]
+    notify('post','简报',"\n".join(message))
 
 
 if __name__=='__main__':
+    index_now()
     while True:
         print('当前时间：',time.strftime("%H:%M:%S"))
-        if time.strftime("%H:%M:%S")=='15:01:00':
-#        if time.strftime("%H:%M:%S")=='15:10:00':
+#        if time.strftime("%H:%M:%S")=='15:01:00':
+        if time.strftime("%H:%M:%S")=='15:15:00':
             time.sleep(3)
             print('go!!!')
             index_now()

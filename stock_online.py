@@ -9,6 +9,7 @@ import random
 from xq import load_config
 from notification import notify
 from Anaysis import summary
+from function import Monotonicity
 
 def Initial():#初始化
     conf=load_config()
@@ -83,6 +84,7 @@ def Menu():
         n=input("请输入跨越的周期长度:")
         m=input("均线拐头天数:")
         result=Bottom(freq,int(ma_s),int(n),int(m))
+#        result=Bottom_new(freq,int(ma_s),int(n),int(m))
         filename=freq+'bottom'+ma_s+'_'+n+"_"+m+'_'+now+'.txt' #文件名
         content=SaveResult(filename,result) #保存结果
         notify('post',filename,"".join(content))
@@ -371,13 +373,57 @@ def Bottom(freq,ma_s,n,m): #均线拐点
                 if j==n: #直到规定的时间内，都是单调递减，则输出
                     result.append(i)
                     break #捕捉到致富代码，则退出循环，寻找下一个
+    return result
 
-#        if freq=='D':
-#            Wait(5000000) #等待一段时长，防止频率过快，受限于帐号积分
-#        if freq=='W':
-#            Wait(500000) #等待一段时长，防止频率过快，受限于帐号积分
-#        if freq=='M':
-#            Wait(5000000) #等待一段时长，防止频率过快，受限于帐号积分
+
+###用单调性选股
+def Bottom_new(freq,ma_s,duration,days,ptf='NO'):
+    '''
+    stock(str):股票代码
+    ma(int):几日均线
+    days(int):均线拐头几天
+    duration(int):考察时间
+    '''
+    count=0 #计数
+    total=len(sl['ts_code']) #总上市股票数
+    result=[]
+    for i in sl['ts_code']:
+        if os.name=='posix':
+            os.system('clear')
+        elif os.name=='nt':
+            os.system('cls')
+        count+=1 #每判断一个股票，计数加1
+        print('进度:'+str(count)+'/'+str(total)) #显示已判断股票数的比例
+        print('正在比对:'+i) #调试用
+        while True:
+            try:
+                data=ts.pro_bar(ts_code=i,freq=freq,adj='qfq',start_date=previous,end_date=now,ma=[ma_s])
+                break
+            except IOError:
+                print('IOError：正在尝试其他账号')
+                pro=Initial()
+            except:
+                print("error occur, another try!")
+        if data is None: #如果没有获取到任何数据，比如刚上市又还没上市的股票
+            continue
+        ma=data['ma'+str(ma_s)] #提取均线
+        ma=list(ma)[0:duration]
+        ma.reverse()
+        close=data['close'] #提取收盘价
+        if len(ma)<duration: #判断是否有空值
+            continue
+        if close[0]<ma[0]: #收盘价在均线上方，如在均线下文，则为弱势
+            continue
+        critical=duration-days#观察规律得
+        if ptf=='YES':
+            print(f'考核周期{duration},上扬{days}')
+            print(f'均线数据{ma}')
+            front=Monotonicity(ma[0:critical],reverse="True")
+            rest=Monotonicity(ma[critical-1:duration-1])
+            print(f'前半段单调性:{front}',ma[0:critical])
+            print(f'后半段单调性:{rest}',ma[critical-1:duration])
+        if Monotonicity(ma[0:critical],reverse="True") and Monotonicity(ma[critical-1:duration]):
+            result.append(i)
     return result
 
 

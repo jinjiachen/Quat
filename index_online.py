@@ -59,26 +59,38 @@ def live_index():
     total_vol=(res['000001']['volume']+res['399001']['volume'])/10**8#两市总成交量,单位亿
     total_vol=round(total_vol,1)#圆整
 
-    #计算成交量
+    #计算涨跌幅
+    sh=res['000001']['now']
     sh_pct=(res['000001']['now']/res['000001']['close']-1)*100#计算上证涨跌幅
     sh_pct=round(sh_pct,2)#圆整
+    sh50=res['000016']['now']
     sh50_pct=(res['000016']['now']/res['000016']['close']-1)*100#计算上证50涨跌幅
     sh50_pct=round(sh50_pct,2)#圆整
+    sz=res['399001']['now']
     sz_pct=(res['399001']['now']/res['399001']['close']-1)*100#计算深成涨跌幅
     sz_pct=round(sz_pct,2)#圆整
+    cyb=res['399006']['now']
     cyb_pct=(res['399006']['now']/res['399006']['close']-1)*100#计算创业板涨跌幅
     cyb_pct=round(cyb_pct,2)#圆整
+    zz1000=res['000852']['now']
     zz1000_pct=(res['000852']['now']/res['000852']['close']-1)*100#计算中证1000涨跌幅
     zz1000_pct=round(zz1000_pct,2)#圆整
+    zz500=res['000905']['now']
     zz500_pct=(res['000905']['now']/res['000905']['close']-1)*100#计算中证1000涨跌幅
     zz500_pct=round(zz500_pct,2)#圆整
     return {'total_vol':total_vol,
+            'sh':sh,
             'sh_pct':sh_pct,
+            'sz':sz,
             'sz_pct':sz_pct,
+            'cyb':cyb,
             'cyb_pct':cyb_pct,
-            'sh50':sh50_pct,
-            'zz1000':zz1000_pct,
-            'zz500':zz500_pct,
+            'sh50':sh50,
+            'sh50_pct':sh50_pct,
+            'zz1000':zz1000,
+            'zz1000_pct':zz1000_pct,
+            'zz500':zz500,
+            'zz500_pct':zz500_pct,
             }
 
 
@@ -93,6 +105,7 @@ def index_info(pro):
 ###查询PE百分数
 def index_percent(pro,index,style,ptf='NO'):
     now=time.strftime("%Y%m%d") #当前日期
+#    now='20230914'
     previous=str(int(now)-100000)#换算到10年前
     df_now=pro.index_dailybasic(ts_code=index,trade_date=now, fields='ts_code,trade_date,pe,pe_ttm,pb')#查询指数信息
     df_index=pro.index_dailybasic(ts_code=index,start_date=previous,end_date=now, fields='ts_code,trade_date,pe,pe_ttm,pb')#查询指数信息

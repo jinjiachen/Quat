@@ -17,7 +17,7 @@ def daily_combo():
 
 def daily_index():
     now=time.strftime("%Y%m%d") #当前日期
-#    now='20230906'
+#    now='20230914'
     pro=Initial()
     while True:
         try:
@@ -46,12 +46,12 @@ def daily_index():
 def index_now():
     res=live_index()
     message=[f'两市成交量：{res["total_vol"]}亿',
-            f'上证涨跌幅：{res["sh_pct"]}',
-            f'深市涨跌幅：{res["sz_pct"]}',
-             f'创业板涨跌幅：{res["cyb_pct"]}',
-             f'上证50涨跌幅：{res["sz_pct"]}',
-             f'中证1000涨跌幅：{res["zz1000"]}',
-             f'中证500涨跌幅：{res["zz500"]}'
+            f'上证：{res["sh"]},上证涨跌幅：{res["sh_pct"]}',
+            f'深市：{res["sz"]},深市涨跌幅：{res["sz_pct"]}',
+             f'创业板：{res["cyb"]}创业板涨跌幅：{res["cyb_pct"]}',
+             f'上证50: {res["sh50"]}, 涨跌幅：{res["sh50_pct"]}',
+             f'中证1000: {res["zz1000"]}, 涨跌幅：{res["zz1000_pct"]}',
+             f'中证500: {res["zz500"]}涨跌幅：{res["zz500_pct"]}'
             ]
     notify('post','简报',"\n".join(message))
 
@@ -60,12 +60,13 @@ if __name__=='__main__':
     index_now()
     while True:
         print('当前时间：',time.strftime("%H:%M:%S"))
-#        if time.strftime("%H:%M:%S")=='15:01:00':
-        if time.strftime("%H:%M:%S")=='15:15:00':
+        if time.strftime("%H:%M:%S")=='15:01:00':
+#        if time.strftime("%H:%M:%S")=='15:15:00':
             time.sleep(3)
             print('go!!!')
             index_now()
-            daily_combo()
             daily_index()
+            daily_combo()
+
 #    schedule(daily_index,'15:15:00')
 #    schedule(daily_combo,'15:15:00')

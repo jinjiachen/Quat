@@ -126,7 +126,7 @@ def average_pcts(pro,stock_list,start,end):#计算一段时间内的每一天的
     return ma_pcts
 
 
-def get_code(file_path):#提取致富代码
+def get_code_ts(file_path):#提取致富代码,返回tushare格式
     with open(file_path,'r') as f:
         res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
         f.close()
@@ -188,7 +188,7 @@ def pcts_list(path):
 
 
 ###读取文件并提取股票代码，返回雪球格式的代码
-def get_code(file_path):#提取致富代码
+def get_code_xq(file_path):#提取致富代码
     with open(file_path,'r') as f:
         res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
         f.close()

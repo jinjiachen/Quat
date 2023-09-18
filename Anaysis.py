@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 #from sqlalchemy import create_engine 
 from function import cal_pcts,range_pcts,average_pcts,pcts_list
-from function import get_code as gc_func
+from function import get_code_ts 
 from xq import get_code as gc_xq
 import os
 
@@ -108,7 +108,7 @@ if __name__=='__main__':
             file_path=file_path.replace('\'','')
         start=input('请输入开始时间')
         end=input('请输入结束时间')
-        stocklist=gc_func(file_path)
+        stocklist=get_code_ts(file_path)
         pcts=range_pcts(pro,stocklist,start,end)
         print(pcts)
     elif choice=='4':
@@ -119,7 +119,8 @@ if __name__=='__main__':
             file_path=file_path.replace('\'','')
         start=input('请输入开始时间')
         end=input('请输入结束时间')
-        stocklist=gc_func(file_path)
+        stocklist=get_code_ts(file_path)
+        print(stocklist)
         pcts=average_pcts(pro,stocklist,start,end)
         print(pcts)
     elif choice=='5':

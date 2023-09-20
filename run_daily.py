@@ -65,8 +65,8 @@ if __name__=='__main__':
             time.sleep(3)
             print('go!!!')
             index_now()
-            daily_index()
             daily_combo()
+            daily_index()
 
 #    schedule(daily_index,'15:15:00')
 #    schedule(daily_combo,'15:15:00')

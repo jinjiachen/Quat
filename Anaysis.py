@@ -120,7 +120,6 @@ if __name__=='__main__':
         start=input('请输入开始时间')
         end=input('请输入结束时间')
         stocklist=get_code_ts(file_path)
-        print(stocklist)
         pcts=average_pcts(pro,stocklist,start,end)
         print(pcts)
     elif choice=='5':

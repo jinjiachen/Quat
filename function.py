@@ -83,7 +83,7 @@ def range_pcts(pro,stock_list,start,end):#计算一个时间段内的涨跌幅
     '''
     pcts=[]
     for stock_code in stock_list:
-        print('正在处理',stock_code)
+#        print('正在处理',stock_code)
         while True:
             try:
                 df = ts.pro_bar(ts_code=stock_code, adj='qfq', start_date=start, end_date=end)
@@ -178,7 +178,7 @@ def pcts_list(path):
     files=[f for f in os.listdir(path) if f.endswith('.txt')]#路径下的txt文件名
     file_path=[os.path.join(path, filename) for filename in files]#合并路径和文件名，形成文件绝对路径
     for txt in file_path:#遍历所有文件的绝对路径
-        stocklist=get_code(txt)
+        stocklist=get_code_xq(txt)
         res=cal_pcts(stocklist)#每个股票的涨跌幅
         if len(res)!=0:
             pcts.append(sum(res)/len(res))#计算综合涨跌幅

@@ -460,15 +460,18 @@ def Quekou(): #向上跳空缺口
             result.append(i)
     return result
 
-def low_p(date):
+
+###低市盈率策略，选取一定市盈率范围内的股票
+def low_p(date,Pmax,Pmin):
     df = pro.daily_basic(ts_code='', trade_date=date, fields='ts_code,trade_date,pe,pb,total_mv')
-    p1=df['total_mv']/10000<30
-    p2=df['total_mv']/10000>20
+    p1=df['total_mv']/10000<=Pmax
+    p2=df['total_mv']/10000>=Pmin
     df_wanted=df[p1][p2]
 #    print(df_wanted)
     res=df_wanted.sort_values(by='total_mv',axis=0,ascending=True,inplace=False)
-    print(res)
-    return res[0:20]
+#    print(res)
+#    return res[0:20]
+    return res
 
 
 ###双均线策略，两条均线在指定时间内开口向上发散
@@ -525,10 +528,10 @@ def run_daily():
 
 
     #Dbott13_15_3组合
-#    result=Bottom('D',13,15,3)
-#    filename=f'Dbott13_15_3_{now}.txt'
-#    content=SaveResult(filename,result) #保存结果
-#    notify('post',filename,"".join(content))
+    result=Bottom('D',13,15,3)
+    filename=f'Dbott13_15_3_{now}.txt'
+    content=SaveResult(filename,result) #保存结果
+    notify('post',filename,"".join(content))
 
 
     #Dsup13_15_0组合
@@ -548,6 +551,8 @@ def run_daily():
     filename=f'Dcross13_21_30_2_{now}.txt'
     content=SaveResult(filename,result) #保存结果
     notify('post',filename,"".join(content))
+
+
 
     #Quekou组合
     result=Quekou()

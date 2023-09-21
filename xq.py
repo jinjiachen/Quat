@@ -1,6 +1,7 @@
 import easytrader
 import easyquotation
 import requests
+import random
 from lxml import etree
 from configparser import ConfigParser
 import os
@@ -110,7 +111,10 @@ def get_code(file_path):#提取致富代码
         f.close()
         stock_code=[] #构造空列表，用来存储股票代码
         for i in res:#遍历所有的结果
-            stock_code.append(i.split('\t')[0].split('.')[1]+i.split('\t')[0].split('.')[0])#提取结果中的致富代码并作简单处理，如'sz000001'
+            try:
+                stock_code.append(i.split('\t')[0].split('.')[1]+i.split('\t')[0].split('.')[0])#提取结果中的致富代码并作简单处理，如'sz000001'
+            except:
+                stock_code.append(i)
     return stock_code 
 
 
@@ -128,6 +132,7 @@ def buy(stock_list,user,quotation):
                 else:
                     amount=int((current_splice/price_now))
                 user.buy(stock_code,price=price_now,amount=amount)
+                time.sleep(random.randint(1,3))
                 break
             except:
                 print('太过于频繁，等待后重试！')
@@ -147,6 +152,7 @@ def sell(user,stock_code,amount):#卖出指定股票
             #如果股票在持仓中，则进行卖出操作
             user.adjust_weight(stock_code,amount)
             flag=0#卖出成功，返回0
+            time.sleep(random.randint(1,3))
     if flag==1:
         print(f'股票{stock_code}不在持仓中，不能进行卖出操作!')
     return flag

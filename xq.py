@@ -111,9 +111,11 @@ def get_code(file_path):#提取致富代码
         f.close()
         stock_code=[] #构造空列表，用来存储股票代码
         for i in res:#遍历所有的结果
-            try:
+            if '\t' in i:
                 stock_code.append(i.split('\t')[0].split('.')[1]+i.split('\t')[0].split('.')[0])#提取结果中的致富代码并作简单处理，如'sz000001'
-            except:
+            else:
+                i=i.replace('\n','')#去除换行符
+                i=i.split('.')[1]+i.split('.')[0]#转化成雪球的格式
                 stock_code.append(i)
     return stock_code 
 

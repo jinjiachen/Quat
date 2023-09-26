@@ -56,6 +56,7 @@ def Menu():
     print("3.均线拐头模型")
     print("4.趋势模型")
     print("5.向上跳空缺口")
+    print("6.指定PE范围内的股票")
     print("all:以上所有模型")
     choice=input()
     if choice=="1":
@@ -103,6 +104,14 @@ def Menu():
     elif choice=='5':
         result=Quekou()
         filename=f'Quekou_{now}.txt'
+        content=SaveResult(filename,result) #保存结果
+        notify('post',filename,"".join(content))
+    elif choice=='6':
+        date=input('请输入查询日期:')
+        Pmax=input('请输入PE上限:')
+        Pmin=input('请输入PE下限:')
+        filename=f'Low_P{now}.txt'
+        result=low_p(date,Pmax,Pmin)
         content=SaveResult(filename,result) #保存结果
         notify('post',filename,"".join(content))
     elif choice=='all':
@@ -463,9 +472,14 @@ def Quekou(): #向上跳空缺口
 
 ###低市盈率策略，选取一定市盈率范围内的股票
 def low_p(date,Pmax,Pmin):
+    '''
+    date(str):日期
+    Pmax(str):最大PE
+    Pmin(str):最小PE
+    '''
     df = pro.daily_basic(ts_code='', trade_date=date, fields='ts_code,trade_date,pe,pb,total_mv')
-    p1=df['total_mv']/10000<=Pmax
-    p2=df['total_mv']/10000>=Pmin
+    p1=df['total_mv']/10000<=int(Pmax)
+    p2=df['total_mv']/10000>=int(Pmin)
     df_wanted=df[p1][p2]
 #    print(df_wanted)
     res=df_wanted.sort_values(by='total_mv',axis=0,ascending=True,inplace=False)

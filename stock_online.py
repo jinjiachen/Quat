@@ -296,7 +296,7 @@ def Suppress(freq,mas,n,m): #K线站上均线模型
                     j=j+1
                 else:
                     if point==m: #判断突破是否在要求的时间段里,是则继续判断
-                        if j==n: #突破前的N段时间内，都在均线下方，突破成立
+                        if j==n-1: #突破前的N段时间内，都在均线下方，突破成立
                             result.append(i)
                         j+=1
                     else:

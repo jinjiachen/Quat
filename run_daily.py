@@ -61,7 +61,7 @@ if __name__=='__main__':
     while True:
         print('当前时间：',time.strftime("%H:%M:%S"))
         if time.strftime("%H:%M:%S")=='15:01:00':
-#        if time.strftime("%H:%M:%S")=='15:15:00':
+#        if time.strftime("%H:%M:%S")=='15:40:00':
             time.sleep(3)
             print('go!!!')
             index_now()

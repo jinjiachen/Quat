@@ -150,11 +150,13 @@ def sell(user,stock_code,amount):#卖出指定股票
         print('正在比对',position['stock_code'])
         if stock_code in position['stock_code']:
             print(f'找到持仓股票{stock_code},进行卖出操作！')
-
-            #如果股票在持仓中，则进行卖出操作
-            user.adjust_weight(stock_code,amount)
-            flag=0#卖出成功，返回0
-            time.sleep(random.randint(1,3))
+            try:
+                #如果股票在持仓中，则进行卖出操作
+                user.adjust_weight(stock_code,amount)
+                flag=0#卖出成功，返回0
+                time.sleep(random.randint(1,3))
+            except:
+                print('正在重新尝试！')
     if flag==1:
         print(f'股票{stock_code}不在持仓中，不能进行卖出操作!')
     return flag

@@ -6,10 +6,11 @@ date:2023-09-25
 '''
 import uiautomator2 as u2
 import time
+import os
 
 
 def u2_connect():
-    d=u2.connect('192.168.2.107:5555')
+    d=u2.connect('192.168.2.107:41023')
     print(d.info)
     return d
 
@@ -48,11 +49,19 @@ def buy(device):
     d(text=" 请输入股票代码/首字母").send_keys('600592')
     d(text="进入").click()
     amount=d.xpath('//*[@resource-id="com.hwabao.hbstockwarning:id/hqmainview"]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.view.ViewGroup[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[4]/android.widget.FrameLayout[2]/android.widget.FrameLayout[2]')
-#    time.sleep(0.5)
+    time.sleep(0.5)
     amount.click()
+    #方法一,速度慢
+#    amount.set_text('100')
+    #方法二,速度适中
 #    d.set_fastinput_ime(True)
-#    amount.send_keys('100')
+#    d.send_keys('100')
+#    d.set_fastinput_ime(False)
+    #方法三,速度相对较快
+    os.system('adb shell input text {}'.format('100'))
+
     d(description="买入").click()
+    d(description="确认买入").click()
 
 
 
@@ -63,4 +72,7 @@ if __name__=='__main__':
     print(res)
     stocks=position(d)
     print(stocks)
+    start=time.time()
     buy(d)
+    end=time.time()
+    print('用时：',end-start)

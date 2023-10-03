@@ -41,12 +41,17 @@ def position(device):
 
 
 ###买入操作
-def buy(device):
+def buy(device,stock_code,number):
+    '''
+    device(obj):u2连接对象
+    stock_code(str):买入的股票代码，数字部分即可
+    number(str):买入的数量
+    '''
     d(text="买入").click()
     code=d.xpath('//*[@resource-id="com.hwabao.hbstockwarning:id/hqmainview"]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.view.ViewGroup[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]')#点击股票代码输入框
     code.click()
     d(text=" 请输入股票代码/首字母").click()
-    d(text=" 请输入股票代码/首字母").send_keys('600592')
+    d(text=" 请输入股票代码/首字母").send_keys(stock_code)
     d(text="进入").click()
     amount=d.xpath('//*[@resource-id="com.hwabao.hbstockwarning:id/hqmainview"]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.view.ViewGroup[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[4]/android.widget.FrameLayout[2]/android.widget.FrameLayout[2]')
     time.sleep(0.5)
@@ -58,7 +63,7 @@ def buy(device):
 #    d.send_keys('100')
 #    d.set_fastinput_ime(False)
     #方法三,速度相对较快
-    os.system('adb shell input text {}'.format('100'))
+    os.system('adb shell input text {}'.format(number))
 
     d(description="买入").click()
     d(description="确认买入").click()
@@ -73,6 +78,6 @@ if __name__=='__main__':
     stocks=position(d)
     print(stocks)
     start=time.time()
-    buy(d)
+    buy(d,'600592','200')
     end=time.time()
     print('用时：',end-start)

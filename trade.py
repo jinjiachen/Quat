@@ -15,6 +15,28 @@ def u2_connect():
     return d
 
 
+
+###菜单
+def menu():
+    choice=input('pos:查询股票持仓\nact:查询资金情况\nbuy:买入股票\nsell:卖出股票')
+#    d=u2_connect()
+    if choice=='pos':
+        ready(d)
+        res=position(d)
+        print(res)
+    elif choice=='act':
+        ready(d)
+        res=account(d)
+        print(res)
+    elif choice=='buy':
+        stock_code=input('请输入股票代码:')
+        number=input('请输入买入数量：')
+        buy(d,stock_code,number)
+    elif choice=='sell':
+        stock_code=input('请输入股票代码:')
+        number=input('请输入卖出数量：')
+        sell(d,stock_code,number)
+
 ###停留在指定的界面
 def ready(d):
     app=d.app_current()['package']
@@ -22,6 +44,7 @@ def ready(d):
         while True:
             if d(resourceId="com.hwabao.hbstockwarning:id/tab_text", text="我的").exists:
                 d(text="资金持仓").click()
+                time.sleep(0.5)
                 break
             else:
                 print('不在初始界面，正在返回')
@@ -111,14 +134,15 @@ def sell(d,stock_code,number):
 ###主程序
 if __name__=='__main__':
     d=u2_connect()
-    ready(d)
-    time.sleep(0.5)
-    res=account(d)
-    print(res)
-    stocks=position(d)
-    print(stocks)
-    start=time.time()
+    menu()
+#    ready(d)
+#    time.sleep(0.5)
+#    res=account(d)
+#    print(res)
+#    stocks=position(d)
+#    print(stocks)
+#    start=time.time()
 #    buy(d,'600592','200')
-    sell(d,'000592','200')
-    end=time.time()
-    print('用时：',end-start)
+#    sell(d,'000592','200')
+#    end=time.time()
+#    print('用时：',end-start)

@@ -7,6 +7,7 @@ date:2023-09-25
 import uiautomator2 as u2
 import time
 import os
+import base64
 from configparser import ConfigParser
 
 ###读取配置文件
@@ -25,8 +26,7 @@ def load_config():#加载配置文件
 
 
 ###连接手机
-def u2_connect():
-    conf=load_config()
+def u2_connect(conf):
     addr=conf.get('adb','ip')
     d=u2.connect(addr)
     print(d.info)
@@ -39,11 +39,11 @@ def menu():
     choice=input('pos:查询股票持仓\nact:查询资金情况\nbuy:买入股票\nsell:卖出股票')
 #    d=u2_connect()
     if choice=='pos':
-        ready(d)
+        ready(d,conf)
         res=position(d)
         print(res)
     elif choice=='act':
-        ready(d)
+        ready(d,conf)
         res=account(d)
         print(res)
     elif choice=='buy':
@@ -56,7 +56,11 @@ def menu():
         sell(d,stock_code,number)
 
 ###停留在指定的界面
-def ready(d):
+def ready(d,conf):
+    '''
+    d(obj):u2对象
+    conf:load_conf返回结果
+    '''
     app=d.app_current()['package']
     if app=='com.hwabao.hbstockwarning':#当前app是否为证券app
         while True:
@@ -71,6 +75,13 @@ def ready(d):
         d.app_start('com.hwabao.hbstockwarning')#打开证券app
         d(text="交易").click()
         d(text="资金持仓").click()
+        while True:
+            if d(text="请输入交易密码").exists:
+                token=conf.get('adb','token')
+                passwd=base64.b64decode(token).decode('ascii')
+                print(passwd)
+                os.system('adb shell input text {}'.format(passwd))
+                break
 
 ###查询帐户基本信息
 def account(d):
@@ -152,7 +163,8 @@ def sell(d,stock_code,number):
 
 ###主程序
 if __name__=='__main__':
-    d=u2_connect()
+    conf=load_config()
+    d=u2_connect(conf)
     menu()
 #    ready(d)
 #    time.sleep(0.5)

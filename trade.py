@@ -7,10 +7,28 @@ date:2023-09-25
 import uiautomator2 as u2
 import time
 import os
+from configparser import ConfigParser
+
+###读取配置文件
+def load_config():#加载配置文件
+    conf=ConfigParser()
+    if os.name=='nt':
+#        path='K:/config.ini'
+        path=r'D:\Downloads\PortableGit-2.36.1-64-bit.7z\bin\Quat\config.ini'
+    elif os.name=='posix':
+        path='/usr/local/src/Quat/config.ini'
+    else:
+        print('no config file was found!')
+
+    conf.read(path,encoding="utf-8")
+    return conf
+
 
 ###连接手机
 def u2_connect():
-    d=u2.connect('192.168.2.107:37423')
+    conf=load_config()
+    addr=conf.get('adb','ip')
+    d=u2.connect(addr)
     print(d.info)
     return d
 
@@ -51,6 +69,7 @@ def ready(d):
                 d.press('back')
     else:
         d.app_start('com.hwabao.hbstockwarning')#打开证券app
+        d(text="交易").click()
         d(text="资金持仓").click()
 
 ###查询帐户基本信息

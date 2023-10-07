@@ -80,7 +80,10 @@ def ready(d,conf):
                 token=conf.get('adb','token')
                 passwd=base64.b64decode(token).decode('ascii')
                 print(passwd)
-                os.system('adb shell input text {}'.format(passwd))
+                if os.name=='posix':
+                    os.system('adb shell input text {}'.format(passwd))
+                elif os.name=='nt':
+                    os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(passwd))
                 break
 
 ###查询帐户基本信息

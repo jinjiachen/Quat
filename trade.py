@@ -79,7 +79,7 @@ def ready(d,conf):
             if d(text="请输入交易密码").exists:
                 token=conf.get('adb','token')
                 passwd=base64.b64decode(token).decode('ascii')
-                print(passwd)
+    #            print(passwd)
                 if os.name=='posix':
                     os.system('adb shell input text {}'.format(passwd))
                 elif os.name=='nt':
@@ -137,7 +137,10 @@ def buy(d,stock_code,number):
 #    d.send_keys('100')
 #    d.set_fastinput_ime(False)
     #方法三,速度相对较快
-    os.system('adb shell input text {}'.format(number))
+    if os.name=='posix':
+        os.system('adb shell input text {}'.format(number))
+    elif os.name=='nt':
+        os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(number))
 
     d(description="买入").click()
     d(description="确认买入").click()
@@ -158,7 +161,10 @@ def sell(d,stock_code,number):
     d(text="请输入股票代码/首字母").send_keys(stock_code)
     d(text="进入").click()
     d.xpath('//*[@resource-id="com.hwabao.hbstockwarning:id/hqmainview"]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.view.ViewGroup[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[4]/android.widget.FrameLayout[2]/android.widget.FrameLayout[2]').click()
-    os.system('adb shell input text {}'.format(number))
+    if os.name=='posix':
+        os.system('adb shell input text {}'.format(number))
+    elif os.name=='nt':
+        os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(number))
     d(description="卖出").click()
     d(description="确认卖出").click()
     print(f'正在卖出{stock_code},数量:{number}')
@@ -168,7 +174,8 @@ def sell(d,stock_code,number):
 if __name__=='__main__':
     conf=load_config()
     d=u2_connect(conf)
-    menu()
+    while True:
+        menu()
 #    ready(d)
 #    time.sleep(0.5)
 #    res=account(d)

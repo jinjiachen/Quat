@@ -110,11 +110,23 @@ def account(d):
 ###查询股票持仓
 def position(d):
 #    d(text="资金持仓").click()
+    time.sleep(1)
     count=d(resourceId="com.hwabao.hbstockwarning:id/txt_name").count
-    res=[]
+    res={}
     for i in range(0,count):
-        name=d(resourceId="com.hwabao.hbstockwarning:id/txt_name")[i].get_text()
-        res.append(name)
+        content={}
+        name=d(resourceId="com.hwabao.hbstockwarning:id/txt_name")[i].get_text()#股票名称
+        cost=d(resourceId="com.hwabao.hbstockwarning:id/txt_cost_price")[i].get_text()#成本价
+        current=d(resourceId="com.hwabao.hbstockwarning:id/txt_current_price")[i].get_text()#当前价
+        hold=d(resourceId="com.hwabao.hbstockwarning:id/txt_hold_account")[i].get_text()#持仓数量
+        available=d(resourceId="com.hwabao.hbstockwarning:id/txt_available_account")[i].get_text()#可用数量
+        print(f'{i}/{count}')
+        content['cost']=cost
+        content['current']=current
+        content['hold']=hold
+        content['available']=available
+        res[name]=content
+#        d(resourceId="com.hwabao.hbstockwarning:id/ll_cost")#价格
     return res
 
 

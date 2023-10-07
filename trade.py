@@ -28,6 +28,12 @@ def load_config():#加载配置文件
 ###连接手机
 def u2_connect(conf):
     addr=conf.get('adb','ip')
+    cmd=f'adb connect {addr}'
+    print(cmd)
+    if os.name=='posix':
+        os.system(cmd)
+    elif os.name=='nt':
+        os.system(f'D:\Downloads\scrcpy-win64-v2.1\\{cmd}')
     d=u2.connect(addr)
     print(d.info)
     return d

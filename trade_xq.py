@@ -98,35 +98,13 @@ def account(d):
     d(obj):u2连接对象
     函数返回float类型
     '''
-    counts=d(resourceId="com.hwabao.hbstockwarning:id/tv_asset").count
-    res={}
-    for i in range(0,counts):
-        title=d(resourceId="com.hwabao.hbstockwarning:id/tv_title")[i].get_text()
-        asset=d(resourceId="com.hwabao.hbstockwarning:id/tv_asset")[i].get_text()
-        res[title]=asset
+    pass
     return res
 
 
 ###查询股票持仓
 def position(d):
-#    d(text="资金持仓").click()
-    time.sleep(1)
-    count=d(resourceId="com.hwabao.hbstockwarning:id/txt_name").count
-    res={}
-    for i in range(0,count):
-        content={}
-        name=d(resourceId="com.hwabao.hbstockwarning:id/txt_name")[i].get_text()#股票名称
-        cost=d(resourceId="com.hwabao.hbstockwarning:id/txt_cost_price")[i].get_text()#成本价
-        current=d(resourceId="com.hwabao.hbstockwarning:id/txt_current_price")[i].get_text()#当前价
-        hold=d(resourceId="com.hwabao.hbstockwarning:id/txt_hold_account")[i].get_text()#持仓数量
-        available=d(resourceId="com.hwabao.hbstockwarning:id/txt_available_account")[i].get_text()#可用数量
-        print(f'{i}/{count}')
-        content['cost']=cost
-        content['current']=current
-        content['hold']=hold
-        content['available']=available
-        res[name]=content
-#        d(resourceId="com.hwabao.hbstockwarning:id/ll_cost")#价格
+    pass
     return res
 
 
@@ -144,7 +122,7 @@ def buy(d,stock_code,number):
         os.system('adb shell input text {}'.format(stock_code))
     elif os.name=='nt':
         os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(stock_code))
-
+    d.click(1400,2900)#模拟点击，其他方法无法定位
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].set_text(number)
     d(resourceId="com.xueqiu.android:id/order_submit").click()
@@ -158,6 +136,17 @@ def sell(d,stock_code,number):
     stock_code(str):买入的股票代码，数字部分即可
     number(str):买入的数量
     '''
+    d(resourceId="com.xueqiu.android:id/trade_action_button_item_title", text="买入").click()
+    d(resourceId="com.xueqiu.android:id/order_search_input").click()
+    #方法三,速度相对较快
+    if os.name=='posix':
+        os.system('adb shell input text {}'.format(stock_code))
+    elif os.name=='nt':
+        os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(stock_code))
+    d.click(1400,2900)#模拟点击，其他方法无法定位
+    d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()
+    d(resourceId="com.xueqiu.android:id/order_input_editText")[1].set_text(number)
+    d(resourceId="com.xueqiu.android:id/order_submit").click()
     print(f'正在卖出{stock_code},数量:{number}')
 
 

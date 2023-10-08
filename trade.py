@@ -110,7 +110,7 @@ def account(d):
 ###查询股票持仓
 def position(d):
 #    d(text="资金持仓").click()
-    time.sleep(1)
+    d.swipe(720,1500,720,1200,0.1)
     count=d(resourceId="com.hwabao.hbstockwarning:id/txt_name").count
     res={}
     for i in range(0,count):

@@ -45,21 +45,23 @@ def menu():
     choice=input('pos:查询股票持仓\nact:查询资金情况\nbuy:买入股票\nsell:卖出股票')
 #    d=u2_connect()
     if choice=='pos':
-        ready(d,conf)
+#        ready(d,conf)
         res=position(d)
         print(res)
     elif choice=='act':
-        ready(d,conf)
+#        ready(d,conf)
         res=account(d)
         print(res)
     elif choice=='buy':
         stock_code=input('请输入股票代码:')
+        price=input('请输入买入价格：')
         number=input('请输入买入数量：')
-        buy(d,stock_code,number)
+        buy(d,stock_code,price,number)
     elif choice=='sell':
         stock_code=input('请输入股票代码:')
+        price=input('请输入卖出价格：')
         number=input('请输入卖出数量：')
-        sell(d,stock_code,number)
+        sell(d,stock_code,price,number)
 
 ###停留在指定的界面
 def ready(d,conf):
@@ -98,7 +100,15 @@ def account(d):
     d(obj):u2连接对象
     函数返回float类型
     '''
-    pass
+    res={}
+    assets=d(resourceId="com.xueqiu.android:id/asset_balance").get_text()#总资产
+    value=d(resourceId="com.xueqiu.android:id/value")[0].get_text()#持有市值
+    profit=d(resourceId="com.xueqiu.android:id/value")[1].get_text()#盈亏
+    available=d(resourceId="com.xueqiu.android:id/value")[2].get_text()#可用
+    res={'assets':assets,
+            'value':value,
+            'profit':profit,
+            'available':available}
     return res
 
 
@@ -109,34 +119,38 @@ def position(d):
 
 
 ###买入操作
-def buy(d,stock_code,number):
+def buy(d,stock_code,price,number):
     '''
     d(obj):u2连接对象
     stock_code(str):买入的股票代码，数字部分即可
+    price(str):买入的价格
     number(str):买入的数量
     '''
     d(resourceId="com.xueqiu.android:id/trade_action_button_item_title", text="买入").click()
     d(resourceId="com.xueqiu.android:id/order_search_input").click()
     #方法三,速度相对较快
     if os.name=='posix':
-        os.system('adb shell input text {}'.format(stock_code))
+        os.system('adb shell input text {}'.format(stock_code))#股票名称
     elif os.name=='nt':
-        os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(stock_code))
+        os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(stock_code))#股票名称
     d.click(1400,2900)#模拟点击，其他方法无法定位
+    d(resourceId="com.xueqiu.android:id/order_input_editText")[0].set_text(price)#价格
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()
-    d(resourceId="com.xueqiu.android:id/order_input_editText")[1].set_text(number)
-    d(resourceId="com.xueqiu.android:id/order_submit").click()
+    d(resourceId="com.xueqiu.android:id/order_input_editText")[1].set_text(number)#数量
+    d(resourceId="com.xueqiu.android:id/order_submit").click()#提交
+#    d(resourceId="com.xueqiu.android:id/tv_right").click()#确定
     print(f'正在买入{stock_code},数量:{number}')
 
 
 ###卖出操作
-def sell(d,stock_code,number):
+def sell(d,stock_code,price,number):
     '''
     d(obj):u2连接对象
+    price(str):买入的价格
     stock_code(str):买入的股票代码，数字部分即可
     number(str):买入的数量
     '''
-    d(resourceId="com.xueqiu.android:id/trade_action_button_item_title", text="买入").click()
+    d(resourceId="com.xueqiu.android:id/trade_action_button_item_title", text="卖出").click()
     d(resourceId="com.xueqiu.android:id/order_search_input").click()
     #方法三,速度相对较快
     if os.name=='posix':
@@ -144,9 +158,11 @@ def sell(d,stock_code,number):
     elif os.name=='nt':
         os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(stock_code))
     d.click(1400,2900)#模拟点击，其他方法无法定位
+    d(resourceId="com.xueqiu.android:id/order_input_editText")[0].set_text(price)#价格
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].set_text(number)
     d(resourceId="com.xueqiu.android:id/order_submit").click()
+#    d(resourceId="com.xueqiu.android:id/tv_right").click()#确定
     print(f'正在卖出{stock_code},数量:{number}')
 
 

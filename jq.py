@@ -14,9 +14,24 @@ import urllib
 import requests
 import os
 import time
+import base64
+from configparser import ConfigParser
 from notification import notify
 from notification import load_config
 
+
+def load_config():#加载配置文件
+    conf=ConfigParser()
+    if os.name=='nt':
+#        path='K:/config.ini'
+        path=r'D:\Downloads\PortableGit-2.36.1-64-bit.7z\bin\Quat\config.ini'
+    elif os.name=='posix':
+        path='/usr/local/src/Quat/config.ini'
+    else:
+        print('no config file was found!')
+
+    conf.read(path,encoding="utf-8")
+    return conf
 
 def Driver():
     #Chrom的配置
@@ -89,6 +104,10 @@ def login(username,passwd):
 
 if __name__ == '__main__':
     driver=Driver()
-    username=''
-    passwd=''
+    conf=load_config()
+    token=conf.get('jq','token')
+    string=base64.b64decode(token).decode('ascii')
+    string=string.split(' ')
+    username=string[0]
+    passwd=string[1]
     login(username,passwd)

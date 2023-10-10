@@ -45,11 +45,21 @@ def Driver():
 
 def login():
     url='https://joinquant.com/'
+    username=''
+    passwd=''
     driver.get(url)
     driver.find_element(By.XPATH,'//button[@class="banner-login show-dialog-login"]').click()#点击登录
-    driver.find_element(By.XPATH,'//input[@name="CyLoginForm[username]"]').send_keys('13795294815')
-    pass
-
+    time.sleep(1)
+    driver.find_element(By.XPATH,'//input[@name="CyLoginForm[username]"]').send_keys(username)
+    driver.find_element(By.XPATH,'//input[@name="CyLoginForm[pwd]"]').send_keys(passwd)
+    driver.find_element(By.XPATH,'//button[@class="login-submit btnPwdSubmit"]').click()
+    time.sleep(1)
+    driver.find_element(By.XPATH,'//button[@class="el-button menu-credit-button el-button--info is-disabled"]').click()#签到
+    center='https://joinquant.com/view/user/floor?type=creditsdesc'
+    comm_url='https://www.joinquant.com/view/community/list?listType=1'
+    topic='https://www.joinquant.com/view/community/detail/8e16876acc72b895749564e4fc563621?type=1'#被选中的文章
+    driver.get(topic)#阅读文章
+    driver.get(center)#回到积分中心
 
 if __name__ == '__main__':
     driver=Driver()

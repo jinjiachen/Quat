@@ -43,10 +43,8 @@ def Driver():
     return driver
 
 
-def login():
+def login(username,passwd):
     url='https://joinquant.com/'
-    username=''
-    passwd=''
     driver.get(url)
     #进行登录
     driver.find_element(By.XPATH,'//button[@class="banner-login show-dialog-login"]').click()#点击登录
@@ -65,22 +63,32 @@ def login():
     windows = driver.window_handles
     driver.switch_to.window(windows[1])#切换第二个标签
     comm_url='https://www.joinquant.com/view/community/list?listType=1'
-    time.sleep(1)
-    driver.execute_script("window.scrollBy(0,1000)")
+    time.sleep(2)
 
-#    driver.find_element(By.XPATH,'//div[@class="jq-c-list_community__text"]').click()#点击文章查看
-    topic='https://www.joinquant.com/view/community/detail/8e16876acc72b895749564e4fc563621?type=1'#被选中的文章
-    driver.get(topic)#阅读文章
+    driver.find_element(By.XPATH,'//div[@class="jq-c-list_community__text"]').click()#点击文章查看
     time.sleep(5)
     driver.execute_script("window.scrollBy(0,10000)")
-#    time.sleep(5)
-#    driver.execute_script("window.scrollBy(1000,500)")
-#    time.sleep(5)
-#    driver.execute_script("window.scrollBy(500,0)")
+    time.sleep(5)
+    driver.execute_script("window.scrollBy(10000,0)")
+    time.sleep(5)
+    driver.execute_script("window.scrollBy(0,10000)")
     driver.get(center)#回到积分中心
-    time.sleep(1)
-    driver.find_element(By.XPATH,'//button[@class="el-button el-button--primary el-button--mini"]').click()#领取阅读积分
+    time.sleep(5)
+#    driver.find_element(By.XPATH,'//button[@class="el-button el-button--primary el-button--mini"]').click()#领取阅读积分
+    #关闭多余标签
+    while True:
+        windows = driver.window_handles
+        if len(windows)==1:
+            break
+        else:
+            driver.switch_to.window(windows[-1])#切换第二个标签
+            driver.close()
+        
+        
+    
 
 if __name__ == '__main__':
     driver=Driver()
-    login()
+    username=''
+    passwd=''
+    login(username,passwd)

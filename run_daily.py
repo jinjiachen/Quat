@@ -8,18 +8,18 @@ from index_online import statistics,live_index
 from notification import notify
 
 def daily_combo():
-    now=time.strftime("%Y%m%d") #当前日期
     pro=Initial()
     while True:
+        now=time.strftime("%Y%m%d") #当前日期
         if is_updated(pro,'stock',now)=='YES':
             run_daily()
             break
 
 def daily_index():
-    now=time.strftime("%Y%m%d") #当前日期
 #    now='20230914'
     pro=Initial()
     while True:
+        now=time.strftime("%Y%m%d") #当前日期
         try:
             if is_updated(pro,'index',now)=='YES':
                 pass
@@ -60,8 +60,8 @@ if __name__=='__main__':
     index_now()
     while True:
         print('当前时间：',time.strftime("%H:%M:%S"))
-        if time.strftime("%H:%M:%S")=='15:01:00':
-#        if time.strftime("%H:%M:%S")=='15:40:00':
+#        if time.strftime("%H:%M:%S")=='15:01:00':
+        if time.strftime("%H:%M:%S")=='16:43:00':
             time.sleep(3)
             print('go!!!')
             index_now()

@@ -58,9 +58,10 @@ def Driver():
     return driver
 
 
-def login(username,passwd):
+def login(driver,username,passwd):
     url='https://joinquant.com/'
     driver.get(url)
+    time.sleep(3)
     #进行登录
     driver.find_element(By.XPATH,'//button[@class="banner-login show-dialog-login"]').click()#点击登录
     time.sleep(1)
@@ -94,9 +95,10 @@ def login(username,passwd):
     while True:
         windows = driver.window_handles
         if len(windows)==1:
+            driver.switch_to.window(windows[-1])#切换当前标签
             break
         else:
-            driver.switch_to.window(windows[-1])#切换第二个标签
+            driver.switch_to.window(windows[-1])#切换当前标签
             driver.close()
         
         
@@ -105,9 +107,13 @@ def login(username,passwd):
 if __name__ == '__main__':
     driver=Driver()
     conf=load_config()
-    token=conf.get('jq','token')
-    string=base64.b64decode(token).decode('ascii')
-    string=string.split(' ')
-    username=string[0]
-    passwd=string[1]
-    login(username,passwd)
+    accounts=conf.options('jq')#获取jq这个section下的items
+#    print(accounts)
+    for item in accounts:
+        print(f'正在处理{item}')
+        token=conf.get('jq',item)
+        string=base64.b64decode(token).decode('ascii')
+        string=string.split(' ')
+        username=string[0]
+        passwd=string[1]
+        login(driver,username,passwd)

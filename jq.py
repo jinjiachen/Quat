@@ -70,7 +70,7 @@ def login(driver,username,passwd):
     driver.find_element(By.XPATH,'//button[@class="login-submit btnPwdSubmit"]').click()
     time.sleep(1)
 
-#    driver.find_element(By.XPATH,'//button[@class="el-button menu-credit-button el-button--primary"]').click()#签到
+    driver.find_element(By.XPATH,'//button[@class="el-button menu-credit-button el-button--primary"]').click()#签到
     #获取阅读文章积分
     center='https://joinquant.com/view/user/floor?type=creditsdesc'
     driver.get(center)#回到积分中心
@@ -90,26 +90,27 @@ def login(driver,username,passwd):
     driver.execute_script("window.scrollBy(0,10000)")
     driver.get(center)#回到积分中心
     time.sleep(5)
-#    driver.find_element(By.XPATH,'//button[@class="el-button el-button--primary el-button--mini"]').click()#领取阅读积分
+    driver.find_element(By.XPATH,'//button[@class="el-button el-button--primary el-button--mini"]').click()#领取阅读积分
     #关闭多余标签
-    while True:
-        windows = driver.window_handles
-        if len(windows)==1:
-            driver.switch_to.window(windows[-1])#切换当前标签
-            break
-        else:
-            driver.switch_to.window(windows[-1])#切换当前标签
-            driver.close()
+#    while True:
+#        windows = driver.window_handles
+#        if len(windows)==1:
+#            driver.switch_to.window(windows[-1])#切换当前标签
+#            break
+#        else:
+#            driver.switch_to.window(windows[-1])#切换当前标签
+#            driver.close()
         
+    driver.quit()
         
     
 
 if __name__ == '__main__':
-    driver=Driver()
     conf=load_config()
     accounts=conf.options('jq')#获取jq这个section下的items
 #    print(accounts)
     for item in accounts:
+        driver=Driver()
         print(f'正在处理{item}')
         token=conf.get('jq',item)
         string=base64.b64decode(token).decode('ascii')

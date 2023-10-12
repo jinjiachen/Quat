@@ -15,6 +15,7 @@ import requests
 import os
 import time
 import base64
+import random
 from configparser import ConfigParser
 from notification import notify
 from notification import load_config
@@ -58,7 +59,7 @@ def Driver():
     return driver
 
 
-def login(driver,username,passwd):
+def login(driver,username,passwd,dry_run='NO'):
     url='https://joinquant.com/'
     driver.get(url)
     time.sleep(3)
@@ -70,7 +71,8 @@ def login(driver,username,passwd):
     driver.find_element(By.XPATH,'//button[@class="login-submit btnPwdSubmit"]').click()
     time.sleep(1)
 
-    driver.find_element(By.XPATH,'//button[@class="el-button menu-credit-button el-button--primary"]').click()#签到
+    if dry_run=='NO':
+        driver.find_element(By.XPATH,'//button[@class="el-button menu-credit-button el-button--primary"]').click()#签到
     #获取阅读文章积分
     center='https://joinquant.com/view/user/floor?type=creditsdesc'
     driver.get(center)#回到积分中心
@@ -81,7 +83,9 @@ def login(driver,username,passwd):
     comm_url='https://www.joinquant.com/view/community/list?listType=1'
     time.sleep(2)
 
-    driver.find_element(By.XPATH,'//div[@class="jq-c-list_community__text"]').click()#点击文章查看
+    num=len(driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]'))
+    i=random.randint(5,num)
+    driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]')[i].click()#点击文章查看
     time.sleep(5)
     driver.execute_script("window.scrollBy(0,10000)")
     time.sleep(5)
@@ -90,7 +94,8 @@ def login(driver,username,passwd):
     driver.execute_script("window.scrollBy(0,10000)")
     driver.get(center)#回到积分中心
     time.sleep(5)
-    driver.find_element(By.XPATH,'//button[@class="el-button el-button--primary el-button--mini"]').click()#领取阅读积分
+    if dry_run=='NO':
+        driver.find_element(By.XPATH,'//button[@class="el-button el-button--primary el-button--mini"]').click()#领取阅读积分
     #关闭多余标签
 #    while True:
 #        windows = driver.window_handles
@@ -117,4 +122,4 @@ if __name__ == '__main__':
         string=string.split(' ')
         username=string[0]
         passwd=string[1]
-        login(driver,username,passwd)
+        login(driver,username,passwd,dry_run='NO')

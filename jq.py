@@ -83,22 +83,30 @@ def login(driver,username,passwd,dry_run='NO'):
     time.sleep(1)
 
     if dry_run=='NO':
-        driver.find_element(By.XPATH,'//button[@class="el-button menu-credit-button el-button--primary"]').click()#签到
-        print(f'{username}签到成功')
+        try:
+            driver.find_element(By.XPATH,'//button[@class="el-button menu-credit-button el-button--primary"]').click()#签到
+            print(f'{username}签到成功')
+        except:
+            print('签到失败')
+            
     #获取阅读文章积分
     center='https://joinquant.com/view/user/floor?type=creditsdesc'
     driver.get(center)#回到积分中心
     time.sleep(1)
-    driver.find_element(By.XPATH,'//a[@href="/./view/community/list?listType=1"]/button').click()#去看看
+    try:
+        driver.find_element(By.XPATH,'//a[@href="/./view/community/list?listType=1"]/button').click()#去看看
+    except:
+        print('已经领取过阅读积分')
     windows = driver.window_handles
     driver.switch_to.window(windows[1])#切换第二个标签
     comm_url='https://www.joinquant.com/view/community/list?listType=1'
     time.sleep(2)
 
     num=len(driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]'))#获取主题的数量
-    i=random.randint(5,num)
+    i=random.randint(3,num)
+    time.sleep(1)
     driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]')[i].click()#随机点击文章查看
-    time.sleep(5)
+    time.sleep(9)
     driver=close_update(driver)
 #    driver.execute_script("window.scrollBy(0,10000)")
 #    time.sleep(5)
@@ -108,9 +116,13 @@ def login(driver,username,passwd,dry_run='NO'):
     driver.get(center)#回到积分中心
     time.sleep(3)
     if dry_run=='NO':
-        driver.find_element(By.XPATH,'//button[@class="el-button el-button--primary el-button--mini"]').click()#领取阅读积分
-        time.sleep(1)
-        print(f'{username}领取阅读积分')
+        try:
+            driver.find_element(By.XPATH,'//button[@class="el-button el-button--primary el-button--mini"]').click()#领取阅读积分
+            time.sleep(1)
+            print(f'{username}领取阅读积分')
+        except:
+            print('领取失败')
+            
 #    point=driver.find_element(By.XPATH,'//div[@class="jq-user-floor__div-item"][1]/text()')
 #    print(f'当前积分{point}')
     #关闭多余标签

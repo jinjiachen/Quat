@@ -73,19 +73,20 @@ def login(driver,username,passwd,dry_run='NO'):
 
     if dry_run=='NO':
         driver.find_element(By.XPATH,'//button[@class="el-button menu-credit-button el-button--primary"]').click()#签到
+        print(f'{username}签到成功')
     #获取阅读文章积分
     center='https://joinquant.com/view/user/floor?type=creditsdesc'
     driver.get(center)#回到积分中心
     time.sleep(1)
-    driver.find_element(By.XPATH,'//a[@href="/./view/community/list?listType=1"]/button').click()
+    driver.find_element(By.XPATH,'//a[@href="/./view/community/list?listType=1"]/button').click()#去看看
     windows = driver.window_handles
     driver.switch_to.window(windows[1])#切换第二个标签
     comm_url='https://www.joinquant.com/view/community/list?listType=1'
     time.sleep(2)
 
-    num=len(driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]'))
+    num=len(driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]'))#获取主题的数量
     i=random.randint(5,num)
-    driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]')[i].click()#点击文章查看
+    driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]')[i].click()#随机点击文章查看
     time.sleep(5)
     driver.execute_script("window.scrollBy(0,10000)")
     time.sleep(5)
@@ -96,6 +97,9 @@ def login(driver,username,passwd,dry_run='NO'):
     time.sleep(5)
     if dry_run=='NO':
         driver.find_element(By.XPATH,'//button[@class="el-button el-button--primary el-button--mini"]').click()#领取阅读积分
+        print(f'{username}领取阅读积分')
+#    point=driver.find_element(By.XPATH,'//div[@class="jq-user-floor__div-item"][1]/text()')
+#    print(f'当前积分{point}')
     #关闭多余标签
 #    while True:
 #        windows = driver.window_handles
@@ -113,7 +117,7 @@ def login(driver,username,passwd,dry_run='NO'):
 if __name__ == '__main__':
     conf=load_config()
     accounts=conf.options('jq')#获取jq这个section下的items
-#    print(accounts)
+#    print(accounts)#调试用
     for item in accounts:
         driver=Driver()
         print(f'正在处理{item}')

@@ -59,6 +59,17 @@ def Driver():
     return driver
 
 
+###关闭当前标签并返回最新标签
+def close_update(driver):
+    windows = driver.window_handles
+    driver.switch_to.window(windows[-1])#切换当前标签
+    driver.close()
+    windows = driver.window_handles
+    driver.switch_to.window(windows[-1])#切换当前标签
+    return driver
+
+
+
 def login(driver,username,passwd,dry_run='NO'):
     url='https://joinquant.com/'
     driver.get(url)
@@ -88,15 +99,17 @@ def login(driver,username,passwd,dry_run='NO'):
     i=random.randint(5,num)
     driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]')[i].click()#随机点击文章查看
     time.sleep(5)
-    driver.execute_script("window.scrollBy(0,10000)")
-    time.sleep(5)
-    driver.execute_script("window.scrollBy(10000,0)")
-    time.sleep(5)
-    driver.execute_script("window.scrollBy(0,10000)")
+    driver=close_update(driver)
+#    driver.execute_script("window.scrollBy(0,10000)")
+#    time.sleep(5)
+#    driver.execute_script("window.scrollBy(10000,0)")
+#    time.sleep(5)
+#    driver.execute_script("window.scrollBy(0,10000)")
     driver.get(center)#回到积分中心
-    time.sleep(5)
+    time.sleep(3)
     if dry_run=='NO':
         driver.find_element(By.XPATH,'//button[@class="el-button el-button--primary el-button--mini"]').click()#领取阅读积分
+        time.sleep(1)
         print(f'{username}领取阅读积分')
 #    point=driver.find_element(By.XPATH,'//div[@class="jq-user-floor__div-item"][1]/text()')
 #    print(f'当前积分{point}')

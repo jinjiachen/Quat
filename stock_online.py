@@ -528,6 +528,7 @@ def double_ma(freq,ma_s,ma_l,duration):
 
 
 def run_daily():
+    now=time.strftime("%Y%m%d") #当前日期
     #Dbott13_15_1组合
     result=Bottom('D',13,15,1)
     filename=f'Dbott13_15_1_{now}.txt'

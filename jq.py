@@ -8,7 +8,7 @@ date:2023-10-10
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-import pyautogui
+#import pyautogui
 from lxml import etree
 import urllib
 import requests
@@ -100,7 +100,7 @@ def login(driver,username,passwd,dry_run='NO'):
     windows = driver.window_handles
     driver.switch_to.window(windows[1])#切换第二个标签
     comm_url='https://www.joinquant.com/view/community/list?listType=1'
-    time.sleep(2)
+    time.sleep(5)
 
     num=len(driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]'))#获取主题的数量
     i=random.randint(3,num)

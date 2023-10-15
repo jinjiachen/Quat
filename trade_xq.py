@@ -70,19 +70,17 @@ def ready(d,conf):
     conf:load_conf返回结果
     '''
     app=d.app_current()['package']
-    if app=='com.hwabao.hbstockwarning':#当前app是否为证券app
+    if app=='com.xueqiu.android':#当前app是否为证券app
         while True:
-            if d(resourceId="com.hwabao.hbstockwarning:id/tab_text", text="我的").exists:
-                d(text="资金持仓").click()
-                time.sleep(0.5)
+            if d(resourceId="com.xueqiu.android:id/broker_name").exists:
                 break
             else:
                 print('不在初始界面，正在返回')
                 d.press('back')
     else:
-        d.app_start('com.hwabao.hbstockwarning')#打开证券app
-        d(text="交易").click()
-        d(text="资金持仓").click()
+        d.app_start('com.xueqiu.android')#打开证券app
+        d(resourceId="com.xueqiu.android:id/tab_name", text="我的").click()
+        d(resourceId="com.xueqiu.android:id/assets_title", text="股票资产(元)").click()
         while True:
             if d(text="请输入交易密码").exists:
                 token=conf.get('adb','token')
@@ -114,7 +112,7 @@ def account(d):
 
 ###查询股票持仓
 def position(d):
-    pass
+    d(resourceId="com.xueqiu.android:id/column_1_row_1").get_text()#持仓
     return res
 
 
@@ -139,7 +137,7 @@ def buy(d,stock_code,price,number):
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].set_text(number)#数量
     d(resourceId="com.xueqiu.android:id/order_submit").click()#提交
 #    d(resourceId="com.xueqiu.android:id/tv_right").click()#确定
-    print(f'正在买入{stock_code},数量:{number}')
+    print(f'正在买入{stock_code},价格：{price}数量:{number}')
 
 
 ###卖出操作
@@ -163,7 +161,7 @@ def sell(d,stock_code,price,number):
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].set_text(number)
     d(resourceId="com.xueqiu.android:id/order_submit").click()
 #    d(resourceId="com.xueqiu.android:id/tv_right").click()#确定
-    print(f'正在卖出{stock_code},数量:{number}')
+    print(f'正在卖出{stock_code},价格:{price}数量:{number}')
 
 
 ###主程序

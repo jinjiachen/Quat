@@ -54,8 +54,9 @@ def menu():
         print(res)
     elif choice=='buy':
         stock_code=input('请输入股票代码:')
+        price=input('请输入买入价格：')
         number=input('请输入买入数量：')
-        buy(d,stock_code,number)
+        buy(d,stock_code,price,number)
     elif choice=='sell':
         stock_code=input('请输入股票代码:')
         number=input('请输入卖出数量：')
@@ -73,6 +74,15 @@ def ready(d,conf):
             if d(resourceId="com.hwabao.hbstockwarning:id/tab_text", text="我的").exists:
                 d(text="资金持仓").click()
                 time.sleep(0.5)
+            if d(text="请输入交易密码").exists:
+                print('未登录，正在登录！')
+                token=conf.get('adb','token')
+                passwd=base64.b64decode(token).decode('ascii')
+                print(passwd)
+                if os.name=='posix':
+                    print('当前为linux系统，正在输入密码')
+                    time.sleep(1)
+                    os.system('adb shell input text {}'.format(passwd))
                 break
             else:
                 print('不在初始界面，正在返回')
@@ -83,14 +93,19 @@ def ready(d,conf):
         d(text="资金持仓").click()
         while True:
             if d(text="请输入交易密码").exists:
+                print('未登录，正在登录！')
                 token=conf.get('adb','token')
                 passwd=base64.b64decode(token).decode('ascii')
-    #            print(passwd)
+                print(passwd)
                 if os.name=='posix':
+                    print('当前为linux系统，正在输入密码')
+                    time.sleep(1)
                     os.system('adb shell input text {}'.format(passwd))
+                    break
                 elif os.name=='nt':
+                    print('当前为windows系统，正在输入密码')
                     os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(passwd))
-                break
+                    break
 
 ###查询帐户基本信息
 def account(d):
@@ -120,7 +135,7 @@ def position(d):
         current=d(resourceId="com.hwabao.hbstockwarning:id/txt_current_price")[i].get_text()#当前价
         hold=d(resourceId="com.hwabao.hbstockwarning:id/txt_hold_account")[i].get_text()#持仓数量
         available=d(resourceId="com.hwabao.hbstockwarning:id/txt_available_account")[i].get_text()#可用数量
-        print(f'{i}/{count}')
+        print(f'{i+1}/{count}')
         content['cost']=cost
         content['current']=current
         content['hold']=hold
@@ -131,10 +146,11 @@ def position(d):
 
 
 ###买入操作
-def buy(d,stock_code,number):
+def buy(d,stock_code,price,number):
     '''
     d(obj):u2连接对象
     stock_code(str):买入的股票代码，数字部分即可
+    price(str):买入的价格
     number(str):买入的数量
     '''
     d(text="买入").click()
@@ -145,8 +161,9 @@ def buy(d,stock_code,number):
     d(text=" 请输入股票代码/首字母").send_keys(stock_code)
 #    d(text=" 请输入股票代码/首字母").set_text(stock_code)
     d(text="进入").click()
+    get_price=d.xpath('//*[@resource-id="com.hwabao.hbstockwarning:id/hqmainview"]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.view.ViewGroup[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[3]/android.widget.FrameLayout[2]')
     amount=d.xpath('//*[@resource-id="com.hwabao.hbstockwarning:id/hqmainview"]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.view.ViewGroup[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[4]/android.widget.FrameLayout[2]/android.widget.FrameLayout[2]')
-    time.sleep(0.5)
+    time.sleep(1)
     amount.click()
     #方法一,速度慢
 #    amount.set_text('100')
@@ -160,6 +177,7 @@ def buy(d,stock_code,number):
     elif os.name=='nt':
         os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(number))
 
+#    input_text(get_price,price)
     d(description="买入").click()
     d(description="确认买入").click()
     print(f'正在买入{stock_code},数量:{number}')
@@ -186,6 +204,36 @@ def sell(d,stock_code,number):
     d(description="卖出").click()
     d(description="确认卖出").click()
     print(f'正在卖出{stock_code},数量:{number}')
+
+###查询今日委托
+def entrust_todday(d):
+    d(resourceId="com.hwabao.hbstockwarning:id/tv_menu_name", text="查询").click()
+    d(resourceId="com.hwabao.hbstockwarning:id/layout_content")[0].click()#今日委托
+    
+
+###查询今日成交
+def order_today(d):
+    d(resourceId="com.hwabao.hbstockwarning:id/tv_menu_name", text="查询").click()
+    d(resourceId="com.hwabao.hbstockwarning:id/layout_content")[1].click()#今日成交
+
+
+###撤单
+def cancel_order():
+    pass
+
+
+###输入文本
+def input_text(target,text):
+    '''
+    target:
+    text(str):输入的文本
+    '''
+    target.click()
+    if os.name=='posix':
+        os.system('adb shell input keyevent 28')
+        os.system('adb shell input text {}'.format(text))
+    elif os.name=='nt':
+        os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(text))
 
 
 ###主程序

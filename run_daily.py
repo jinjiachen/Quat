@@ -6,6 +6,7 @@ import time
 from function import is_updated,schedule
 from index_online import statistics,live_index
 from notification import notify
+from jq import auto_check
 
 def daily_combo():
     pro=Initial()
@@ -67,6 +68,8 @@ if __name__=='__main__':
             index_now()
             daily_combo()
             daily_index()
+        if time.strftime("%H:%M:%S")=='06:00:00':
+            auto_check()
 
 #    schedule(daily_index,'15:15:00')
 #    schedule(daily_combo,'15:15:00')

@@ -49,7 +49,7 @@ def menu():
         res=position(d)
         print(res)
     elif choice=='act':
-#        ready(d,conf)
+        ready(d,conf)
         res=account(d)
         print(res)
     elif choice=='buy':
@@ -70,19 +70,28 @@ def ready(d,conf):
     conf:load_conf返回结果
     '''
     app=d.app_current()['package']
+#    print(app)
     if app=='com.xueqiu.android':#当前app是否为证券app
         while True:
-            if d(resourceId="com.xueqiu.android:id/broker_name").exists:
+#            if d(resourceId="com.xueqiu.android:id/broker_name").exists:
+            if d(text="沪深").exists:
+                print('在指定界面')
                 break
             else:
                 print('不在初始界面，正在返回')
                 d.press('back')
+                if d(resourceId="com.xueqiu.android:id/tab_name", text="我的").exists:
+                    d(resourceId="com.xueqiu.android:id/tab_name", text="我的").click()
+                    d(resourceId="com.xueqiu.android:id/assets_title", text="股票资产(元)").click()
+                    break
     else:
+        print('正在打开应用！')
         d.app_start('com.xueqiu.android')#打开证券app
         d(resourceId="com.xueqiu.android:id/tab_name", text="我的").click()
         d(resourceId="com.xueqiu.android:id/assets_title", text="股票资产(元)").click()
         while True:
             if d(text="请输入交易密码").exists:
+                print('正在输入密码')
                 token=conf.get('adb','token')
                 passwd=base64.b64decode(token).decode('ascii')
     #            print(passwd)
@@ -90,6 +99,9 @@ def ready(d,conf):
                     os.system('adb shell input text {}'.format(passwd))
                 elif os.name=='nt':
                     os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(passwd))
+                break
+            elif d(text="沪深").exists:
+                print('在指定界面')
                 break
 
 ###查询帐户基本信息

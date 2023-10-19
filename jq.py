@@ -136,10 +136,9 @@ def login(driver,username,passwd,dry_run='NO'):
 #            driver.close()
         
     driver.quit()
-        
-    
 
-if __name__ == '__main__':
+
+def auto_check():
     conf=load_config()
     accounts=conf.options('jq')#获取jq这个section下的items
 #    print(accounts)#调试用
@@ -152,3 +151,7 @@ if __name__ == '__main__':
         username=string[0]
         passwd=string[1]
         login(driver,username,passwd,dry_run='NO')
+    
+
+if __name__ == '__main__':
+    auto_check()

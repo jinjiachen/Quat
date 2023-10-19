@@ -53,11 +53,13 @@ def menu():
         res=account(d)
         print(res)
     elif choice=='buy':
+        ready(d,conf)
         stock_code=input('请输入股票代码:')
         price=input('请输入买入价格：')
         number=input('请输入买入数量：')
         buy(d,stock_code,price,number)
     elif choice=='sell':
+        ready(d,conf)
         stock_code=input('请输入股票代码:')
         price=input('请输入卖出价格：')
         number=input('请输入卖出数量：')
@@ -137,6 +139,7 @@ def buy(d,stock_code,price,number):
     number(str):买入的数量
     '''
     d(resourceId="com.xueqiu.android:id/trade_action_button_item_title", text="买入").click()
+    check_passwd(d)
     d(resourceId="com.xueqiu.android:id/order_search_input").click()
     #方法三,速度相对较快
     if os.name=='posix':
@@ -161,12 +164,15 @@ def sell(d,stock_code,price,number):
     number(str):买入的数量
     '''
     d(resourceId="com.xueqiu.android:id/trade_action_button_item_title", text="卖出").click()
+    check_passwd(d)
     d(resourceId="com.xueqiu.android:id/order_search_input").click()
     #方法三,速度相对较快
     if os.name=='posix':
         os.system('adb shell input text {}'.format(stock_code))
+#        input_text(stock_code)
     elif os.name=='nt':
-        os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(stock_code))
+        os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(stock_code))#股票名称
+#        input_text(stock_code)
     d.click(1400,2900)#模拟点击，其他方法无法定位
     d(resourceId="com.xueqiu.android:id/order_input_editText")[0].set_text(price)#价格
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()
@@ -174,6 +180,33 @@ def sell(d,stock_code,price,number):
     d(resourceId="com.xueqiu.android:id/order_submit").click()
 #    d(resourceId="com.xueqiu.android:id/tv_right").click()#确定
     print(f'正在卖出{stock_code},价格:{price}数量:{number}')
+
+
+###检查是否输入密码
+def check_passwd(d):
+    if d(text="请输入交易密码").exists:
+        print('正在输入密码')
+        token=conf.get('adb','token')
+        passwd=base64.b64decode(token).decode('ascii')
+#        print(passwd)
+        if os.name=='posix':
+            os.system('adb shell input text {}'.format(passwd))
+        elif os.name=='nt':
+            os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(passwd))
+
+
+###按节奏输入文本
+def input_text(string):
+    '''
+    string(str):文本
+    interval(str):间隔
+    '''
+    for i in string:
+        if os.name=='nt':
+            os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(i))
+        elif os.name=='posix':
+            os.system('adb shell input text {}'.format(i))
+#        time.sleep(float(interval))
 
 
 ###主程序

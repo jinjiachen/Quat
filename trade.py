@@ -74,6 +74,7 @@ def ready(d,conf):
             if d(resourceId="com.hwabao.hbstockwarning:id/tab_text", text="我的").exists:
                 d(text="资金持仓").click()
                 time.sleep(0.5)
+                break
             if d(text="请输入交易密码").exists:
                 print('未登录，正在登录！')
                 token=conf.get('adb','token')
@@ -82,7 +83,19 @@ def ready(d,conf):
                 if os.name=='posix':
                     print('当前为linux系统，正在输入密码')
                     time.sleep(1)
-                    os.system('adb shell input text {}'.format(passwd))
+#                    os.system('adb shell input text {}'.format(passwd))
+                    #方法二,速度适中
+                    d.set_fastinput_ime(True)
+                    d.send_keys(passwd)
+                    d.set_fastinput_ime(False)
+                elif os.name=='nt':
+                    print('当前为windows系统，正在输入密码')
+#                    os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(passwd))
+                    #方法二,速度适中
+                    time.sleep(5)
+                    d.set_fastinput_ime(True)
+                    d.send_keys(passwd)
+                    d.set_fastinput_ime(False)
                 break
             else:
                 print('不在初始界面，正在返回')
@@ -96,15 +109,24 @@ def ready(d,conf):
                 print('未登录，正在登录！')
                 token=conf.get('adb','token')
                 passwd=base64.b64decode(token).decode('ascii')
-                print(passwd)
+#                print(passwd)
                 if os.name=='posix':
                     print('当前为linux系统，正在输入密码')
                     time.sleep(1)
-                    os.system('adb shell input text {}'.format(passwd))
+#                    os.system('adb shell input text {}'.format(passwd))
+                    d.set_fastinput_ime(True)
+                    d.send_keys(passwd)
+                    d.set_fastinput_ime(False)
                     break
                 elif os.name=='nt':
+                    time.sleep(1)
                     print('当前为windows系统，正在输入密码')
-                    os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(passwd))
+#                    os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(passwd))
+                    #方法二,速度适中
+                    time.sleep(5)
+                    d.set_fastinput_ime(True)
+                    d.send_keys(passwd)
+                    d.set_fastinput_ime(False)
                     break
 
 ###查询帐户基本信息

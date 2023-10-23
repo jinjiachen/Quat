@@ -54,9 +54,10 @@ def menu():
         print(res)
     elif choice=='buy':
         stock_code=input('请输入股票代码:')
-        price=input('请输入买入价格：')
+#        price=input('请输入买入价格：')
         number=input('请输入买入数量：')
-        buy(d,stock_code,price,number)
+#        buy(d,stock_code,price,number)
+        buy(d,stock_code,number)
     elif choice=='sell':
         stock_code=input('请输入股票代码:')
         number=input('请输入卖出数量：')
@@ -168,7 +169,8 @@ def position(d):
 
 
 ###买入操作
-def buy(d,stock_code,price,number):
+#def buy(d,stock_code,price,number):
+def buy(d,stock_code,number):
     '''
     d(obj):u2连接对象
     stock_code(str):买入的股票代码，数字部分即可
@@ -183,7 +185,7 @@ def buy(d,stock_code,price,number):
     d(text=" 请输入股票代码/首字母").send_keys(stock_code)
 #    d(text=" 请输入股票代码/首字母").set_text(stock_code)
     d(text="进入").click()
-    get_price=d.xpath('//*[@resource-id="com.hwabao.hbstockwarning:id/hqmainview"]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.view.ViewGroup[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[3]/android.widget.FrameLayout[2]')
+#    get_price=d.xpath('//*[@resource-id="com.hwabao.hbstockwarning:id/hqmainview"]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.view.ViewGroup[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[3]/android.widget.FrameLayout[2]')
     amount=d.xpath('//*[@resource-id="com.hwabao.hbstockwarning:id/hqmainview"]/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.view.ViewGroup[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.widget.FrameLayout[4]/android.widget.FrameLayout[2]/android.widget.FrameLayout[2]')
     time.sleep(1)
     amount.click()
@@ -224,7 +226,7 @@ def sell(d,stock_code,number):
     elif os.name=='nt':
         os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(number))
     d(description="卖出").click()
-    d(description="确认卖出").click()
+#    d(description="确认卖出").click()
     print(f'正在卖出{stock_code},数量:{number}')
 
 ###查询今日委托

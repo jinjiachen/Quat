@@ -126,7 +126,10 @@ def account(d):
 
 ###查询股票持仓
 def position(d):
-    d(resourceId="com.xueqiu.android:id/column_1_row_1").get_text()#持仓
+    positions=d(resourceId="com.xueqiu.android:id/column_1_row_1")#持仓
+    res=[]
+    for pos in positions:
+        res.append(pos.get_text())
     return res
 
 

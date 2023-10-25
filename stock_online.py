@@ -127,6 +127,7 @@ def Menu():
         result=Suppress(freq2,int(n2))
 
 def SaveResult(filename,result):        
+    now=time.strftime("%Y%m%d") #当前日期
     if os.name=='nt':
         file_path='K:\\result\\'
     elif os.name=='posix':
@@ -529,6 +530,13 @@ def double_ma(freq,ma_s,ma_l,duration):
 
 def run_daily():
     now=time.strftime("%Y%m%d") #当前日期
+
+    #Quekou组合
+    result=Quekou()
+    filename=f'Quekou_{now}.txt'
+    content=SaveResult(filename,result) #保存结果
+    notify('post',filename,"".join(content))
+
     #Dbott13_15_1组合
     result=Bottom('D',13,15,1)
     filename=f'Dbott13_15_1_{now}.txt'
@@ -569,11 +577,6 @@ def run_daily():
 
 
 
-    #Quekou组合
-    result=Quekou()
-    filename=f'Quekou_{now}.txt'
-    content=SaveResult(filename,result) #保存结果
-    notify('post',filename,"".join(content))
 
 pro=Initial() #初始化
 now=time.strftime("%Y%m%d") #当前日期

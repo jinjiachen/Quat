@@ -48,7 +48,7 @@ def u2_connect(conf):
 
 ###菜单
 def menu():
-    choice=input('pos:查询股票持仓\nact:查询资金情况\nbuy:买入股票\nsell:卖出股票')
+    choice=input('pos:查询股票持仓\nact:查询资金情况\nbuy:买入股票\nsell:卖出股票\nrepo:逆回购')
 #    d=u2_connect()
     if choice=='pos':
         ready(d,conf)
@@ -63,13 +63,16 @@ def menu():
         stock_code=input('请输入股票代码:')
         price=input('请输入买入价格：')
         number=input('请输入买入数量：')
-        buy(d,stock_code,price,number)
+        buy(d,stock_code,number,price)
     elif choice=='sell':
         ready(d,conf)
         stock_code=input('请输入股票代码:')
         price=input('请输入卖出价格：')
         number=input('请输入卖出数量：')
-        sell(d,stock_code,price,number)
+        sell(d,stock_code,number,price)
+    elif choice=='repo':
+        ready(d,conf)
+        reverse_repo(d)
 
 ###停留在指定的界面
 def ready(d,conf):
@@ -164,7 +167,7 @@ def position(d):
 
 
 ###买入操作
-def buy(d,stock_code,price,number):
+def buy(d,stock_code,number,price=''):
     '''
     d(obj):u2连接对象
     stock_code(str):买入的股票代码，数字部分即可
@@ -192,7 +195,7 @@ def buy(d,stock_code,price,number):
 
 
 ###卖出操作
-def sell(d,stock_code,price='',number):
+def sell(d,stock_code,number,price=''):
     '''
     d(obj):u2连接对象
     price(str):买入的价格
@@ -262,8 +265,14 @@ def check_running(d,name):
 
 ###自动逆回购
 def reverse_repo(d):
-    d(text='逆回购').click()
-    pass
+    '''
+    d(obj):u2连接对象
+    '''
+    cash=account(d)['available'].replace(',','')
+    cash=float(cash)
+    cash=int(cash/100)*100#100的整数倍
+#    print(f'正在进行逆回购sz131810,金额{cash}')
+    sell(d,'sz131810',cash)
 
 ###主程序
 if __name__=='__main__':

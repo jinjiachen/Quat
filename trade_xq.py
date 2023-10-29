@@ -80,6 +80,7 @@ def ready(d,conf):
     d(obj):u2对象
     conf:load_conf返回结果
     '''
+    #检查屏幕状态，如果息屏，点亮并解锁
     if d.info.get('screenOn')==False:#熄屏状态
         d.unlock()
         unlock=conf.get('adb','unlock')#解锁密码
@@ -87,12 +88,17 @@ def ready(d,conf):
             os.system('adb shell input text {}'.format(unlock))
         elif os.name=='nt':
             os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(unlock))
+
     app=d.app_current()['package']
 #    print(app)
     if app=='com.xueqiu.android':#当前app是否为证券app
         while True:
 #            if d(resourceId="com.xueqiu.android:id/broker_name").exists:
             if d(text="沪深").exists:
+                if d(text='解锁').exists:
+                    d(text='解锁').click()
+                    time.sleep(0.5)
+                    check_passwd(d)
                 print('在指定界面')
                 break
             else:
@@ -257,7 +263,7 @@ def check_running(d,name):
     name(str):app名称
     '''
     running_apps=d.app_list_running()
-    print(running_apps)
+#    print(running_apps)
     for app in running_apps:
         print(f'正在比对{app}')
         if name==app:

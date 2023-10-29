@@ -27,15 +27,21 @@ def load_config():#加载配置文件
 
 ###连接手机
 def u2_connect(conf):
-    addr=conf.get('adb','ip')
-    cmd=f'adb connect {addr}'
-    print(cmd)
-    if os.name=='posix':
-        os.system(cmd)
-    elif os.name=='nt':
-        os.system(f'D:\Downloads\scrcpy-win64-v2.1\\{cmd}')
-    d=u2.connect(addr)
-    print(d.info)
+    try:
+        print('正在尝试有线连接!')
+        d=u2.connect()
+        print(d.info)
+    except:
+        print('正在尝试无线连接!')
+        addr=conf.get('adb','ip')
+        cmd=f'adb connect {addr}'
+        print(cmd)
+        if os.name=='posix':
+            os.system(cmd)
+        elif os.name=='nt':
+            os.system(f'D:\Downloads\scrcpy-win64-v2.1\\{cmd}')
+        d=u2.connect(addr)
+        print(d.info)
     return d
 
 
@@ -45,7 +51,7 @@ def menu():
     choice=input('pos:查询股票持仓\nact:查询资金情况\nbuy:买入股票\nsell:卖出股票')
 #    d=u2_connect()
     if choice=='pos':
-#        ready(d,conf)
+        ready(d,conf)
         res=position(d)
         print(res)
     elif choice=='act':
@@ -71,6 +77,13 @@ def ready(d,conf):
     d(obj):u2对象
     conf:load_conf返回结果
     '''
+    if d.info.get('screenOn')==False:#熄屏状态
+        d.unlock()
+        unlock=conf.get('adb','unlock')#解锁密码
+        if os.name=='posix':
+            os.system('adb shell input text {}'.format(unlock))
+        elif os.name=='nt':
+            os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(unlock))
     app=d.app_current()['package']
 #    print(app)
     if app=='com.xueqiu.android':#当前app是否为证券app
@@ -85,26 +98,43 @@ def ready(d,conf):
                 if d(resourceId="com.xueqiu.android:id/tab_name", text="我的").exists:
                     d(resourceId="com.xueqiu.android:id/tab_name", text="我的").click()
                     d(resourceId="com.xueqiu.android:id/assets_title", text="股票资产(元)").click()
+                    check_passwd(d)
                     break
     else:
-        print('正在打开应用！')
-        d.app_start('com.xueqiu.android')#打开证券app
-        d(resourceId="com.xueqiu.android:id/tab_name", text="我的").click()
-        d(resourceId="com.xueqiu.android:id/assets_title", text="股票资产(元)").click()
-        while True:
-            if d(text="请输入交易密码").exists:
-                print('正在输入密码')
-                token=conf.get('adb','token')
-                passwd=base64.b64decode(token).decode('ascii')
-    #            print(passwd)
-                if os.name=='posix':
-                    os.system('adb shell input text {}'.format(passwd))
-                elif os.name=='nt':
-                    os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(passwd))
-                break
-            elif d(text="沪深").exists:
-                print('在指定界面')
-                break
+        if check_running(d,'com.xueqiu.android'):
+            print('程序在后台，正在切换应用！')
+            d.app_start('com.xueqiu.android')#打开证券app
+            if d(text="沪深").exists:
+                print('已经在指定界面')
+            else:
+                print('不在初始界面，正在返回')
+                while True:
+                    d.press('back')
+                    if d(resourceId="com.xueqiu.android:id/tab_name", text="我的").exists:
+                        d(resourceId="com.xueqiu.android:id/tab_name", text="我的").click()
+                        d(resourceId="com.xueqiu.android:id/assets_title", text="股票资产(元)").click()
+                        break
+        else:
+            print('正在打开应用！')
+            d.app_start('com.xueqiu.android')#打开证券app
+            d(resourceId="com.xueqiu.android:id/tab_name", text="我的").click()
+            d(resourceId="com.xueqiu.android:id/assets_title", text="股票资产(元)").click()
+#            time.sleep(1)
+            while True:
+                if d(text="请输入交易密码").exists:
+                    print('正在输入密码')
+                    token=conf.get('adb','token')
+                    passwd=base64.b64decode(token).decode('ascii')
+        #            print(passwd)
+                    if os.name=='posix':
+                        os.system('adb shell input text {}'.format(passwd))
+                    elif os.name=='nt':
+                        os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(passwd))
+                    break
+                elif d(text="沪深").exists:
+                    print('在指定界面')
+                    break
+
 
 ###查询帐户基本信息
 def account(d):
@@ -142,6 +172,7 @@ def buy(d,stock_code,price,number):
     number(str):买入的数量
     '''
     d(resourceId="com.xueqiu.android:id/trade_action_button_item_title", text="买入").click()
+    time.sleep(0.5)
     check_passwd(d)
     d(resourceId="com.xueqiu.android:id/order_search_input").click()
     #方法三,速度相对较快
@@ -149,7 +180,8 @@ def buy(d,stock_code,price,number):
         os.system('adb shell input text {}'.format(stock_code))#股票名称
     elif os.name=='nt':
         os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(stock_code))#股票名称
-    d.click(1400,2900)#模拟点击，其他方法无法定位
+#    d.click(1400,2900)#模拟点击，其他方法无法定位,mi11
+    d.click(984,1818)#模拟点击，其他方法无法定位,mi11
     d(resourceId="com.xueqiu.android:id/order_input_editText")[0].set_text(price)#价格
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].set_text(number)#数量
@@ -167,6 +199,7 @@ def sell(d,stock_code,price,number):
     number(str):买入的数量
     '''
     d(resourceId="com.xueqiu.android:id/trade_action_button_item_title", text="卖出").click()
+    time.sleep(0.5)
     check_passwd(d)
     d(resourceId="com.xueqiu.android:id/order_search_input").click()
     #方法三,速度相对较快
@@ -176,7 +209,8 @@ def sell(d,stock_code,price,number):
     elif os.name=='nt':
         os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(stock_code))#股票名称
 #        input_text(stock_code)
-    d.click(1400,2900)#模拟点击，其他方法无法定位
+#    d.click(1400,2900)#模拟点击，其他方法无法定位,mi11
+    d.click(984,1818)#模拟点击，其他方法无法定位,mi11
     d(resourceId="com.xueqiu.android:id/order_input_editText")[0].set_text(price)#价格
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].set_text(number)
@@ -188,7 +222,7 @@ def sell(d,stock_code,price,number):
 ###检查是否输入密码
 def check_passwd(d):
     if d(text="请输入交易密码").exists:
-        print('正在输入密码')
+        print('检测到密码，正在输入密码')
         token=conf.get('adb','token')
         passwd=base64.b64decode(token).decode('ascii')
 #        print(passwd)
@@ -211,6 +245,18 @@ def input_text(string):
             os.system('adb shell input text {}'.format(i))
 #        time.sleep(float(interval))
 
+###检查某个app是否在后台运行
+def check_running(d,name):
+    '''
+    d(obj):u2连接对象
+    name(str):app名称
+    '''
+    running_apps=d.app_list_running()
+    print(running_apps)
+    for app in running_apps:
+        print(f'正在比对{app}')
+        if name==app:
+            return True
 
 ###主程序
 if __name__=='__main__':

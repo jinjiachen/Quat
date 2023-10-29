@@ -182,7 +182,8 @@ def buy(d,stock_code,price,number):
         os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(stock_code))#股票名称
 #    d.click(1400,2900)#模拟点击，其他方法无法定位,mi11
     d.click(984,1818)#模拟点击，其他方法无法定位,mi11
-    d(resourceId="com.xueqiu.android:id/order_input_editText")[0].set_text(price)#价格
+    if price!='':
+        d(resourceId="com.xueqiu.android:id/order_input_editText")[0].set_text(price)#价格
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].set_text(number)#数量
     d(resourceId="com.xueqiu.android:id/order_submit").click()#提交
@@ -191,7 +192,7 @@ def buy(d,stock_code,price,number):
 
 
 ###卖出操作
-def sell(d,stock_code,price,number):
+def sell(d,stock_code,price='',number):
     '''
     d(obj):u2连接对象
     price(str):买入的价格
@@ -211,7 +212,8 @@ def sell(d,stock_code,price,number):
 #        input_text(stock_code)
 #    d.click(1400,2900)#模拟点击，其他方法无法定位,mi11
     d.click(984,1818)#模拟点击，其他方法无法定位,mi11
-    d(resourceId="com.xueqiu.android:id/order_input_editText")[0].set_text(price)#价格
+    if price!='':
+        d(resourceId="com.xueqiu.android:id/order_input_editText")[0].set_text(price)#价格
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].set_text(number)
     d(resourceId="com.xueqiu.android:id/order_submit").click()
@@ -257,6 +259,11 @@ def check_running(d,name):
         print(f'正在比对{app}')
         if name==app:
             return True
+
+###自动逆回购
+def reverse_repo(d):
+    d(text='逆回购').click()
+    pass
 
 ###主程序
 if __name__=='__main__':

@@ -226,7 +226,7 @@ def sell(d,stock_code,number,price=''):
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].set_text(number)
     d(resourceId="com.xueqiu.android:id/order_submit").click()
-#    d(resourceId="com.xueqiu.android:id/tv_right").click()#确定
+    d(resourceId="com.xueqiu.android:id/tv_right").click()#确定
     print(f'正在卖出{stock_code},价格:{price}数量:{number}')
 
 
@@ -265,7 +265,7 @@ def check_running(d,name):
     running_apps=d.app_list_running()
 #    print(running_apps)
     for app in running_apps:
-        print(f'正在比对{app}')
+#        print(f'正在比对{app}')
         if name==app:
             return True
 
@@ -276,9 +276,9 @@ def reverse_repo(d):
     '''
     cash=account(d)['available'].replace(',','')
     cash=float(cash)
-    cash=int(cash/100)*100#100的整数倍
+    cash=int(cash/100)#100的整数倍
 #    print(f'正在进行逆回购sz131810,金额{cash}')
-    sell(d,'sz131810',cash)
+    sell(d,'SZ131810',cash)
 
 ###主程序
 if __name__=='__main__':

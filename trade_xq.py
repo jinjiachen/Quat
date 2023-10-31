@@ -74,8 +74,8 @@ def menu():
         ready(d,conf)
         reverse_repo(d)
 
-###停留在指定的界面
-def ready(d,conf):
+###死循环解锁屏幕，确保解锁成功
+def wakeup(d,conf):
     '''
     d(obj):u2对象
     conf:load_conf返回结果
@@ -83,12 +83,22 @@ def ready(d,conf):
     #检查屏幕状态，如果息屏，点亮并解锁
     if d.info.get('screenOn')==False:#熄屏状态
         d.unlock()
+        d.unlock()
         unlock=conf.get('adb','unlock')#解锁密码
         if os.name=='posix':
             os.system('adb shell input text {}'.format(unlock))
         elif os.name=='nt':
             os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(unlock))
 
+
+###停留在指定的界面
+def ready(d,conf):
+    '''
+    d(obj):u2对象
+    conf:load_conf返回结果
+    '''
+
+    wakeup(d,conf)#解锁屏幕
     app=d.app_current()['package']
 #    print(app)
     if app=='com.xueqiu.android':#当前app是否为证券app
@@ -97,7 +107,7 @@ def ready(d,conf):
             if d(text="沪深").exists:
                 if d(text='解锁').exists:
                     d(text='解锁').click()
-                    time.sleep(0.5)
+#                    time.sleep(1)
                     check_passwd(d)
                 print('在指定界面')
                 break
@@ -107,6 +117,7 @@ def ready(d,conf):
                 if d(resourceId="com.xueqiu.android:id/tab_name", text="我的").exists:
                     d(resourceId="com.xueqiu.android:id/tab_name", text="我的").click()
                     d(resourceId="com.xueqiu.android:id/assets_title", text="股票资产(元)").click()
+#                    time.sleep(1)
                     check_passwd(d)
                     break
     else:
@@ -122,6 +133,8 @@ def ready(d,conf):
                     if d(resourceId="com.xueqiu.android:id/tab_name", text="我的").exists:
                         d(resourceId="com.xueqiu.android:id/tab_name", text="我的").click()
                         d(resourceId="com.xueqiu.android:id/assets_title", text="股票资产(元)").click()
+#                        time.sleep(1)
+                        check_passwd(d)
                         break
         else:
             print('正在打开应用！')
@@ -231,16 +244,24 @@ def sell(d,stock_code,number,price=''):
 
 
 ###检查是否输入密码
-def check_passwd(d):
-    if d(text="请输入交易密码").exists:
-        print('检测到密码，正在输入密码')
-        token=conf.get('adb','token')
-        passwd=base64.b64decode(token).decode('ascii')
-#        print(passwd)
-        if os.name=='posix':
-            os.system('adb shell input text {}'.format(passwd))
-        elif os.name=='nt':
-            os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(passwd))
+def check_passwd(d,times=10):
+    '''
+    d(obj):u2连接对象
+    times(str):检测次数
+    '''
+    i=1
+    while i<=int(times):
+        if d(text="请输入交易密码").exists:
+            print('检测到密码，正在输入密码')
+            token=conf.get('adb','token')
+            passwd=base64.b64decode(token).decode('ascii')
+    #        print(passwd)
+            if os.name=='posix':
+                os.system('adb shell input text {}'.format(passwd))
+            elif os.name=='nt':
+                os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(passwd))
+            break
+        i=i+1
 
 
 ###按节奏输入文本

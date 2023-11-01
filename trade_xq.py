@@ -124,7 +124,12 @@ def ready(d,conf):
         if check_running(d,'com.xueqiu.android'):
             print('程序在后台，正在切换应用！')
             d.app_start('com.xueqiu.android')#打开证券app
+            time.sleep(1)#等待切换
             if d(text="沪深").exists:
+                if d(text='解锁').exists:
+                    d(text='解锁').click()
+#                    time.sleep(1)
+                    check_passwd(d)
                 print('已经在指定界面')
             else:
                 print('不在初始界面，正在返回')
@@ -132,6 +137,7 @@ def ready(d,conf):
                     d.press('back')
                     if d(resourceId="com.xueqiu.android:id/tab_name", text="我的").exists:
                         d(resourceId="com.xueqiu.android:id/tab_name", text="我的").click()
+                    if d(resourceId="com.xueqiu.android:id/assets_title", text="股票资产(元)").exists():
                         d(resourceId="com.xueqiu.android:id/assets_title", text="股票资产(元)").click()
 #                        time.sleep(1)
                         check_passwd(d)

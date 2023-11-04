@@ -1,0 +1,9 @@
+tushare
+pandas
+numpy
+matplotlib
+easytrader
+easyquotation
+lxml
+uiautomator2
+redis

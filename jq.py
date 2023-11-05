@@ -106,7 +106,7 @@ def login(driver,username,passwd,dry_run='NO'):
     i=random.randint(3,num)
     print(f'主题总数：{num},阅读随机文章{i}')
     time.sleep(1)
-    driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]')[i].click()#随机点击文章查看
+    driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]')[i-1].click()#随机点击文章查看
     time.sleep(9)
     driver=close_update(driver)
     driver.get(center)#回到积分中心

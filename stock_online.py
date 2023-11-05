@@ -206,6 +206,7 @@ def Cross(freq,mas,mal,n): #均线交叉
     return result
 
 def GoldenCross(freq,mas,mal,n,m): #均线金叉
+    now=time.strftime("%Y%m%d") #当前日期
     count=0 #计数
     total=len(sl['ts_code']) #总上市股票数
     result=[]
@@ -258,6 +259,7 @@ def GoldenCross(freq,mas,mal,n,m): #均线金叉
     return result
 
 def Suppress(freq,mas,n,m): #K线站上均线模型
+    now=time.strftime("%Y%m%d") #当前日期
     count=0 #计数
     total=len(sl['ts_code']) #总上市股票数
     result=[]
@@ -306,6 +308,7 @@ def Suppress(freq,mas,n,m): #K线站上均线模型
 
 ###指定均线在一段时间内单调递增
 def Trend(freq,ma_s,n): #单调递增模型
+    now=time.strftime("%Y%m%d") #当前日期
     count=0 #计数
     total=len(sl['ts_code']) #总上市股票数
     result=[]
@@ -341,6 +344,7 @@ def Trend(freq,ma_s,n): #单调递增模型
                 
 
 def Bottom(freq,ma_s,n,m): #均线拐点
+    now=time.strftime("%Y%m%d") #当前日期
     count=0 #计数
     total=len(sl['ts_code']) #总上市股票数
     result=[]
@@ -438,6 +442,7 @@ def Bottom_new(freq,ma_s,duration,days,ptf='NO'):
 
 
 def Quekou(): #向上跳空缺口
+    now=time.strftime("%Y%m%d") #当前日期
     count=0 #计数
 #    global sl#调试
 #    sl=sl[700:820] #调试用，限制股票数量以减短时间

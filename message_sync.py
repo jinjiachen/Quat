@@ -35,16 +35,16 @@ def main(conf):
         port=16873,
         password=token)
     ps = r.pubsub()
-    ps.subscribe('myChannel')
+    ps.subscribe('xq')
     for item in ps.listen():  # keep listening, and print the message in the channel
         if item['type'] == 'message':
             signals = item['data'].decode('utf-8')
             if signals == 'exit':
                 break
             else:
-                signal_list = json.loads(signals)
-                for sig in signal_list:
-                    print(sig)
+#                signal_list = json.loads(signals)
+#                for sig in signal_list:
+                print(signals)
 #                    order(sig)
 
 

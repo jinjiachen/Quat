@@ -7,3 +7,5 @@ easyquotation
 lxml
 uiautomator2
 redis
+scipy
+sqlalchemy

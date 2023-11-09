@@ -73,6 +73,10 @@ def menu():
     elif choice=='repo':
         ready(d,conf)
         reverse_repo(d)
+    elif choice=='buy_group':
+        ready(d,conf)
+        data=[('SZ000592','200'),('SH600592','100')]
+        buy_group(d,data)
 
 ###死循环解锁屏幕，确保解锁成功
 def wakeup(d,conf):
@@ -222,6 +226,18 @@ def buy(d,stock_code,number,price='',mode=0):
     elif mode==0:
         d(resourceId="com.xueqiu.android:id/tv_left").click()#取消
         print(f'测试模式：正在买入{stock_code},价格：{price}数量:{number}')
+
+
+###买入一组股票
+def buy_group(d,data):
+    '''
+    d(obj):u2连接对象
+    data(list):一组股票信息的列表，包含股票代码和数量信息，如：[(stock code, number)]
+    '''
+    for stock_info in data:
+        print(stock_info)
+        buy(d,stock_info[0],stock_info[1],'')
+        ready(d,conf)#临时办法，待优化
 
 
 ###卖出操作

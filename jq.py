@@ -6,6 +6,7 @@ Author: Michael Jin
 date:2023-10-10
 '''
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 #import pyautogui
@@ -36,7 +37,8 @@ def load_config():#加载配置文件
 
 def Driver():
     #Chrom的配置
-    options = webdriver.ChromeOptions()
+#    options = webdriver.ChromeOptions()#适用3.8以下
+    options = Options()
 #    options.add_argument("--proxy-server=http://192.168.2.108:8889")
 #    options.add_argument("--no-proxy-server")
     options.add_argument("--headless")
@@ -51,7 +53,7 @@ def Driver():
 #    path="C:\Program Files\Google\Chrome\Application\chrome.exe"
 #    driver=webdriver.Chrome(chrome_options=options,executable_path=path)
 #    driver=webdriver.Chrome(path,chrome_options=options)
-    driver=webdriver.Chrome(chrome_options=options)
+    driver=webdriver.Chrome(options=options)
     driver.maximize_window()
     #driver.set_page_load_timeout(10)
     #driver.set_script_timeout(10)

@@ -48,7 +48,7 @@ def u2_connect(conf):
 
 ###菜单
 def menu():
-    choice=input('pos:查询股票持仓\nact:查询资金情况\nbuy:买入股票\nsell:卖出股票\nrepo:逆回购')
+    choice=input('pos:查询股票持仓\nact:查询资金情况\nbuy:买入股票\nsell:卖出股票\nrepo:逆回购\nbuys:买入一组股票\nsells:卖出一组股票')
 #    d=u2_connect()
     if choice=='pos':
         ready(d,conf)
@@ -73,6 +73,14 @@ def menu():
     elif choice=='repo':
         ready(d,conf)
         reverse_repo(d)
+    elif choice=='buys':
+        ready(d,conf)
+        data=[('SZ000592','200'),('SH600592','100')]
+        buy_group(d,data)
+    elif choice=='sells':
+        ready(d,conf)
+        data=[('SZ000592','200'),('SH600592','100')]
+        sell_group(d,data)
 
 ###死循环解锁屏幕，确保解锁成功
 def wakeup(d,conf):
@@ -192,12 +200,13 @@ def position(d):
 
 
 ###买入操作
-def buy(d,stock_code,number,price=''):
+def buy(d,stock_code,number,price='',mode=0):
     '''
     d(obj):u2连接对象
     stock_code(str):买入的股票代码，数字部分即可
     price(str):买入的价格
     number(str):买入的数量
+    mode(int):0-测试模式，1-实战模式
     '''
     d(resourceId="com.xueqiu.android:id/trade_action_button_item_title", text="买入").click()
     time.sleep(0.5)
@@ -215,17 +224,34 @@ def buy(d,stock_code,number,price=''):
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].set_text(number)#数量
     d(resourceId="com.xueqiu.android:id/order_submit").click()#提交
-#    d(resourceId="com.xueqiu.android:id/tv_right").click()#确定
-    print(f'正在买入{stock_code},价格：{price}数量:{number}')
+    if mode==1:
+        d(resourceId="com.xueqiu.android:id/tv_right").click()#确定
+        print(f'正在买入{stock_code},价格：{price}数量:{number}')
+    elif mode==0:
+        d(resourceId="com.xueqiu.android:id/tv_left").click()#取消
+        print(f'测试模式：正在买入{stock_code},价格：{price}数量:{number}')
+
+
+###买入一组股票
+def buy_group(d,data):
+    '''
+    d(obj):u2连接对象
+    data(list):一组股票信息的列表，包含股票代码和数量信息，如：[(stock code, number)]
+    '''
+    for stock_info in data:
+        print(stock_info)
+        buy(d,stock_info[0],stock_info[1],'')
+        ready(d,conf)#临时办法，待优化
 
 
 ###卖出操作
-def sell(d,stock_code,number,price=''):
+def sell(d,stock_code,number,price='',mode=0):
     '''
     d(obj):u2连接对象
     price(str):买入的价格
     stock_code(str):买入的股票代码，数字部分即可
     number(str):买入的数量
+    mode(int):0-测试模式，1-实战模式
     '''
     d(resourceId="com.xueqiu.android:id/trade_action_button_item_title", text="卖出").click()
     time.sleep(0.5)
@@ -245,9 +271,24 @@ def sell(d,stock_code,number,price=''):
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].set_text(number)
     d(resourceId="com.xueqiu.android:id/order_submit").click()
-    d(resourceId="com.xueqiu.android:id/tv_right").click()#确定
-    print(f'正在卖出{stock_code},价格:{price}数量:{number}')
+    if mode==1:
+        d(resourceId="com.xueqiu.android:id/tv_right").click()#确定
+        print(f'正在卖出{stock_code},价格:{price}数量:{number}')
+    elif mode==0:
+        d(resourceId="com.xueqiu.android:id/tv_left").click()#取消
+        print(f'测试模式：正在卖出{stock_code},价格:{price}数量:{number}')
 
+
+###卖出一组股票
+def sell_group(d,data):
+    '''
+    d(obj):u2连接对象
+    data(list):一组股票信息的列表，包含股票代码和数量信息，如：[(stock code, number)]
+    '''
+    for stock_info in data:
+        print(stock_info)
+        sell(d,stock_info[0],stock_info[1],'')
+        ready(d,conf)#临时办法，待优化
 
 ###检查是否输入密码
 def check_passwd(d,times=10):
@@ -297,15 +338,32 @@ def check_running(d,name):
             return True
 
 ###自动逆回购
-def reverse_repo(d):
+def reverse_repo(d,mode=0):
     '''
     d(obj):u2连接对象
+    mode(int):0-测试模式，1-实战模式
     '''
-    cash=account(d)['available'].replace(',','')
-    cash=float(cash)
-    cash=int(cash/100)#100的整数倍
+    d(text="逆回购").click()
+    d(text="R-001").click()
+    d(text="借出").click()
+    d(text="全仓").click()
+    d(text="借出").click()
+    if mode==1:
+        d(resourceId="com.xueqiu.android:id/tv_right").click()#确定
+        print(f'正在逆回购')
+    elif mode==0:
+        d(resourceId="com.xueqiu.android:id/tv_left").click()#取消
+        print(f'测试逆回购')
+#    d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()
+#    d(resourceId="com.xueqiu.android:id/order_input_editText")[1].set_text(number)
+#    cash=account(d)['available'].replace(',','')
+#    cash=float(cash)
+#    cash=int(cash/100)#100的整数倍
 #    print(f'正在进行逆回购sz131810,金额{cash}')
-    sell(d,'SZ131810',cash)
+#    sell(d,'SZ131810',cash)
+
+
+
 
 ###主程序
 if __name__=='__main__':

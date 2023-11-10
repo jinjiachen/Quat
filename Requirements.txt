@@ -9,3 +9,5 @@ uiautomator2
 redis
 scipy
 sqlalchemy
+selenium
+configparser

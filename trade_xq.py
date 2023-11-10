@@ -72,7 +72,7 @@ def menu():
         sell(d,stock_code,number,price)
     elif choice=='repo':
         ready(d,conf)
-        reverse_repo(d)
+        reverse_repo(d,mode=1)
     elif choice=='buys':
         ready(d,conf)
         data=[('SZ000592','200'),('SH600592','100')]
@@ -347,10 +347,11 @@ def reverse_repo(d,mode=0):
     d(text="R-001").click()
     d(text="借出").click()
     d(text="全仓").click()
-    d(text="借出").click()
+    d(text="借出")[1].click()
     if mode==1:
         d(resourceId="com.xueqiu.android:id/tv_right").click()#确定
         print(f'正在逆回购')
+        d(text="确定").click()
     elif mode==0:
         d(resourceId="com.xueqiu.android:id/tv_left").click()#取消
         print(f'测试逆回购')

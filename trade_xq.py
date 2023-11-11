@@ -23,6 +23,7 @@ def load_config():#加载配置文件
 
     conf.read(path,encoding="utf-8")
     return conf
+conf=load_config()
 
 
 ###连接手机
@@ -368,7 +369,6 @@ def reverse_repo(d,mode=0):
 
 ###主程序
 if __name__=='__main__':
-    conf=load_config()
     d=u2_connect(conf)
     while True:
         menu()

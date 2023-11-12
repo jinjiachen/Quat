@@ -64,9 +64,10 @@ def transfer_code(code):
         new_code='SH'+data[0]
     return new_code
 
+###启动stream模式
 stream = db.Stream('xq')
 while True:
-    item = stream.read(count=1, block=1000, last_id='$')
+    item = stream.read(count=100, block=1000, last_id='$')
     if item:
-        order_handle(item)
-#        print(item)
+#        order_handle(item)
+        print(item)

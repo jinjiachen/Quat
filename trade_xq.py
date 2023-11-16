@@ -70,6 +70,7 @@ def menu():
         stock_code=input('请输入股票代码:')
         price=input('请输入卖出价格：')
         number=input('请输入卖出数量：')
+#        sell(d,stock_code,number,price,1)
         sell(d,stock_code,number,price)
     elif choice=='repo':
         ready(d,conf)
@@ -114,6 +115,7 @@ def ready(d,conf):
         while True:
 #            if d(resourceId="com.xueqiu.android:id/broker_name").exists:
             if d(text="沪深").exists:
+                time.sleep(0.5)#防止检测不到解锁
                 if d(text='解锁').exists:
                     d(text='解锁').click()
 #                    time.sleep(1)

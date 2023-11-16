@@ -35,7 +35,7 @@ db = Database(
     decode_responses=True)
 
 
-@db.listener(channels=['xq'], is_async=True)
+@db.listener(channels=['small_value'], is_async=True)
 def on_redis_message(**item):
     if item['type'] == 'message':
         msg = json.loads(item['data'])

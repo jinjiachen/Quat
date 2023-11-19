@@ -35,14 +35,16 @@ db = Database(
     decode_responses=True)
 
 
-@db.listener(channels=['small_value'], is_async=True)
+@db.listener(channels=['small_value','average'], is_async=True)
 def on_redis_message(**item):
     if item['type'] == 'message':
         msg = json.loads(item['data'])
         if msg['action'] == 'exit':
             raise StopIteration
         else:
+#            print(msg)
             order_handle(msg)
+            pass
 
 
 def order_handle(msg):
@@ -52,14 +54,15 @@ def order_handle(msg):
     code=msg['code']
     code=transfer_code(code)#转换成雪球股票代码
     pct=msg['pct']
+    amt=msg['amount']
     if act=='BUY':
         print(f'BUY {code}')
         ready(d,conf)
-        buy(d,code,'100','')
+        buy(d,code,amt,'')
     elif act=='SELL':
         print(f'SELL {code}')
         ready(d,conf)
-        sell(d,code,'100','')
+        sell(d,code,amt,'')
 
 ###转换不同平台的股票代码
 def transfer_code(code):

@@ -220,8 +220,9 @@ def buy(d,stock_code,number,price='',mode=0):
         os.system('adb shell input text {}'.format(stock_code))#股票名称
     elif os.name=='nt':
         os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(stock_code))#股票名称
+    time.sleep(0.5)#后面是位置点击，这里作必要的停顿
 #    d.click(1400,2900)#模拟点击，其他方法无法定位,mi11
-    d.click(984,1818)#模拟点击，其他方法无法定位,mi11
+    d.click(984,1818)#模拟点击，其他方法无法定位,redmi
     if price!='':
         d(resourceId="com.xueqiu.android:id/order_input_editText")[0].set_text(price)#价格
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()
@@ -267,8 +268,9 @@ def sell(d,stock_code,number,price='',mode=0):
     elif os.name=='nt':
         os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(stock_code))#股票名称
 #        input_text(stock_code)
+    time.sleep(0.5)#后面是位置点击，这里作必要的停顿
 #    d.click(1400,2900)#模拟点击，其他方法无法定位,mi11
-    d.click(984,1818)#模拟点击，其他方法无法定位,mi11
+    d.click(984,1818)#模拟点击，其他方法无法定位,redmi
     if price!='':
         d(resourceId="com.xueqiu.android:id/order_input_editText")[0].set_text(price)#价格
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()

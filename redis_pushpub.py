@@ -58,11 +58,11 @@ def order_handle(msg):
     if act=='BUY':
         print(f'BUY {code}')
         ready(d,conf)
-        buy(d,code,amt,'')
+        buy(d,code,amt,'',mode=1)
     elif act=='SELL':
         print(f'SELL {code}')
         ready(d,conf)
-        sell(d,code,amt,'')
+        sell(d,code,amt,'',mode=1)
 
 ###转换不同平台的股票代码
 def transfer_code(code):

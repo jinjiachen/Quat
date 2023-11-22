@@ -28,6 +28,8 @@ def load_config():#加载配置文件
 conf=load_config()
 d=u2_connect(conf)
 token=conf.get('redis','token')
+runlevel=conf.get('trade','mode')
+print('mode:',runlevel)
 db = Database(
     host='redis-16873.c294.ap-northeast-1-2.ec2.cloud.redislabs.com',
     port=16873,
@@ -58,11 +60,11 @@ def order_handle(msg):
     if act=='BUY':
         print(f'BUY {code}')
         ready(d,conf)
-        buy(d,code,amt,'',mode=1)
+        buy(d,code,amt,'',mode=int(runlevel))
     elif act=='SELL':
         print(f'SELL {code}')
         ready(d,conf)
-        sell(d,code,amt,'',mode=1)
+        sell(d,code,amt,'',mode=int(runlevel))
 
 ###转换不同平台的股票代码
 def transfer_code(code):

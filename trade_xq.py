@@ -26,6 +26,11 @@ def load_config():#加载配置文件
 conf=load_config()
 
 
+###全局变量
+device=conf.get('trade','device')
+runlevel=conf.get('trade','mode')
+
+
 ###连接手机
 def u2_connect(conf):
     try:
@@ -49,6 +54,7 @@ def u2_connect(conf):
 
 ###菜单
 def menu():
+    print(f'设备：{device}\n运行模式：{runlevel}')
     choice=input('pos:查询股票持仓\nact:查询资金情况\nbuy:买入股票\nsell:卖出股票\nrepo:逆回购\nbuys:买入一组股票\nsells:卖出一组股票')
 #    d=u2_connect()
     if choice=='pos':
@@ -64,14 +70,14 @@ def menu():
         stock_code=input('请输入股票代码:')
         price=input('请输入买入价格：')
         number=input('请输入买入数量：')
-        buy(d,stock_code,number,price)
+        buy(d,stock_code,number,price,mode=int(runlevel))
     elif choice=='sell':
         ready(d,conf)
         stock_code=input('请输入股票代码:')
         price=input('请输入卖出价格：')
         number=input('请输入卖出数量：')
 #        sell(d,stock_code,number,price,1)
-        sell(d,stock_code,number,price)
+        sell(d,stock_code,number,price,mode=int(runlevel))
     elif choice=='repo':
         ready(d,conf)
         reverse_repo(d,mode=1)
@@ -221,8 +227,10 @@ def buy(d,stock_code,number,price='',mode=0):
     elif os.name=='nt':
         os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(stock_code))#股票名称
     time.sleep(0.5)#后面是位置点击，这里作必要的停顿
-#    d.click(1400,2900)#模拟点击，其他方法无法定位,mi11
-    d.click(984,1818)#模拟点击，其他方法无法定位,redmi
+    if device=='mi11':
+        d.click(1400,2900)#模拟点击，其他方法无法定位,mi11
+    elif device=='redmi':
+        d.click(984,1818)#模拟点击，其他方法无法定位,redmi
     if price!='':
         d(resourceId="com.xueqiu.android:id/order_input_editText")[0].set_text(price)#价格
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()
@@ -269,8 +277,10 @@ def sell(d,stock_code,number,price='',mode=0):
         os.system('D:\Downloads\scrcpy-win64-v2.1\\adb shell input text {}'.format(stock_code))#股票名称
 #        input_text(stock_code)
     time.sleep(0.5)#后面是位置点击，这里作必要的停顿
-#    d.click(1400,2900)#模拟点击，其他方法无法定位,mi11
-    d.click(984,1818)#模拟点击，其他方法无法定位,redmi
+    if device=='mi11':
+        d.click(1400,2900)#模拟点击，其他方法无法定位,mi11
+    elif device=='redmi':
+        d.click(984,1818)#模拟点击，其他方法无法定位,redmi
     if price!='':
         d(resourceId="com.xueqiu.android:id/order_input_editText")[0].set_text(price)#价格
     d(resourceId="com.xueqiu.android:id/order_input_editText")[1].clear_text()

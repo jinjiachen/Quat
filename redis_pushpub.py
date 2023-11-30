@@ -30,6 +30,7 @@ d=u2_connect(conf)
 token=conf.get('redis','token')
 runlevel=conf.get('trade','mode')
 print('mode:',runlevel)
+print('device:',device)
 db = Database(
     host='redis-16873.c294.ap-northeast-1-2.ec2.cloud.redislabs.com',
     port=16873,

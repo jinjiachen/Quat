@@ -160,7 +160,16 @@ def Menu():
             details=item.xpath('./div[2]/div/div/p/span/text()')
             print(code,act,details)
 
+###构建买卖的股票基本信息
+def stk_info(stock_name,code,price,amount):
+    '''
+    stock_name(str):股票名称
+    code(str):代码
+    price(float):价格
+    amount(int):数量
+    '''
+    res = "stockName={stock_name}&stockCode={code}&exchange={market}&securityType=3&price={price}&num={amount}&entrustType=1&channel=&deviceInfo="
+    return res
 
 if __name__=='__main__':
     Menu()
-    pass

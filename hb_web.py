@@ -35,6 +35,7 @@ def general(method,url):
 
     '''
     conf=load_config()#读取配置文件
+    s=requests.Session()
     hb_cookie=conf.get('hb','cookie')#获取配置文件中的cookie
     hb_cookie=base64.b64decode(hb_cookie).decode('ascii')
 #    print(type(hb_cookie))
@@ -49,22 +50,24 @@ def general(method,url):
                 'cookie':hb_cookie,
                 'Refer':'https://m.touker.com/trading/trade/position',
                 'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
-                'X-Requested-Width':'XMLHttpRequest'
+                'X-Requested-Width':'XMLHttpRequest',
+                'Sec-Ch-Ua':'"Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"',
+                'Sec-Ch-Ua-Platform':'Windows',
+                'Sec-Fetch-Dest':'document',
+                'Sec-Fetch-Mode':'navigate',
+                'Sec-Fetch-Site':'same-origin',
                 }
-        res=requests.get(url,headers=myheader)#发送get请求
+#        res=requests.get(url,headers=myheader,allow_redirects=False)#发送get请求
+        res=s.get(url,headers=myheader,allow_redirects=False)#发送get请求
         print(res.status_code)
         print(res.url)
+#        print([x.__dict__ for x in s.cookies])
+        print(res.cookies)
+        print(s.cookies)
 #        print(res.text)
     elif method=='post':
         myheader={
-#                'Accept':'text/html, */*; q=0.01',
-#                'Accept-Encoding':'gzip, deflate, br',
-#                'Accept-Language':'zh-CN,zh;q=0.9',
                 'cookie':hb_cookie,
-#                'Origin':'https://m.touker.com',
-#                'Refer':'https://m.touker.com/trading/trade/buy',
-#                'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
-#                'X-Requested-Width':'XMLHttpRequest'
                 'accept': 'application/json, text/javascript, */*; q=0.01',
                 'accept-encoding': 'gzip, deflate, br',
                 'accept-language': 'zh-CN,zh;q=0.9',
@@ -83,7 +86,9 @@ def general(method,url):
                 }
         buy_url='https://m.touker.com/trading/securitiesEntrust.json'
         data1 = "stockName=%E6%B2%AA%E6%B7%B1300ETF%E5%8D%8E%E5%A4%8F&stockCode=510330&exchange=SH&securityType=3&price=3.506&num=1100&entrustType=1&channel=&deviceInfo="
-        res=requests.post(buy_url,headers=myheader,data=data1)
+#        res=requests.post(buy_url,headers=myheader,data=data1)
+        res=s.post(buy_url,headers=myheader,data=data1)
+        print(s.cookies)
 #        res=requests.post(buy_url,headers=myheader,data=data1,verify=False,allow_redirects=False)
         print(res.status_code)
 #        print(data)

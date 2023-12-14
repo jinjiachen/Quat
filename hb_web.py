@@ -85,7 +85,7 @@ def general(method,url):
                 'Host': 'm.touker.com'
                 }
         buy_url='https://m.touker.com/trading/securitiesEntrust.json'
-        data1 = "stockName=%E6%B2%AA%E6%B7%B1300ETF%E5%8D%8E%E5%A4%8F&stockCode=510330&exchange=SH&securityType=3&price=3.506&num=1100&entrustType=1&channel=&deviceInfo="
+        data1 = "stockName=&stockCode=159601&exchange=SZ&securityType=3&price=0.686&num=4600&entrustType=1&channel=&deviceInfo="
 #        res=requests.post(buy_url,headers=myheader,data=data1)
         res=s.post(buy_url,headers=myheader,data=data1)
         print(s.cookies)
@@ -96,54 +96,68 @@ def general(method,url):
 
     return res
 
+
+###查询持仓
+def get_position():
+    position_url='https://m.touker.com/trading/queryHoldPosition.json?positionType=total&_=1701322363576'#持仓明细
+    res=general('get',position_url)
+    selector=etree.HTML(res.text)
+    items=selector.xpath('//div[@class="position-item"]')
+    positions=[]
+    for item in items:
+        total_info=[]
+#            print(etree.tostring(item))
+        part1=item.xpath('./div/div/div/text()')
+        part2=item.xpath('./div/div/div/div/text()')
+        total_info=part1[0:7]+part2
+#            print(part1[0:7]+part2)
+#            print('='*50)
+        positions.append(total_info)
+    return positions
+
+
+###获取账户信息
+def get_account():
+    url='https://m.touker.com/trading/baseInfo.json?_=1701498696248'
+    res=general('get',url)
+    base_info=json.loads(res.text)
+    return base_info
+
+
+###查询委托成交
+def consult(act):
+    '''
+    act(str):查询的动作，即历史委托(lswt)，今日委托(jswt),历史成交(lscj),今日成交(jrcj)等
+    '''
+    consult_url=f'https://m.touker.com/trading/trade/entrustList?orderType={act}'
+    res=general('get',consult_url)
+    selector=etree.HTML(res.text)
+    items=selector.xpath('//div[@class="revoke-area"]/a')
+    deals=[]
+    for item in items:
+        code=item.xpath('./div/p/text()')
+        act=item.xpath('./div[2]/button/text()')
+        details=item.xpath('./div[2]/div/div/p/span/text()')
+        print(code,act,details)
+
+
+###菜单
 def Menu():
     choice=input('1.position\n2.历史成交\n3.今日成交\n4.帐户信息\n5.今日委托')
     if choice=='1':
 #        position_url=f'https://m.touker.com/trading/trade/trading-sub/position?_=1701162501444'#构建get请求的地址
-        position_url='https://m.touker.com/trading/queryHoldPosition.json?positionType=total&_=1701322363576'#持仓明细
-        res=general('get',position_url)
-        selector=etree.HTML(res.text)
-        items=selector.xpath('//div[@class="position-item"]')
-        positions=[]
-        for item in items:
-            total_info=[]
-#            print(etree.tostring(item))
-            part1=item.xpath('./div/div/div/text()')
-            part2=item.xpath('./div/div/div/div/text()')
-            total_info=part1[0:7]+part2
-#            print(part1[0:7]+part2)
-#            print('='*50)
-            positions.append(total_info)
+        positions=get_position()
         for i,stock in enumerate(positions):
             print(f'{i+1}-->{stock}')
     elif choice=='2':
-        consult_url='https://m.touker.com/trading/trade/entrustList?orderType=lscj'
-        res=general('get',consult_url)
-        selector=etree.HTML(res.text)
-        items=selector.xpath('//div[@class="revoke-area"]/a')
-#        print(items)
-        deals=[]
-        for item in items:
-            code=item.xpath('./div/p/text()')
-            act=item.xpath('./div[2]/button/text()')
-            details=item.xpath('./div[2]/div/div/p/span/text()')
-            print(code,act,details)
-
+        consult('lscj')
     elif choice=='3':
-        consult_url='https://m.touker.com/trading/trade/entrustList?orderType=jrcj'
-        res=general('get',consult_url)
-        selector=etree.HTML(res.text)
-        items=selector.xpath('//div[@class="revoke-area"]/a')
-        deals=[]
-        for item in items:
-            code=item.xpath('./div/p/text()')
-            act=item.xpath('./div[2]/button/text()')
-            details=item.xpath('./div[2]/div/div/p/span/text()')
-            print(code,act,details)
+        consult('jrcj')
     elif choice=='4':
-        url='https://m.touker.com/trading/baseInfo.json?_=1701498696248'
-        res=general('get',url)
-        base_info=json.loads(res.text)
+        base_info=get_account()
+#        url='https://m.touker.com/trading/baseInfo.json?_=1701498696248'
+#        res=general('get',url)
+#        base_info=json.loads(res.text)
         print(base_info)
         assets=base_info['totalAssets']
         market_values=base_info['totalMarketValue']
@@ -154,16 +168,8 @@ def Menu():
     elif choice=='buy':
         general('post','')
     elif choice=='5':
-        consult_url='https://m.touker.com/trading/trade/entrustList?orderType=jrwt'
-        res=general('get',consult_url)
-        selector=etree.HTML(res.text)
-        items=selector.xpath('//div[@class="revoke-area"]/a')
-        deals=[]
-        for item in items:
-            code=item.xpath('./div/p/text()')
-            act=item.xpath('./div[2]/button/text()')
-            details=item.xpath('./div[2]/div/div/p/span/text()')
-            print(code,act,details)
+        consult('jrwt')
+
 
 ###构建买卖的股票基本信息
 def stk_info(stock_name,code,price,amount):

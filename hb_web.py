@@ -7,7 +7,7 @@ Date: 2023-11-24
 
 import urllib
 import requests
-import os
+import os,re
 import base64,json
 from lxml import etree
 from configparser import ConfigParser
@@ -27,7 +27,8 @@ def load_config():#加载配置文件
     return conf
 
 
-def general(method,url):
+###模拟get，post请求
+def general(method,url,data=''):
     '''
     功能：推送消息
     title:消息的标题
@@ -61,9 +62,10 @@ def general(method,url):
         res=s.get(url,headers=myheader,allow_redirects=False)#发送get请求
         print(res.status_code)
         print(res.url)
+        #以下是获取cookie的尝试
 #        print([x.__dict__ for x in s.cookies])
-        print(res.cookies)
-        print(s.cookies)
+#        print(res.cookies)
+#        print(s.cookies)
 #        print(res.text)
     elif method=='post':
         myheader={
@@ -85,9 +87,12 @@ def general(method,url):
                 'Host': 'm.touker.com'
                 }
         buy_url='https://m.touker.com/trading/securitiesEntrust.json'
-        data1 = "stockName=&stockCode=159601&exchange=SZ&securityType=3&price=0.686&num=4600&entrustType=1&channel=&deviceInfo="
+        #下面两条为抓取的实际示例
+#        data_buy = "stockName=&stockCode=159601&exchange=SZ&securityType=3&price=0.686&num=4600&entrustType=1&channel=&deviceInfo="
+#       data_sell="stockName=%E6%81%92%E7%94%9F%E4%BA%92%E8%81%94%E7%BD%91ETF&stockCode=513330&exchange=SH&securityType=3&price=0.370&num=100&entrustType=2&channel=&deviceInfo="
+
 #        res=requests.post(buy_url,headers=myheader,data=data1)
-        res=s.post(buy_url,headers=myheader,data=data1)
+        res=s.post(buy_url,headers=myheader,data=data)
         print(s.cookies)
 #        res=requests.post(buy_url,headers=myheader,data=data1,verify=False,allow_redirects=False)
         print(res.status_code)
@@ -141,6 +146,17 @@ def consult(act):
         print(code,act,details)
 
 
+
+###下单
+def myorder(act,data):
+    if act=='buy':
+        buy_url='https://m.touker.com/trading/securitiesEntrust.json'
+    elif act=='sell':
+        sel_url=''
+    general('post',data)
+
+    pass
+
 ###菜单
 def Menu():
     choice=input('1.position\n2.历史成交\n3.今日成交\n4.帐户信息\n5.今日委托')
@@ -171,16 +187,33 @@ def Menu():
         consult('jrwt')
 
 
-###构建买卖的股票基本信息
-def stk_info(stock_name,code,price,amount):
+###构建买卖的股票基本信息并下单
+def order(act,stock_name,code,price,amount):
     '''
+    act(str):买卖
     stock_name(str):股票名称
     code(str):代码
     price(float):价格
     amount(int):数量
     '''
-    res = "stockName={stock_name}&stockCode={code}&exchange={market}&securityType=3&price={price}&num={amount}&entrustType=1&channel=&deviceInfo="
-    return res
+    #基于股票代码,判断市场类型
+#    if 'sh' or 'SH' or 'XSHG' in stock_name:
+    if 'XSHG' in code:
+        market='SH'
+    elif 'XSHE' in code:
+        market='SZ'
+    #提取code中的数字部分
+    code=re.search('\d+',code).group()
+    #这个信息中包含了buy/sell的动作,1:buy,2:sell
+    if act=='BUY':
+        data = f"stockName={stock_name}&stockCode={code}&exchange={market}&securityType=3&price={price}&num={amount}&entrustType=1&channel=&deviceInfo="
+    elif act=='SELL':
+        data = f"stockName={stock_name}&stockCode={code}&exchange={market}&securityType=3&price={price}&num={amount}&entrustType=2&channel=&deviceInfo="
+    print(data)
+
+    url='https://m.touker.com/trading/securitiesEntrust.json'
+#    general('post',url,data)
+    
 
 if __name__=='__main__':
     Menu()

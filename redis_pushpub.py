@@ -9,6 +9,7 @@ import json,os
 from walrus import Database
 from configparser import ConfigParser
 from trade_xq import *
+from hb_web import *
 
 
 def load_config():#加载配置文件
@@ -46,11 +47,12 @@ def on_redis_message(**item):
             raise StopIteration
         else:
 #            print(msg)
-            order_handle(msg)
-            pass
+            order_xq(msg)
+#            order_hb(msg)
 
 
-def order_handle(msg):
+###用trade_xq来下单
+def order_xq(msg):
     # 请在此处自己coding, 根据msg给交易端下单
     print(f'正在处理{msg}')
     act=msg['action']
@@ -66,6 +68,21 @@ def order_handle(msg):
         print(f'SELL {code}')
         ready(d,conf)
         sell(d,code,amt,'',mode=int(runlevel))
+
+
+###用hb_web来下单
+def order_hb(msg):
+    # 请在此处自己coding, 根据msg给交易端下单
+    print(f'正在处理{msg}')
+    act=msg['action']
+    code=msg['code']
+    pct=msg['pct']
+    amt=msg['amount']
+    if act=='BUY':
+        order(act,'',code,'',amt)
+    elif act=='SELL':
+        order(act,'',code,'',amt)
+
 
 ###转换不同平台的股票代码
 def transfer_code(code):

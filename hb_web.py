@@ -7,7 +7,7 @@ Date: 2023-11-24
 
 import urllib
 import requests
-import os,re
+import os,re,time
 import base64,json
 from lxml import etree
 from configparser import ConfigParser
@@ -182,7 +182,15 @@ def Menu():
         today_profit=base_info['todayProfit']
 #        print(assets,market_values,available,profits,today_profit)
     elif choice=='buy':
-        general('post','')
+        code=input('请输入股票代码')
+        price=input('请输入价格')
+        amount=input('请输入数量')
+        order('BUY','',code,price,amount)
+    elif choice=='sell':
+        code=input('请输入股票代码')
+        price=input('请输入价格')
+        amount=input('请输入数量')
+        order('SELL','',code,price,amount)
     elif choice=='5':
         consult('jrwt')
 
@@ -212,7 +220,21 @@ def order(act,stock_name,code,price,amount):
     print(data)
 
     url='https://m.touker.com/trading/securitiesEntrust.json'
-#    general('post',url,data)
+    general('post',url,data)
+
+
+###保持登录状态
+def keep_login():
+    url='https://m.touker.com/trading/whetherNeedValidatePwd.json'
+    res=requests.post(url)
+    print(res.status_code)
+    print(res.text)
+
+
+def check_status():
+    while True:
+        keep_login()
+        time.sleep(2)
     
 
 if __name__=='__main__':

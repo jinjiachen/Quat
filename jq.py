@@ -77,8 +77,8 @@ def login(driver,username,passwd,dry_run='NO'):
     #进行登录
     driver.find_element(By.XPATH,'//button[@class="banner-login show-dialog-login"]').click()#点击登录
     time.sleep(1)
-    driver.find_element(By.XPATH,'//input[@name="CyLoginForm[username]"]').send_keys(username)
-    driver.find_element(By.XPATH,'//input[@name="CyLoginForm[pwd]"]').send_keys(passwd)
+    driver.find_element(By.XPATH,'//input[@name="username"]').send_keys(username)
+    driver.find_element(By.XPATH,'//input[@name="pwd"]').send_keys(passwd)
     driver.find_element(By.XPATH,'//button[@class="login-submit btnPwdSubmit"]').click()
     time.sleep(1)
 

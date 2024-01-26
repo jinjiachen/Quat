@@ -12,10 +12,13 @@ def daily_combo():
     pro=Initial()
     while True:
         now=time.strftime("%Y%m%d") #当前日期
+        df=pro.trade_cal(start_date=now,end_date=now)
         if is_updated(pro,'stock',now)=='YES':#交易日
+#        if df['is_open'][0]==1:#交易日
             run_daily()
             break
-        elif is_updated(pro,'stock',now)=='NO':#非交易日
+#        elif is_updated(pro,'stock',now)=='NO':#非交易日
+        elif df['is_open'][0]==0:#非交易日
             break
 
 def daily_index():
@@ -23,8 +26,10 @@ def daily_index():
     pro=Initial()
     while True:
         now=time.strftime("%Y%m%d") #当前日期
+        df=pro.trade_cal(start_date=now,end_date=now)
         try:
-            if is_updated(pro,'index',now)=='YES':#交易日
+#            if is_updated(pro,'index',now)=='YES':#交易日
+            if df['is_open'][0]==1:#交易日
                 pass
                 print('获取指数信息')
                 res=statistics(pro,now,ptf='NO')
@@ -40,7 +45,8 @@ def daily_index():
                 print('构造的消息：',message)
                 notify('post',f'日报{now}',"\n".join(message))
                 break
-            elif is_updated(pro,'index',now)=='NO':#非交易日
+#            elif is_updated(pro,'index',now)=='NO':#非交易日
+            elif df['is_open'][0]==0:#非交易日
                 break
         except:
             print('请求出错正在重试！')

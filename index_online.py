@@ -76,7 +76,7 @@ def live_index():
     zz1000_pct=(res['000852']['now']/res['000852']['close']-1)*100#计算中证1000涨跌幅
     zz1000_pct=round(zz1000_pct,2)#圆整
     zz500=res['000905']['now']
-    zz500_pct=(res['000905']['now']/res['000905']['close']-1)*100#计算中证1000涨跌幅
+    zz500_pct=(res['000905']['now']/res['000905']['close']-1)*100#计算中证500涨跌幅
     zz500_pct=round(zz500_pct,2)#圆整
     return {'total_vol':total_vol,
             'sh':sh,

@@ -72,10 +72,10 @@ if __name__=='__main__':
     while True:
         print('当前时间：',time.strftime("%H:%M:%S"))
         if time.strftime("%H:%M:%S")=='15:00:30':
-#        if time.strftime("%H:%M:%S")=='16:43:00':
             time.sleep(3)
             print('go!!!')
             index_now()
+        if time.strftime("%H:%M:%S")=='16:00:00':
             daily_combo()
             daily_index()
         if time.strftime("%H:%M:%S")=='06:00:00':

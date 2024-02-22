@@ -37,17 +37,19 @@ def u2_connect(conf):
         print('正在尝试有线连接!')
         d=u2.connect()
         print(d.info)
+#    except:
+#        print('正在尝试无线连接!')
+#        addr=conf.get('adb','ip')
+#        cmd=f'adb connect {addr}'
+#        print(cmd)
+#        if os.name=='posix':
+#            os.system(cmd)
+#        elif os.name=='nt':
+#            os.system(f'D:\Downloads\scrcpy-win64-v2.1\\{cmd}')
+#        d=u2.connect(addr)
+#        print(d.info)
     except:
-        print('正在尝试无线连接!')
-        addr=conf.get('adb','ip')
-        cmd=f'adb connect {addr}'
-        print(cmd)
-        if os.name=='posix':
-            os.system(cmd)
-        elif os.name=='nt':
-            os.system(f'D:\Downloads\scrcpy-win64-v2.1\\{cmd}')
-        d=u2.connect(addr)
-        print(d.info)
+        print('有线连接失败')
     return d
 
 

@@ -40,9 +40,9 @@ def Driver():
 #    options = webdriver.ChromeOptions()#适用3.8以下
     options = Options()
 #    options.add_argument("--proxy-server=http://192.168.2.108:8889")
-#    options.add_argument("--no-proxy-server")
+    options.add_argument("--no-proxy-server")
     options.add_argument("--headless")
-#    options.add_argument('user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"')
+    options.add_argument('user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"')
 #    options.add_argument('user-agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36"')
 #    options.add_argument('user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36')
     options.add_argument('log-level=3') #INFO = 0 WARNING = 1 LOG_ERROR = 2 LOG_FATAL = 3 default is 0
@@ -79,8 +79,8 @@ def login(driver,username,passwd,dry_run='NO'):
     #进行登录
     driver.find_element(By.XPATH,'//button[@class="banner-login show-dialog-login"]').click()#点击登录
     time.sleep(1)
-    driver.find_element(By.XPATH,'//input[@name="CyLoginForm[username]"]').send_keys(username)
-    driver.find_element(By.XPATH,'//input[@name="CyLoginForm[pwd]"]').send_keys(passwd)
+    driver.find_element(By.XPATH,'//input[@name="username"]').send_keys(username)
+    driver.find_element(By.XPATH,'//input[@name="pwd"]').send_keys(passwd)
     driver.find_element(By.XPATH,'//button[@class="login-submit btnPwdSubmit"]').click()
     time.sleep(1)
 
@@ -108,7 +108,7 @@ def login(driver,username,passwd,dry_run='NO'):
     i=random.randint(3,num)
     print(f'主题总数：{num},阅读随机文章{i}')
     time.sleep(1)
-    driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]')[i].click()#随机点击文章查看
+    driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]')[i-1].click()#随机点击文章查看
     time.sleep(9)
     driver=close_update(driver)
     driver.get(center)#回到积分中心

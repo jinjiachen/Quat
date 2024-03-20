@@ -79,7 +79,8 @@ if __name__=='__main__':
             daily_combo()
             daily_index()
         if time.strftime("%H:%M:%S")=='06:00:00':
-            auto_check()
+            if os.name=='nt':
+                auto_check()
 
 #    schedule(daily_index,'15:15:00')
 #    schedule(daily_combo,'15:15:00')

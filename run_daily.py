@@ -2,7 +2,7 @@
 
 #import stock_online
 from stock_online import *
-import time
+import time,os
 from function import is_updated,schedule
 from index_online import statistics,live_index
 from notification import notify

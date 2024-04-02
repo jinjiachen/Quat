@@ -6,7 +6,7 @@ from lxml import etree
 from configparser import ConfigParser
 import os
 import time
-import json
+import json,base64
 from function import cal_pcts
 
 
@@ -267,6 +267,7 @@ def my_stocks():#获取自选股票的持仓
 if __name__=='__main__':
     conf=load_config()
     login_cookies=conf.get('cookies','xq')
+    login_cookies=base64.b64decode(login_cookies).decode('ascii')#base64解码后的cookie
     while True:
         Menu()
         input('press ANY THING to contine!')

@@ -205,11 +205,14 @@ def order(act,stock_name,code,price,amount):
     amount(int):数量
     '''
     #基于股票代码,判断市场类型
-#    if 'sh' or 'SH' or 'XSHG' in stock_name:
-    if 'XSHG' in code:
+    words_sh=['sh','XSHG']
+    words_sz=['sz','XSHG','XSHE']
+    if any(suffix in code for suffix in words_sh):
         market='SH'
-    elif 'XSHE' in code:
+#        print('市场为',market)
+    elif any(suffix in code for suffix in words_sz):
         market='SZ'
+#        print('市场为',market)
     #提取code中的数字部分
     code=re.search('\d+',code).group()
     #这个信息中包含了buy/sell的动作,1:buy,2:sell

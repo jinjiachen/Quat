@@ -61,7 +61,7 @@ def Menu():
             except:
                 print('操作出错')
     elif choice=='da':
-        xq_post('delete',my_stocks(login_cookies))#删除所有雪球自选股
+        xq_post(login_cookies,'delete',my_stocks(login_cookies))#删除所有雪球自选股
     elif choice=='as':
         file_path=input('输入文件路径或文件夹路径:')
         if os.name=='posix':
@@ -83,7 +83,7 @@ def Menu():
                     for stock in stocks:
                         stocklist.append(stock)
 #                print(stocklist)
-        xq_post('add',stocklist)#增加雪球自选股
+        xq_post(login_cookies,'add',stocklist)#增加雪球自选股
 
 
 

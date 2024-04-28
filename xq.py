@@ -61,7 +61,7 @@ def Menu():
             except:
                 print('操作出错')
     elif choice=='da':
-        xq_post('delete',my_stocks())#删除所有雪球自选股
+        xq_post('delete',my_stocks(login_cookies))#删除所有雪球自选股
     elif choice=='as':
         file_path=input('输入文件路径或文件夹路径:')
         if os.name=='posix':
@@ -203,7 +203,12 @@ def position(user,quotation):#get position for specific combo
         my_pos.append(str(index+1)+'. '+stock_code[index]+'\t'+stock_name[index]+'\t'+pct[index])
     return [my_pos,pcts_overall]#返回一个列表，分别为每个股票涨跌幅和综合涨幅
 
-def xq_post(method,stocklist):#模拟雪球的请求
+def xq_post(login_cookies,method,stocklist):#模拟雪球的请求
+    '''
+    login_cookies(str):雪球的cookie
+    method(str):delete,add
+    stocklist(list):股票的列表
+    '''
     header={
                 'Accept':'application/json, text/plain, */*',
                 'Accept-Encoding':'gzip, deflate, br',
@@ -241,7 +246,10 @@ def xq_post(method,stocklist):#模拟雪球的请求
 #            print('连接超时，正在重新连接！')
 
 
-def my_stocks():#获取自选股票的持仓
+def my_stocks(login_cookies):#获取自选股票的持仓
+    '''
+    login_cookies(str):雪球的cookie
+    '''
     url='https://stock.xueqiu.com/v5/stock/portfolio/stock/list.json?size=1000&category=1&pid=-1'
     header={
             'Accept':'application/json, text/plain, */*',

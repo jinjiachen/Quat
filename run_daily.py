@@ -70,20 +70,24 @@ def index_now():
 
 ###自动同步当天的股票结果到雪球自选
 def xq_sync(login_cookies):
-    xq_post(login_cookies,'delete',my_stocks(login_cookies))#删除所有雪球自选股
-    stocklist=[]
-    today=datetime.now().strftime('%Y%m%d')
-    file_path='/usr/local/src/Quat/result/'+today
-    for root,dirs,files in os.walk(file_path,topdown=False):#遍历路径下的文件和文件夹，返回root,dirs,files的三元元组
-        ###读取所有文件中的股票信息并存入stocklist
-        for file in files:#遍历所有文件
-            print(os.path.abspath(file_path+'/'+file))
-            file=os.path.abspath(file_path+'/'+file)#构建文件的绝对路径
-            stocks=get_code(file)#获取文件中的股票信息
-            ###存储股票信息
-            for stock in stocks:
-                stocklist.append(stock)
-    xq_post(login_cookies,'add',stocklist)#增加雪球自选股
+    try:
+        xq_post(login_cookies,'delete',my_stocks(login_cookies))#删除所有雪球自选股
+        stocklist=[]
+        today=datetime.now().strftime('%Y%m%d')
+        file_path='/usr/local/src/Quat/result/'+today
+        for root,dirs,files in os.walk(file_path,topdown=False):#遍历路径下的文件和文件夹，返回root,dirs,files的三元元组
+            ###读取所有文件中的股票信息并存入stocklist
+            for file in files:#遍历所有文件
+                print(os.path.abspath(file_path+'/'+file))
+                file=os.path.abspath(file_path+'/'+file)#构建文件的绝对路径
+                stocks=get_code(file)#获取文件中的股票信息
+                ###存储股票信息
+                for stock in stocks:
+                    stocklist.append(stock)
+        xq_post(login_cookies,'add',stocklist)#增加雪球自选股
+        notify('post','同步持仓','已完成同步')
+    except:
+        notify('post','同步持仓','同步失败，可能是cookie过期')
 
 if __name__=='__main__':
     conf=load_config()

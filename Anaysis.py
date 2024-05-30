@@ -42,21 +42,21 @@ def summary(file_path):#对结果文件总结
     for stock_info in res:
         splice=stock_info.split('\t')
 #        print(len(splice))
-        if len(splice)==8:
+        if len(splice)==10:
             bankuai.append(splice[4])
-            if splice[5]=='主板':
+            if splice[6]=='主板':
                 ZB+=1
                 if 'SZ' in splice[0]:
                     SZ+=1
                 elif 'SH' in splice[0]:
                     SH+=1
-            elif splice[5]=='创业板':
+            elif splice[6]=='创业板':
                 CYB+=1
-            elif splice[5]=='科创板':
+            elif splice[6]=='科创板':
                 KCB+=1
-            elif splice[5]=='中小板':
+            elif splice[6]=='中小板':
                 ZXB+=1
-        elif len(splice)==6 and '北交所' in stock_info:
+        elif len(splice)==8 and '北交所' in stock_info:
             BJS+=1
     
     bankuai_info=pd.value_counts(bankuai)#统计板块次数

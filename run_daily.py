@@ -2,7 +2,7 @@
 
 #import stock_online
 from stock_online import *
-import time,os,base64
+import time,os,base64,sys
 from datetime import datetime
 from function import is_updated,schedule
 from index_online import statistics,live_index
@@ -93,20 +93,26 @@ if __name__=='__main__':
     conf=load_config()
     login_cookies=conf.get('cookies','xq')
     login_cookies=base64.b64decode(login_cookies).decode('ascii')#base64解码后的cookie
-    index_now()
-    while True:
-        print('当前时间：',time.strftime("%H:%M:%S"))
-        if time.strftime("%H:%M:%S")=='15:00:30':
-            time.sleep(3)
-            print('go!!!')
-            index_now()
-        if time.strftime("%H:%M:%S")=='16:00:00':
-            daily_combo()
-            daily_index()
-            xq_sync(login_cookies)#同步当天结果到雪球自选
-        if time.strftime("%H:%M:%S")=='06:00:00':
-            if os.name=='nt':
-                auto_check()
+    if len(sys.argv)=="1":
+        while True:
+            print('当前时间：',time.strftime("%H:%M:%S"))
+            if time.strftime("%H:%M:%S")=='15:00:30':
+                time.sleep(3)
+                print('go!!!')
+                index_now()
+            if time.strftime("%H:%M:%S")=='16:00:00':
+                daily_combo()
+                daily_index()
+                xq_sync(login_cookies)#同步当天结果到雪球自选
+            if time.strftime("%H:%M:%S")=='06:00:00':
+                if os.name=='nt':
+                    auto_check()
+    elif sys.argv[1]=="index":
+        index_now()
+    elif sys.argv[1]=="combo":
+        daily_combo()
+        daily_index()
+        xq_sync(login_cookies)#同步当天结果到雪球自选
 
 #    schedule(daily_index,'15:15:00')
 #    schedule(daily_combo,'15:15:00')

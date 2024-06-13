@@ -143,7 +143,8 @@ def consult(act):
         code=item.xpath('./div/p/text()')
         act=item.xpath('./div[2]/button/text()')
         details=item.xpath('./div[2]/div/div/p/span/text()')
-        print(code,act,details)
+        status=item.xpath('./div[2]/div/p[2]/text()')
+        print(code,act,details,status)
 
 
 

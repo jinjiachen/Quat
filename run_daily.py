@@ -113,6 +113,8 @@ if __name__=='__main__':
         daily_combo()
         daily_index()
         xq_sync(login_cookies)#同步当天结果到雪球自选
+    elif sys.argv[1]=="sync":
+        xq_sync(login_cookies)#同步当天结果到雪球自选
 
 #    schedule(daily_index,'15:15:00')
 #    schedule(daily_combo,'15:15:00')

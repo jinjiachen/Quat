@@ -156,11 +156,9 @@ def myorder(act,data):
         sel_url=''
     general('post',data)
 
-    pass
-
 ###菜单
 def Menu():
-    choice=input('pos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托')
+    choice=input('pos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nt:做T')
     if choice=='pos':
 #        position_url=f'https://m.touker.com/trading/trade/trading-sub/position?_=1701162501444'#构建get请求的地址
         positions=get_position()
@@ -194,6 +192,12 @@ def Menu():
         order('SELL','',code,price,amount)
     elif choice=='jrwt':
         consult('jrwt')
+    elif choice=='t':
+        code=input('请输入股票代码')
+        price1=input('请输入价格1')
+        price2=input('请输入价格2')
+        amount=input('请输入数量')
+        trade_T(code,price1,price2,amount)
 
 
 ###构建买卖的股票基本信息并下单
@@ -245,6 +249,19 @@ def check_status():
         keep_login()
         time.sleep(2)
     
+###高买高卖做T
+def trade_T(code,price1,price2,amount):
+    '''
+    code(str):股票代码
+    price1(float):股价
+    price2(float):股价
+    amount:(int):股票数量
+    '''
+#def order(act,stock_name,code,price,amount):
+    price_up=max(price1,price2)
+    price_down=min(price1,price2)
+    order('BUY','',code,price_down,amount)
+    order('SELL','',code,price_up,amount)
 
 if __name__=='__main__':
     Menu()

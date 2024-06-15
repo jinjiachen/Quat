@@ -160,17 +160,17 @@ def myorder(act,data):
 
 ###菜单
 def Menu():
-    choice=input('1.position\n2.历史成交\n3.今日成交\n4.帐户信息\n5.今日委托')
-    if choice=='1':
+    choice=input('pos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托')
+    if choice=='pos':
 #        position_url=f'https://m.touker.com/trading/trade/trading-sub/position?_=1701162501444'#构建get请求的地址
         positions=get_position()
         for i,stock in enumerate(positions):
             print(f'{i+1}-->{stock}')
-    elif choice=='2':
+    elif choice=='lscj':
         consult('lscj')
-    elif choice=='3':
+    elif choice=='jrcj':
         consult('jrcj')
-    elif choice=='4':
+    elif choice=='act':
         base_info=get_account()
 #        url='https://m.touker.com/trading/baseInfo.json?_=1701498696248'
 #        res=general('get',url)
@@ -192,7 +192,7 @@ def Menu():
         price=input('请输入价格')
         amount=input('请输入数量')
         order('SELL','',code,price,amount)
-    elif choice=='5':
+    elif choice=='jrwt':
         consult('jrwt')
 
 
@@ -233,6 +233,11 @@ def keep_login():
     res=requests.post(url)
     print(res.status_code)
     print(res.text)
+    url_unreadmsg='https://m.touker.com/trading/queryUnReadMessageCount.json?channel=null&_=1718437688080'
+    res=requests.post(url_unreadmsg)
+    print(res.status_code)
+    print(res.text)
+
 
 
 def check_status():

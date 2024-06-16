@@ -198,6 +198,9 @@ def Menu():
         price2=input('请输入价格2')
         amount=input('请输入数量')
         trade_T(code,price1,price2,amount)
+    elif choice=='revoke':
+        code=input('请输入股票代码')
+        revoke(code)
 
 
 ###构建买卖的股票基本信息并下单
@@ -222,12 +225,13 @@ def order(act,stock_name,code,price,amount):
     code=re.search('\d+',code).group()
     #这个信息中包含了buy/sell的动作,1:buy,2:sell
     if act=='BUY':
+        url='https://m.touker.com/trading/securitiesEntrust.json'
         data = f"stockName={stock_name}&stockCode={code}&exchange={market}&securityType=3&price={price}&num={amount}&entrustType=1&channel=&deviceInfo="
     elif act=='SELL':
+        url='https://m.touker.com/trading/securitiesEntrust.json'
         data = f"stockName={stock_name}&stockCode={code}&exchange={market}&securityType=3&price={price}&num={amount}&entrustType=2&channel=&deviceInfo="
+        
     print(data)
-
-    url='https://m.touker.com/trading/securitiesEntrust.json'
     general('post',url,data)
 
 
@@ -262,6 +266,49 @@ def trade_T(code,price1,price2,amount):
     price_down=min(price1,price2)
     order('BUY','',code,price_down,amount)
     order('SELL','',code,price_up,amount)
+
+###撤回委托
+def revoke(code):
+    conf=load_config()#读取配置文件
+    s=requests.Session()
+    hb_cookie=conf.get('hb','cookie')#获取配置文件中的cookie
+    hb_cookie=base64.b64decode(hb_cookie).decode('ascii')
+    myheader={
+            'cookie':hb_cookie,
+            'accept': 'application/json, text/javascript, */*; q=0.01',
+            'accept-encoding': 'gzip, deflate, br,zstd',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'origin': 'https://m.touker.com',
+            'Priority':'u=1,i',
+            'referer': 'https://m.touker.com/trading/trade/revoke',
+            'sec-ch-ua': '"Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': "Windows",
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-origin',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+            'x-requested-with': 'XMLHttpRequest',
+            }
+    #基于股票代码,判断市场类型
+    words_sh=['sh','XSHG']
+    words_sz=['sz','XSHG','XSHE']
+    if any(suffix in code for suffix in words_sh):
+        market='SH'
+#        print('市场为',market)
+    elif any(suffix in code for suffix in words_sz):
+        market='SZ'
+#        print('市场为',market)
+    #提取code中的数字部分
+    code=re.search('\d+',code).group()
+    url='https://m.touker.com/trading/revokeCommit.json'
+    entrustcode=input('请输入信任代码')
+    data=f'exchange={market}&stockCode={code}&entrustCode={entrustcode}'
+    res=s.post(url,headers=myheader,data=data)
+    print(data)
+    print(res.status_code)
+#    general('post',url,data)
 
 if __name__=='__main__':
     Menu()

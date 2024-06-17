@@ -41,12 +41,14 @@ def summary(file_path,ptf='NO'):#对结果文件总结
     bankuai=[]#收集板块信息
     for stock_info in res:
         splice=stock_info.split('\t')
+#        print('总长度为',len(splice))
         if ptf=='YES':
             print(len(splice))
             print('正在处理',splice)
             for i,j in enumerate(splice):
                 print(str(i)+'-->'+j)
-        if len(splice)==10:
+                print(len(j))
+        if len(splice)==9 or len(splice)==11:
             bankuai.append(splice[4])
             if splice[6]=='主板':
                 ZB+=1

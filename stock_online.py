@@ -57,6 +57,7 @@ def Menu():
     print("4.趋势模型")
     print("5.向上跳空缺口")
     print("6.指定PE范围内的股票")
+    print("7.收盘价等于最高价的股票")
     print("all:以上所有模型")
     choice=input()
     if choice=="1":
@@ -112,6 +113,12 @@ def Menu():
         Pmin=input('请输入PE下限:')
         filename=f'Low_P{now}.txt'
         result=low_p(date,Pmax,Pmin)
+        content=SaveResult(filename,result) #保存结果
+        notify('post',filename,"".join(content))
+    elif choice=='7':
+        date=input('请输入查询日期:')
+        filename=f'close and high_{now}.txt'
+        result=close_eq_high(date)
         content=SaveResult(filename,result) #保存结果
         notify('post',filename,"".join(content))
     elif choice=='all':
@@ -536,6 +543,12 @@ def double_ma(freq,ma_s,ma_l,duration):
 def run_daily():
     now=time.strftime("%Y%m%d") #当前日期
 
+    #收盘价为最高价组合
+    result=close_eq_high(date)
+    filename=f'close and high_{now}.txt'
+    content=SaveResult(filename,result) #保存结果
+    notify('post',filename,"".join(content))
+
     #Quekou组合
     result=Quekou()
     filename=f'Quekou_{now}.txt'
@@ -579,6 +592,18 @@ def run_daily():
     filename=f'Dcross13_21_30_2_{now}.txt'
     content=SaveResult(filename,result) #保存结果
     notify('post',filename,"".join(content))
+
+
+###收盘价等于最高价的股票
+def close_eq_high(date):
+    '''
+    date(str):交易日期，如20240619
+    '''
+    df=pro.daily(trade_date=date)#当天的交易数据
+    close=df['close']
+    high=df['high']
+    result=df[close==high]
+    return result['ts_code']
 
 
 

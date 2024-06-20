@@ -603,7 +603,8 @@ def close_eq_high(date):
     close=df['close']
     high=df['high']
     result=df[close==high]
-    return result['ts_code']
+    codes=silter(result['ts_code'])#过滤ST
+    return codes
 
 
 

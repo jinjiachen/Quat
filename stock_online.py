@@ -544,7 +544,7 @@ def run_daily():
     now=time.strftime("%Y%m%d") #当前日期
 
     #收盘价为最高价组合
-    result=close_eq_high(date)
+    result=close_eq_high(now)
     filename=f'close and high_{now}.txt'
     content=SaveResult(filename,result) #保存结果
     notify('post',filename,"".join(content))

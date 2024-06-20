@@ -32,10 +32,11 @@ def Stocklist(mkt):#获取股票列表
 ###过滤ST股票并记录
 def filter(sl):
     '''
-    sl:stocklist,股票列表
+    sl(dataframe):stocklist,股票列表
     '''
     ST=[]#存储ST股
     for stock_name in sl['name']:
+#        print(f'正在处理{stock_name}')
         if 'ST' in stock_name:
             ST.append(stock_name)#记录ST
             sl.drop(sl[sl['name']==stock_name].index,inplace=True)#用drop方法删除对应行数
@@ -167,6 +168,9 @@ def SaveResult(filename,result):
     return content+res_tolist
 
 def StockDetails(ts_code):
+    '''
+    ts_code(str):股票代码
+    '''
     details=[] #记录股票详细信息
     while True:
         try:
@@ -603,7 +607,11 @@ def close_eq_high(date):
     close=df['close']
     high=df['high']
     result=df[close==high]
-    codes=silter(result['ts_code'])#过滤ST
+    codes=result['ts_code']
+    for code in codes:
+        stock_info=StockDetails(code)
+#        print(stock_info)
+#    codes=filter(result)#过滤ST
     return codes
 
 

@@ -606,13 +606,17 @@ def close_eq_high(date):
     df=pro.daily(trade_date=date)#当天的交易数据
     close=df['close']
     high=df['high']
-    result=df[close==high]
-    codes=result['ts_code']
+    result=df[close==high]#符合条件的股票
+    codes=result['ts_code']#提取代码
+    codes_details=[]#保存股票详细信息的列表
     for code in codes:
         stock_info=StockDetails(code)
+        codes_details.append(stock_info)
 #        print(stock_info)
 #    codes=filter(result)#过滤ST
-    return codes
+    df_new=pd.DataFrame(codes_details)
+    df_new.rename({2,'name'},inplace=True)
+    return filter(df_new)
 
 
 

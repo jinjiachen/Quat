@@ -36,7 +36,7 @@ def filter(sl):
     '''
     ST=[]#存储ST股
     for stock_name in sl['name']:
-        print(f'正在处理{stock_name}')
+#        print(f'正在处理{stock_name}')
         if 'ST' in stock_name:
             ST.append(stock_name)#记录ST
             sl.drop(sl[sl['name']==stock_name].index,inplace=True)#用drop方法删除对应行数

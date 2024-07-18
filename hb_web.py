@@ -138,13 +138,21 @@ def consult(act):
     res=general('get',consult_url)
     selector=etree.HTML(res.text)
     items=selector.xpath('//div[@class="revoke-area"]/a')
-    deals=[]
+    deals=[]#保存最终的结果
     for item in items:
+        cache=[]#保存每一次交易的结果
         code=item.xpath('./div/p/text()')
         act=item.xpath('./div[2]/button/text()')
         details=item.xpath('./div[2]/div/div/p/span/text()')
         status=item.xpath('./div[2]/div/p[2]/text()')
+        [cache.append(i) for i in code]
+        [cache.append(i) for i in act]
+        [cache.append(i) for i in details]
+        [cache.append(i) for i in status]
+        deals.append(cache)
         print(code,act,details,status)
+#    print(deals)
+    return deals
 
 
 
@@ -254,18 +262,22 @@ def check_status():
         time.sleep(2)
     
 ###高买高卖做T
-def trade_T(code,price1,price2,amount):
+def trade_T(code,price1,price2,amount,direction=None):
     '''
     code(str):股票代码
     price1(float):股价
     price2(float):股价
     amount:(int):股票数量
     '''
-#def order(act,stock_name,code,price,amount):
     price_up=max(price1,price2)
     price_down=min(price1,price2)
-    order('BUY','',code,price_down,amount)
-    order('SELL','',code,price_up,amount)
+    if direction=='up':
+        pass
+    elif direction=='down':
+        pass
+    else:
+        order('BUY','',code,price_down,amount)
+        order('SELL','',code,price_up,amount)
 
 ###撤回委托
 def revoke(code):

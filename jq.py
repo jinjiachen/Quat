@@ -16,7 +16,7 @@ import requests
 import os
 import time
 import base64
-import random
+import random,cv2
 from configparser import ConfigParser
 from notification import notify
 from notification import load_config
@@ -149,6 +149,33 @@ def auto_check():
         username=string[0]
         passwd=string[1]
         login(driver,username,passwd,dry_run='NO')
+
+
+###识别缺口的位置
+def identify_gap(yz,qk):
+    '''
+    yz(str):验证的图片
+    qk(str):移动的缺口图片
+    '''
+    yz_img=cv2.imread(yz)#加载验证图片
+    qk_img=cv2.imread(qk)#加载缺口图片
+
+    #识别图片边缘
+    yz_canny=cv2.Canny(yz_img,100,200)
+    qk_canny=cv2.Canny(qk_img,100,200)
+    #缺口的匹配
+    res=cv2.matchTemplate(yz_canny,qk_canny,cv2.TM_CCOEFF_NORMED)
+    min_val,max_val,min_loc,max_loc=cv2.minMaxLoc(res)
+
+#    th,tw=yz_img.shape[:2]
+    th,tw=yz_canny.shape[:2]
+    tl=max_loc
+    br=(tl[0]+tw,tl[1]+th)
+    cv2.rectangle(yz_img,tl,br,(0,0,255),2)
+    cv2.imwrite('/tmp/yz_canny.jpg',yz_canny)
+    cv2.imwrite('/tmp/qk_canny.jpg',qk_canny)
+    cv2.imwrite('/tmp/out.jpg',yz_img)
+
     
 
 if __name__ == '__main__':

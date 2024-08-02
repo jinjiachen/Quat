@@ -221,8 +221,8 @@ def order(act,stock_name,code,price,amount):
     amount(int):数量
     '''
     #基于股票代码,判断市场类型
-    words_sh=['sh','XSHG']
-    words_sz=['sz','XSHG','XSHE']
+    words_sh=['SH','sh','XSHG']
+    words_sz=['SZ','sz','XSHE']
     if any(suffix in code for suffix in words_sh):
         market='SH'
 #        print('市场为',market)

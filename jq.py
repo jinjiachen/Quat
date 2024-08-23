@@ -41,7 +41,7 @@ def Driver():
     options = Options()
 #    options.add_argument("--proxy-server=http://192.168.2.108:8889")
     options.add_argument("--no-proxy-server")
-    options.add_argument("--headless")
+#    options.add_argument("--headless")
     options.add_argument('user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"')
 #    options.add_argument('user-agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36"')
 #    options.add_argument('user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36')
@@ -81,6 +81,7 @@ def login(driver,username,passwd,dry_run='NO'):
     time.sleep(1)
     driver.find_element(By.XPATH,'//input[@name="username"]').send_keys(username)
     driver.find_element(By.XPATH,'//input[@name="pwd"]').send_keys(passwd)
+    driver.find_element(By.XPATH,'//input[@id="agreementBox"]').click()#勾选协议
     driver.find_element(By.XPATH,'//button[@class="login-submit btnPwdSubmit"]').click()
     time.sleep(1)
 
@@ -159,6 +160,7 @@ def identify_gap(yz,qk):
     '''
     yz_img=cv2.imread(yz)#加载验证图片
     qk_img=cv2.imread(qk)#加载缺口图片
+    dirname=os.path.dirname(yz)
 
     #识别图片边缘
     yz_canny=cv2.Canny(yz_img,100,200)
@@ -168,15 +170,19 @@ def identify_gap(yz,qk):
     min_val,max_val,min_loc,max_loc=cv2.minMaxLoc(res)
 
 #    th,tw=yz_img.shape[:2]
-    th,tw=yz_canny.shape[:2]
+    th,tw=qk_canny.shape[:2]
     tl=max_loc
     br=(tl[0]+tw,tl[1]+th)
     cv2.rectangle(yz_img,tl,br,(0,0,255),2)
-    cv2.imwrite('/tmp/yz_canny.jpg',yz_canny)
-    cv2.imwrite('/tmp/qk_canny.jpg',qk_canny)
-    cv2.imwrite('/tmp/out.jpg',yz_img)
+    print(dirname)
+    cv2.imwrite(dirname+'\out1.jpg',yz_canny)
+    cv2.imwrite(dirname+'\out2.jpg',qk_canny)
+    cv2.imwrite(dirname+'\out3.jpg',yz_img)
 
     
 
 if __name__ == '__main__':
-    auto_check()
+#    auto_check()
+    yz=input('请输入验证图片')
+    qk=input('请输入缺口图片')
+    identify_gap(yz,qk)

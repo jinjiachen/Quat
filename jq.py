@@ -9,6 +9,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 #import pyautogui
 from lxml import etree
 import urllib
@@ -88,6 +89,8 @@ def login(driver,username,passwd,dry_run='NO'):
     if dry_run=='NO':
         try:
             driver.find_element(By.XPATH,'//button[@class="el-button menu-credit-button el-button--primary"]').click()#签到
+            handle=driver.find_element(By.XPATH,"//div[@class='valid-code__drag-handle handler']")#拖动的滑块
+            ActionChains(handle).move_by_offset(100,0)
             print(f'{username}签到成功')
         except:
             print('签到失败')

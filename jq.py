@@ -85,12 +85,34 @@ def login(driver,username,passwd,dry_run='NO'):
     driver.find_element(By.XPATH,'//input[@id="agreementBox"]').click()#勾选协议
     driver.find_element(By.XPATH,'//button[@class="login-submit btnPwdSubmit"]').click()
     time.sleep(1)
+    driver.switch_to.default_content()
+    slider=driver.find_element(By.XPATH,'//div[@id="drag"]')
+    ActionChains(slider).drag_and_drop_by_offset(slider,100,0)
+    ActionChains(slider).perform()
+#    driver.find_element(By.XPATH,'//div[@class="bootstrap-dialog-close-button"]/button').click()
+    time.sleep(10)
+
+
+###测试模块
+    driver.find_element(By.XPATH,'//button[@class="el-button menu-credit-button el-button--primary"]').click()#签到
+    time.sleep(1)
+#    driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div/button').click()
+    driver.find_element(By.XPATH,'//div[@class="bootstrap-dialog-close-button"]/button').click()
+#    handle=driver.find_element(By.XPATH,'//div[@class="valid-code__drag-bg drag_bg"]')#拖动的滑块
+#    ActionChains(handle).drag_and_drop_by_offset(handle,100,0)
+#    ActionChains(handle).perform()
+
+###测试模块
 
     if dry_run=='NO':
         try:
             driver.find_element(By.XPATH,'//button[@class="el-button menu-credit-button el-button--primary"]').click()#签到
-            handle=driver.find_element(By.XPATH,"//div[@class='valid-code__drag-handle handler']")#拖动的滑块
-            ActionChains(handle).move_by_offset(100,0)
+            time.sleep(5)
+#            driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div/button').click()
+#            handle=driver.find_element(By.XPATH,"//div[@class='valid-code__drag-handle handler']")#拖动的滑块
+            handle=driver.find_element(By.XPATH,'//div[@class="valid-code__drag"]')#拖动的滑块
+            ActionChains(handle).drag_and_drop_by_offset(handle,100,0)
+            ActionChains(handle).perform()
             print(f'{username}签到成功')
         except:
             print('签到失败')
@@ -185,7 +207,7 @@ def identify_gap(yz,qk):
     
 
 if __name__ == '__main__':
-#    auto_check()
-    yz=input('请输入验证图片')
-    qk=input('请输入缺口图片')
-    identify_gap(yz,qk)
+    auto_check()
+#    yz=input('请输入验证图片')
+#    qk=input('请输入缺口图片')
+#    identify_gap(yz,qk)

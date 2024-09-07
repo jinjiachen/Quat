@@ -85,34 +85,30 @@ def login(driver,username,passwd,dry_run='NO'):
     driver.find_element(By.XPATH,'//input[@id="agreementBox"]').click()#勾选协议
     driver.find_element(By.XPATH,'//button[@class="login-submit btnPwdSubmit"]').click()
     time.sleep(1)
-    driver.switch_to.default_content()
-    slider=driver.find_element(By.XPATH,'//div[@id="drag"]')
-    ActionChains(slider).drag_and_drop_by_offset(slider,100,0)
-    ActionChains(slider).perform()
+    #driver.switch_to.default_content()
+#    slider=driver.find_element(By.XPATH,'//div[@id="drag"]')
+#    ActionChains(slider).drag_and_drop_by_offset(slider,100,0)
+#    ActionChains(slider).perform()
 #    driver.find_element(By.XPATH,'//div[@class="bootstrap-dialog-close-button"]/button').click()
     time.sleep(10)
 
 
-###测试模块
-    driver.find_element(By.XPATH,'//button[@class="el-button menu-credit-button el-button--primary"]').click()#签到
-    time.sleep(1)
-#    driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div/button').click()
-    driver.find_element(By.XPATH,'//div[@class="bootstrap-dialog-close-button"]/button').click()
-#    handle=driver.find_element(By.XPATH,'//div[@class="valid-code__drag-bg drag_bg"]')#拖动的滑块
-#    ActionChains(handle).drag_and_drop_by_offset(handle,100,0)
-#    ActionChains(handle).perform()
-
-###测试模块
-
     if dry_run=='NO':
         try:
+            action=ActionChains(driver)
             driver.find_element(By.XPATH,'//button[@class="el-button menu-credit-button el-button--primary"]').click()#签到
-            time.sleep(5)
-#            driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div/button').click()
-#            handle=driver.find_element(By.XPATH,"//div[@class='valid-code__drag-handle handler']")#拖动的滑块
-            handle=driver.find_element(By.XPATH,'//div[@class="valid-code__drag"]')#拖动的滑块
-            ActionChains(handle).drag_and_drop_by_offset(handle,100,0)
-            ActionChains(handle).perform()
+#            driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div/button').click()#关闭验证
+            time.sleep(1)
+            handle=driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div[2]//div[@id="drag"]/div[3]')#滑块位置
+#            handle=driver.find_element(By.XPATH,'//div[@class="valid-code__drag"]')#拖动的滑块,此法无效
+            #click and hold方法可行，drag and hold不行，不知为何
+            action.click_and_hold(handle)
+            action.move_by_offset(100,0)
+            action.release()
+        #    action.move_to_element(handle)
+        #    action.drag_and_drop_by_offset(handle,10,0)
+            action.perform()
+            time.sleep(2)
             print(f'{username}签到成功')
         except:
             print('签到失败')
@@ -200,9 +196,9 @@ def identify_gap(yz,qk):
     br=(tl[0]+tw,tl[1]+th)
     cv2.rectangle(yz_img,tl,br,(0,0,255),2)
     print(dirname)
-    cv2.imwrite(dirname+'\out1.jpg',yz_canny)
-    cv2.imwrite(dirname+'\out2.jpg',qk_canny)
-    cv2.imwrite(dirname+'\out3.jpg',yz_img)
+#    cv2.imwrite(dirname+'\out1.jpg',yz_canny)
+#    cv2.imwrite(dirname+'\out2.jpg',qk_canny)
+#    cv2.imwrite(dirname+'\out3.jpg',yz_img)
 
     
 

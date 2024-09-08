@@ -98,14 +98,22 @@ def login(driver,username,passwd,dry_run='NO'):
             action=ActionChains(driver)
             driver.find_element(By.XPATH,'//button[@class="el-button menu-credit-button el-button--primary"]').click()#签到
 #            driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div/button').click()#关闭验证
-            time.sleep(1)
+            time.sleep(2)
+            img_qk=driver.find_element(By.XPATH,'//div[@id="xy_img"]').get_attribute('style')#验证图片中的缺口
+#            img_b64=
+            print(img_qk)
             driver.save_screenshot('shot.png')#屏幕截图,必须为png
             print('截图成功')
+            picture_mark('shot.png')
+            picture_scrot('shot.png',(760,240),(1230,455))
+            distance=identify_gap('scrot.png','qk.jpg')
+            print('移动距离:',distance)
             handle=driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div[2]//div[@id="drag"]/div[3]')#滑块位置
 #            handle=driver.find_element(By.XPATH,'//div[@class="valid-code__drag"]')#拖动的滑块,此法无效
             #click and hold方法可行，drag and hold不行，不知为何
             action.click_and_hold(handle)
-            action.move_by_offset(100,0)
+            action.move_by_offset(distance[0],0)
+            time.sleep(1)
             action.release()
         #    action.move_to_element(handle)
         #    action.drag_and_drop_by_offset(handle,10,0)
@@ -115,8 +123,6 @@ def login(driver,username,passwd,dry_run='NO'):
         except:
             print('签到失败')
             
-    picture_mark('shot.png')
-    picture_scrot('shot.png',(760,240),(1230,455))
     #获取阅读文章积分
     center='https://joinquant.com/view/user/floor?type=creditsdesc'
     driver.get(center)#回到积分中心
@@ -203,6 +209,8 @@ def identify_gap(yz,qk):
 #    cv2.imwrite(dirname+'\out1.jpg',yz_canny)
 #    cv2.imwrite(dirname+'\out2.jpg',qk_canny)
 #    cv2.imwrite(dirname+'\out3.jpg',yz_img)
+
+    return tl
 
     
 ###图像标记

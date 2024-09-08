@@ -99,6 +99,8 @@ def login(driver,username,passwd,dry_run='NO'):
             driver.find_element(By.XPATH,'//button[@class="el-button menu-credit-button el-button--primary"]').click()#签到
 #            driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div/button').click()#关闭验证
             time.sleep(1)
+            driver.save_screenshot('shot.png')#屏幕截图,必须为png
+            print('截图成功')
             handle=driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div[2]//div[@id="drag"]/div[3]')#滑块位置
 #            handle=driver.find_element(By.XPATH,'//div[@class="valid-code__drag"]')#拖动的滑块,此法无效
             #click and hold方法可行，drag and hold不行，不知为何
@@ -113,6 +115,8 @@ def login(driver,username,passwd,dry_run='NO'):
         except:
             print('签到失败')
             
+    picture_mark('shot.png')
+    picture_scrot('shot.png',(760,240),(1230,455))
     #获取阅读文章积分
     center='https://joinquant.com/view/user/floor?type=creditsdesc'
     driver.get(center)#回到积分中心
@@ -201,6 +205,34 @@ def identify_gap(yz,qk):
 #    cv2.imwrite(dirname+'\out3.jpg',yz_img)
 
     
+###图像标记
+def picture_mark(pic):
+    '''
+    pic(str):图片路径
+    '''
+    img=cv2.imread(pic)#加载验证图片
+    print(img.shape)
+    pt1=(650,130)
+    pt2=(1270,590)
+    cv2.rectangle(img,pt1,pt2,(0,0,255),2)
+    pt3=(760,240)
+    pt4=(1230,455)
+    cv2.rectangle(img,pt3,pt4,(0,255,0),2)
+#    print('图片修改')
+    cv2.imwrite('shot_revise.png',img)
+#    print('图片保存')
+
+###图像裁剪
+def picture_scrot(pic,corp1,corp2):
+    '''
+    pic(str):图片路径
+    corp(tuple):裁剪的第一个坐标
+    corp(tuple):裁剪的第二个坐标
+    '''
+    img=cv2.imread(pic)#加载验证图片
+    scrot_img=img[corp1[1]:corp2[1],corp1[0]:corp2[0]]#截取的范围，y0:y1,x0:x1
+    cv2.imwrite('scrot.png',scrot_img)
+
 
 if __name__ == '__main__':
     auto_check()

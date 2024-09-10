@@ -14,7 +14,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from lxml import etree
 import urllib
 import requests
-import os
+import os,re
 import time
 import base64
 import random,cv2
@@ -100,8 +100,10 @@ def login(driver,username,passwd,dry_run='NO'):
 #            driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div/button').click()#关闭验证
             time.sleep(2)
             img_qk=driver.find_element(By.XPATH,'//div[@id="xy_img"]').get_attribute('style')#验证图片中的缺口
-#            img_b64=
-            print(img_qk)
+            img_b64=re.search('\,.*\"',img_qk).group()
+            img_b64=img_b64.replace(',','')
+            img_b64=img_b64.replace('\"','')
+            print(img_b64)
             driver.save_screenshot('shot.png')#屏幕截图,必须为png
             print('截图成功')
             picture_mark('shot.png')

@@ -11,3 +11,4 @@ scipy
 sqlalchemy
 selenium
 configparser
+opencv

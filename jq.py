@@ -103,20 +103,30 @@ def login(driver,username,passwd,dry_run='NO'):
             img_b64=re.search('\,.*\"',img_qk).group()
             img_b64=img_b64.replace(',','')
             img_b64=img_b64.replace('\"','')
-            print(img_b64)
+#            print(img_b64)
+            ###将base64编码写入文件
+            with open ('./qk.jpg','wb') as f:
+                f.write(base64.b64decode(img_b64))#b64照片原理是将图片二进制文件经过base64编码处理，所以解码后就是二进制原码
+                print('base64码写入成功')
+                f.close()
+
             driver.save_screenshot('shot.png')#屏幕截图,必须为png
             print('截图成功')
             picture_mark('shot.png')
-            picture_scrot('shot.png',(760,240),(1230,455))
+            if os.name=='nt':
+                picture_scrot('shot.png',(760,240),(1230,455))
+            elif os.name=='posix':
+                picture_scrot('shot.png',(550,170),(865,310))
+            qk_width=50#缺口的宽度
             distance=identify_gap('scrot.png','qk.jpg')
-            print('移动距离:',distance)
             handle=driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div[2]//div[@id="drag"]/div[3]')#滑块位置
 #            handle=driver.find_element(By.XPATH,'//div[@class="valid-code__drag"]')#拖动的滑块,此法无效
             #click and hold方法可行，drag and hold不行，不知为何
             action.click_and_hold(handle)
-            action.move_by_offset(distance[0],0)
+            action.move_by_offset(distance[0]+qk_width,0)
             time.sleep(1)
             action.release()
+            print('移动距离:',distance[0]+qk_width)
         #    action.move_to_element(handle)
         #    action.drag_and_drop_by_offset(handle,10,0)
             action.perform()
@@ -134,23 +144,57 @@ def login(driver,username,passwd,dry_run='NO'):
     except:
         print('已经领取过阅读积分')
     windows = driver.window_handles
-    driver.switch_to.window(windows[1])#切换第二个标签
-    comm_url='https://www.joinquant.com/view/community/list?listType=1'
-    time.sleep(5)
+    if len(windows)>1:
+        driver.switch_to.window(windows[1])#切换第二个标签
+        comm_url='https://www.joinquant.com/view/community/list?listType=1'
+        time.sleep(5)
 
-    num=len(driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]'))#获取主题的数量
-    i=random.randint(3,num)
-    print(f'主题总数：{num},阅读随机文章{i}')
-    time.sleep(1)
-    driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]')[i-1].click()#随机点击文章查看
-    time.sleep(9)
-    driver=close_update(driver)
-    driver.get(center)#回到积分中心
-    time.sleep(3)
+        num=len(driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]'))#获取主题的数量
+        i=random.randint(3,num)
+        print(f'主题总数：{num},阅读随机文章{i}')
+        time.sleep(1)
+        driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]')[i-1].click()#随机点击文章查看
+        time.sleep(9)
+        driver=close_update(driver)
+        driver.get(center)#回到积分中心
+        time.sleep(3)
+    else:
+        print('只有一个标签')
     if dry_run=='NO':
         try:
             driver.find_element(By.XPATH,'//button[@class="el-button el-button--primary el-button--mini"]').click()#领取阅读积分
+            time.sleep(2)
+            img_qk=driver.find_element(By.XPATH,'//div[@id="xy_img"]').get_attribute('style')#验证图片中的缺口
+            img_b64=re.search('\,.*\"',img_qk).group()
+            img_b64=img_b64.replace(',','')
+            img_b64=img_b64.replace('\"','')
+#            print(img_b64)
+            ###将base64编码写入文件
+            with open ('./qk.jpg','wb') as f:
+                f.write(base64.b64decode(img_b64))#b64照片原理是将图片二进制文件经过base64编码处理，所以解码后就是二进制原码
+                print('base64码写入成功')
+                f.close()
+
+            driver.save_screenshot('shot.png')#屏幕截图,必须为png
+            print('截图成功')
+            picture_mark('shot.png')
+            if os.name=='nt':
+                picture_scrot('shot.png',(760,240),(1230,455))
+            elif os.name=='posix':
+                picture_scrot('shot.png',(550,170),(865,310))
+            qk_width=50#缺口的宽度
+            distance=identify_gap('scrot.png','qk.jpg')
+            handle=driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div[2]//div[@id="drag"]/div[3]')#滑块位置
+#            handle=driver.find_element(By.XPATH,'//div[@class="valid-code__drag"]')#拖动的滑块,此法无效
+            #click and hold方法可行，drag and hold不行，不知为何
+            action.click_and_hold(handle)
+            action.move_by_offset(distance[0]+qk_width,0)
             time.sleep(1)
+            action.release()
+            print('移动距离:',distance[0]+qk_width)
+        #    action.move_to_element(handle)
+        #    action.drag_and_drop_by_offset(handle,10,0)
+            action.perform()
             print(f'{username}领取阅读积分')
         except:
             print('领取失败')
@@ -222,12 +266,20 @@ def picture_mark(pic):
     '''
     img=cv2.imread(pic)#加载验证图片
     print(img.shape)
-    pt1=(650,130)
-    pt2=(1270,590)
-    cv2.rectangle(img,pt1,pt2,(0,0,255),2)
-    pt3=(760,240)
-    pt4=(1230,455)
-    cv2.rectangle(img,pt3,pt4,(0,255,0),2)
+    if os.name=='nt':
+        pt1=(650,130)
+        pt2=(1270,590)
+        cv2.rectangle(img,pt1,pt2,(0,0,255),2)
+        pt3=(760,240)
+        pt4=(1230,455)
+        cv2.rectangle(img,pt3,pt4,(0,255,0),2)
+    elif os.name=='posix':
+        pt1=(477,98)
+        pt2=(890,400)
+        cv2.rectangle(img,pt1,pt2,(0,0,255),2)
+        pt3=(550,170)
+        pt4=(865,310)
+        cv2.rectangle(img,pt3,pt4,(0,255,0),2)
 #    print('图片修改')
     cv2.imwrite('shot_revise.png',img)
 #    print('图片保存')

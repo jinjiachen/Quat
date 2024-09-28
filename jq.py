@@ -195,6 +195,7 @@ def login(driver,username,passwd,dry_run='NO'):
         #    action.move_to_element(handle)
         #    action.drag_and_drop_by_offset(handle,10,0)
             action.perform()
+            time.sleep(2)
             print(f'{username}领取阅读积分')
         except:
             print('领取失败')

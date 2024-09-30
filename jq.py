@@ -253,9 +253,9 @@ def identify_gap(yz,qk):
     br=(tl[0]+tw,tl[1]+th)
     cv2.rectangle(yz_img,tl,br,(0,0,255),2)
     print(dirname)
-#    cv2.imwrite(dirname+'\out1.jpg',yz_canny)
-#    cv2.imwrite(dirname+'\out2.jpg',qk_canny)
-#    cv2.imwrite(dirname+'\out3.jpg',yz_img)
+    cv2.imwrite('.\out1.jpg',yz_canny)
+    cv2.imwrite('.\out2.jpg',qk_canny)
+    cv2.imwrite('.\out3.jpg',yz_img)
 
     return tl
 

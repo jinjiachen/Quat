@@ -104,11 +104,16 @@ def index_info(pro):
 
 ###查询PE百分数
 def index_percent(pro,index,style,ptf='NO'):
+    '''
+    pro(obj):tushare的对象
+    index(str):指数的代码
+    style(str):PB,PE,PE_ttm,total_mv
+    '''
     now=time.strftime("%Y%m%d") #当前日期
 #    now='20230914'
     previous=str(int(now)-100000)#换算到10年前
-    df_now=pro.index_dailybasic(ts_code=index,trade_date=now, fields='ts_code,trade_date,pe,pe_ttm,pb')#查询指数信息
-    df_index=pro.index_dailybasic(ts_code=index,start_date=previous,end_date=now, fields='ts_code,trade_date,pe,pe_ttm,pb')#查询指数信息
+    df_now=pro.index_dailybasic(ts_code=index,trade_date=now, fields='ts_code,trade_date,pe,pe_ttm,pb,total_mv')#查询指数信息
+    df_index=pro.index_dailybasic(ts_code=index,start_date=previous,end_date=now, fields='ts_code,trade_date,pe,pe_ttm,pb,total_mv')#查询指数信息
     if style=='PB':
         pb=df_now['pb'][0]
         pb_range=df_index['pb']
@@ -133,6 +138,14 @@ def index_percent(pro,index,style,ptf='NO'):
         return [pe,percent]
         if ptf=='YES':
             print('PE_ttm:',pe)
+    elif style=='total_mv':
+        total_mv=df_now['total_mv'][0]
+        total_mv_range=df_index['total_mv']
+        percent=percentileofscore(total_mv,total_mv)
+        percent=round(percent,2)
+        return [total_mv,percent]
+        if ptf=='YES':
+            print('total_mv:',total_mv)
 
 
 

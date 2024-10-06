@@ -171,10 +171,12 @@ def consult_total_mv(pro,date,ptf='NO'):
     df=pro.index_dailybasic(trade_date=date, fields='ts_code,total_mv,turnover_rate,pe')
     mv_sh=df[df['ts_code']=='000001.SH']['total_mv']#上证的市值
     mv_sz=df[df['ts_code']=='399001.SZ']['total_mv']#深证的市值
+    hs300=df[df['ts_code']=='000300.SH']['total_mv']#沪深300的市值
     total=(mv_sh.values[0]+mv_sz.values[0])/10**12#计算总市值，单位万亿
     if ptf=='YES':
         print(mv_sh)
         print(mv_sz)
+        print(hs300)
         print(total)
     return total
 

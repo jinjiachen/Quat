@@ -103,14 +103,17 @@ def index_info(pro):
 
 
 ###查询PE百分数
-def index_percent(pro,index,style,ptf='NO'):
+def index_percent(pro,index,style,date='',ptf='NO'):
     '''
     pro(obj):tushare的对象
     index(str):指数的代码
+    date(str):查询日期，如20240930
     style(str):PB,PE,PE_ttm,total_mv
     '''
-    now=time.strftime("%Y%m%d") #当前日期
-#    now='20230914'
+    if date=='':
+        now=time.strftime("%Y%m%d") #当前日期
+    else:
+        now=date
     previous=str(int(now)-100000)#换算到10年前
     df_now=pro.index_dailybasic(ts_code=index,trade_date=now, fields='ts_code,trade_date,pe,pe_ttm,pb,total_mv')#查询指数信息
     df_index=pro.index_dailybasic(ts_code=index,start_date=previous,end_date=now, fields='ts_code,trade_date,pe,pe_ttm,pb,total_mv')#查询指数信息
@@ -141,19 +144,59 @@ def index_percent(pro,index,style,ptf='NO'):
     elif style=='total_mv':
         total_mv=df_now['total_mv'][0]
         total_mv_range=df_index['total_mv']
-        percent=percentileofscore(total_mv,total_mv)
+        percent=percentileofscore(total_mv_range,total_mv)
         percent=round(percent,2)
         return [total_mv,percent]
         if ptf=='YES':
             print('total_mv:',total_mv)
 
 
+###通过tushare查询GDP
+def consult_GDP(pro,date):
+    '''
+    pro(obj):tushare的对象
+    date(str):查询日期，形如2023q1-2024q3
+    '''
+    q=date.split('-')
+    df=pro.cn_gdp(start_q=q[0],end_q=q[1],fields='quarter,gdp,gdp_yoy')
+    total=df['gdp'][0]/10**4 #总gdp,单位万亿
+    return {'GDP':total,'data':df}
 
+###通过tushare查询两市总市值
+def consult_total_mv(pro,date,ptf='NO'):
+    '''
+    pro(obj):tushare的对象
+    date(str):查询日期，形如20240930
+    '''
+    df=pro.index_dailybasic(trade_date=date, fields='ts_code,total_mv,turnover_rate,pe')
+    mv_sh=df[df['ts_code']=='000001.SH']['total_mv']#上证的市值
+    mv_sz=df[df['ts_code']=='399001.SZ']['total_mv']#深证的市值
+    total=(mv_sh.values[0]+mv_sz.values[0])/10**12#计算总市值，单位万亿
+    if ptf=='YES':
+        print(mv_sh)
+        print(mv_sz)
+        print(total)
+    return total
+
+###菜单
+def Menu():
+    choice=input('请选择功能：\n1.查询两市总市值\n2.查询GDP\n3.查询实时指数')
+    if choice=='1':
+        date=input('请输入查询日期：')
+        res=consult_total_mv(pro,date,ptf='YES')
+    elif choice=='2':
+        date=input('请输入查询日期(2024q1-2024q4)：')
+        res=consult_GDP(pro,date)
+        print(res)
+    elif choice=='3':
+        res=live_index()
+        print(res)
 
 
 ###主程序
 if __name__=='__main__':
     pro=Initial()
-    res=statistics(pro)
-    for key in res.keys():
-        print(res[key])
+    Menu()
+#    res=statistics(pro,date='20240930')
+#    for key in res.keys():
+#        print(res[key])

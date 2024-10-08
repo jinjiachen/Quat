@@ -192,7 +192,13 @@ def Menu():
         print(res)
     elif choice=='3':
         res=live_index()
-        print(res)
+#        print(res)
+        print(f"上证：{res['sh']}-->{res['sh_pct']}")
+        print(f"深证：{res['sz']}-->{res['sz_pct']}")
+        print(f"创业板：{res['cyb']}-->{res['cyb_pct']}")
+        print(f"上证50：{res['sh50']}-->{res['sh50_pct']}")
+        print(f"中证500：{res['zz500']}-->{res['zz500_pct']}")
+        print(f"中证1000：{res['zz1000']}-->{res['zz1000_pct']}")
 
 
 ###主程序

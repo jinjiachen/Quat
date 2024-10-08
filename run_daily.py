@@ -109,9 +109,10 @@ if __name__=='__main__':
                     auto_check()
     elif sys.argv[1]=="index":
         index_now()
+    elif sys.argv[1]=="index_ts":
+        daily_index()
     elif sys.argv[1]=="combo":
         daily_combo()
-        daily_index()
         xq_sync(login_cookies)#同步当天结果到雪球自选
     elif sys.argv[1]=="sync":
         xq_sync(login_cookies)#同步当天结果到雪球自选

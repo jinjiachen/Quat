@@ -53,7 +53,7 @@ def statistics(pro,date='',ptf='NO'):
 ###通过easyquotation获取实时指数涨跌幅和成交量
 def live_index():
     quo=easyquotation.use('sina')
-    stocklist=['sh000001','sz399001','sz399006','sh000016','sh000852','sh000905']
+    stocklist=['sh000001','sz399001','sz399006','sh000016','sh000852','sh000905','sh000300','sz399303']
     res=quo.stocks(stocklist)
     #计算总成交量
     total_vol=(res['000001']['volume']+res['399001']['volume'])/10**8#两市总成交量,单位亿
@@ -78,6 +78,12 @@ def live_index():
     zz500=res['000905']['now']
     zz500_pct=(res['000905']['now']/res['000905']['close']-1)*100#计算中证500涨跌幅
     zz500_pct=round(zz500_pct,2)#圆整
+    hs300=res['000300']['now']
+    hs300_pct=(res['000300']['now']/res['000300']['close']-1)*100#计算沪深300涨跌幅
+    hs300_pct=round(hs300_pct,2)#圆整
+    gz2000=res['399303']['now']
+    gz2000_pct=(res['399303']['now']/res['399303']['close']-1)*100#计算国证2000涨跌幅
+    gz2000_pct=round(gz2000_pct,2)#圆整
     return {'total_vol':total_vol,
             'sh':sh,
             'sh_pct':sh_pct,
@@ -91,6 +97,10 @@ def live_index():
             'zz1000_pct':zz1000_pct,
             'zz500':zz500,
             'zz500_pct':zz500_pct,
+            'hs300':hs300,
+            'hs300_pct':hs300_pct,
+            'gz2000':gz2000,
+            'gz2000_pct':gz2000_pct,
             }
 
 
@@ -195,10 +205,12 @@ def Menu():
 #        print(res)
         print(f"上证：{res['sh']}-->{res['sh_pct']}")
         print(f"深证：{res['sz']}-->{res['sz_pct']}")
+        print(f"沪深300：{res['hs300']}-->{res['hs300_pct']}")
         print(f"创业板：{res['cyb']}-->{res['cyb_pct']}")
         print(f"上证50：{res['sh50']}-->{res['sh50_pct']}")
         print(f"中证500：{res['zz500']}-->{res['zz500_pct']}")
         print(f"中证1000：{res['zz1000']}-->{res['zz1000_pct']}")
+        print(f"国证2000：{res['gz2000']}-->{res['gz2000_pct']}")
 
 
 ###主程序

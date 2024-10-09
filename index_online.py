@@ -21,6 +21,7 @@ def statistics(pro,date='',ptf='NO'):
         now=date
     df_sh=pro.index_daily(ts_code='000001.SH',trade_date=now,fields='pct_chg,amount')
     df_sz=pro.index_daily(ts_code='399001.SZ',trade_date=now,fields='pct_chg,amount')
+    df_hs300=pro.index_daily(ts_code='000300.SH',trade_date=now,fields='pct_chg,amount')
     amount=(df_sh['amount']+df_sz['amount'])/10**5#上证深证总交易额（亿元）
 
     df_index=pro.index_dailybasic(trade_date=now, fields='ts_code,trade_date,pe')#查询指数pe
@@ -32,6 +33,24 @@ def statistics(pro,date='',ptf='NO'):
     #深成
     PEttm399001=index_percent(pro,'399001.sz','PE_ttm')
     PB399001=index_percent(pro,'399001.sz','PB')
+    #沪深300
+    PEttm000300=index_percent(pro,'000300.sh','PE_ttm')
+    PB000300=index_percent(pro,'000300.sh','PB')
+    #中证500
+    PEttm000905=index_percent(pro,'000905.sh','PE_ttm')
+    PB000905=index_percent(pro,'000905.sh','PB')
+    #中证1000(暂无)
+#    PEttm000852=index_percent(pro,'000852.sh','PE_ttm')
+#    PB000852=index_percent(pro,'000852.sh','PB')
+    #国证2000(暂无)
+#    PEttm399303=index_percent(pro,'399303.sz','PE_ttm')
+#    PB399303=index_percent(pro,'399303.sz','PB')
+    #上证50
+    PEttm000016=index_percent(pro,'000016.sh','PE_ttm')
+    PB000016=index_percent(pro,'000016.sh','PB')
+    #创业板
+    PEttm399006=index_percent(pro,'399006.sz','PE_ttm')
+    PB399006=index_percent(pro,'399006.sz','PB')
     if ptf=='YES':
         print('上证PE：',pe_sh)
         print('深证PE：',pe_sz)
@@ -47,6 +66,18 @@ def statistics(pro,date='',ptf='NO'):
             'PB000001':PB000001,\
             'PEttm399001':PEttm399001,\
             'PB399001':PB399001,
+            'PEttm000300':PEttm000300,\
+            'PB000300':PB000300,
+            'PEttm000905':PEttm000905,\
+            'PB000905':PB000905,
+#            'PEttm000852':PEttm000852,\
+#            'PB000852':PB000852,
+#            'PEttm399303':PEttm399303,\
+#            'PB399303':PB399303,
+            'PEttm000016':PEttm000016,\
+            'PB000016':PB000016,
+            'PEttm399006':PEttm399006,\
+            'PB399006':PB399006,
         }
 
 
@@ -112,7 +143,7 @@ def index_info(pro):
     pb_000001sh=df_index[df_index['ts_code']=='000001.SH']['pb']#上证PB
 
 
-###查询PE百分数
+###通过tushare查询PE百分数
 def index_percent(pro,index,style,date='',ptf='NO'):
     '''
     pro(obj):tushare的对象
@@ -192,7 +223,7 @@ def consult_total_mv(pro,date,ptf='NO'):
 
 ###菜单
 def Menu():
-    choice=input('请选择功能：\n1.查询两市总市值\n2.查询GDP\n3.查询实时指数')
+    choice=input('请选择功能：\n1.查询两市总市值\n2.查询GDP\n3.查询实时指数\n4.查询指数PE,PB,PE_ttm百分比')
     if choice=='1':
         date=input('请输入查询日期：')
         res=consult_total_mv(pro,date,ptf='YES')
@@ -211,12 +242,23 @@ def Menu():
         print(f"中证500：{res['zz500']}-->{res['zz500_pct']}")
         print(f"中证1000：{res['zz1000']}-->{res['zz1000_pct']}")
         print(f"国证2000：{res['gz2000']}-->{res['gz2000_pct']}")
+    elif choice=='4':
+        date=input('请输入查询日期：')
+        index=input('请输入查询的指数(000001.sh)：')
+        styles=['PE','PE_ttm','PB','total_mv']
+        res={}
+        for style in styles:
+            res[style]=index_percent(pro,index,style,date,ptf='NO')
+        print(res)
+
+
 
 
 ###主程序
 if __name__=='__main__':
     pro=Initial()
-    Menu()
+    while True:
+        Menu()
 #    res=statistics(pro,date='20240930')
 #    for key in res.keys():
 #        print(res[key])

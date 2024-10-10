@@ -32,17 +32,29 @@ def daily_index():
         try:
 #            if is_updated(pro,'index',now)=='YES':#交易日
             if df['is_open'][0]==1:#交易日
-                pass
                 print('获取指数信息')
                 res=statistics(pro,now,ptf='NO')
                 print(res)
-                message=f'全市成交量：{res["amount"]}亿,上证涨跌幅：{res["pct_sh"]}% PE:{res["PEttm000001"][0]} 10年百分位：{res["PEttm000001"][1]},PB:{res["PB000001"][0]} 10年百分位：{res["PB000001"][1]},深证涨跌幅：{res["pct_sz"]}% PE:{res["PEttm399001"][0]} 10年百分位：{res["PEttm399001"][1]},'#构造字符串用于推送
+#                message=f'全市成交量：{res["amount"]}亿,上证涨跌幅：{res["pct_sh"]}% PE:{res["PEttm000001"][0]} 10年百分位：{res["PEttm000001"][1]},PB:{res["PB000001"][0]} 10年百分位：{res["PB000001"][1]},深证涨跌幅：{res["pct_sz"]}% PE:{res["PEttm399001"][0]} 10年百分位：{res["PEttm399001"][1]},'#构造字符串用于推送
                 message=[
                         f'全市成交量：{res["amount"]}亿',
-                        f'上证涨跌幅：{res["pct_sh"]}%',
-                        f'PE:{res["PEttm000001"][0]}-->10年百分位：{res["PEttm000001"][1]},PB:{res["PB000001"][0]}-->10年百分位：{res["PB000001"][1]}',
-                        f'深证涨跌幅：{res["pct_sz"]}%',
-                        f'PE:{res["PEttm399001"][0]}-->10年百分位：{res["PEttm399001"][1]},PB:{res["PB399001"][0]}-->10年百分位：{res["PB399001"][1]}',
+                        f'上证涨跌幅：{res["close_sh"]}-->{res["pct_sh"]}%',
+                        f'PE:{res["PEttm000001"][0]}-->10年百分位：{res["PEttm000001"][1]}\nPB:{res["PB000001"][0]}-->10年百分位：{res["PB000001"][1]}',
+                        '#'*25,
+                        f'深证涨跌幅：{res["close_sz"]}-->{res["pct_sz"]}%',
+                        f'PE:{res["PEttm399001"][0]}-->10年百分位：{res["PEttm399001"][1]}\nPB:{res["PB399001"][0]}-->10年百分位：{res["PB399001"][1]}',
+                        '#'*25,
+                        f'沪深300涨跌幅：{res["close_hs300"]}-->{res["pct_hs300"]}%',
+                        f'PE:{res["PEttm000300"][0]}-->10年百分位：{res["PEttm000300"][1]}\nPB:{res["PB000300"][0]}-->10年百分位：{res["PB000300"][1]}',
+                        '#'*25,
+                        f'中证500涨跌幅：{res["close_zz500"]}-->{res["pct_zz500"]}%',
+                        f'PE:{res["PEttm000905"][0]}-->10年百分位：{res["PEttm000905"][1]}\nPB:{res["PB000905"][0]}-->10年百分位：{res["PB000905"][1]}',
+                        '#'*25,
+                        f'上证50涨跌幅：{res["close_sz50"]}-->{res["pct_sz50"]}%',
+                        f'PE:{res["PEttm000016"][0]}-->10年百分位：{res["PEttm000016"][1]}\nPB:{res["PB000016"][0]}-->10年百分位：{res["PB000016"][1]}',
+                        '#'*25,
+                        f'创业板涨跌幅：{res["close_cyb"]}-->{res["pct_cyb"]}%',
+                        f'PE:{res["PEttm399006"][0]}-->10年百分位：{res["PEttm399006"][1]}\nPB:{res["PB399006"][0]}-->10年百分位：{res["PB399006"][1]}',
                         ]
                 print('构造的消息：',message)
                 notify('post',f'日报{now}',"\n".join(message))

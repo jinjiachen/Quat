@@ -19,9 +19,12 @@ def statistics(pro,date='',ptf='NO'):
         now=time.strftime("%Y%m%d") #当前日期
     else:
         now=date
-    df_sh=pro.index_daily(ts_code='000001.SH',trade_date=now,fields='pct_chg,amount')
-    df_sz=pro.index_daily(ts_code='399001.SZ',trade_date=now,fields='pct_chg,amount')
-    df_hs300=pro.index_daily(ts_code='000300.SH',trade_date=now,fields='pct_chg,amount')
+    df_sh=pro.index_daily(ts_code='000001.SH',trade_date=now,fields='close,pct_chg,amount')
+    df_sz=pro.index_daily(ts_code='399001.SZ',trade_date=now,fields='close,pct_chg,amount')
+    df_hs300=pro.index_daily(ts_code='000300.SH',trade_date=now,fields='close,pct_chg,amount')
+    df_zz500=pro.index_daily(ts_code='000905.SH',trade_date=now,fields='close,pct_chg,amount')
+    df_sz50=pro.index_daily(ts_code='000016.SH',trade_date=now,fields='close,pct_chg,amount')
+    df_cyb=pro.index_daily(ts_code='399006.SZ',trade_date=now,fields='close,pct_chg,amount')
     amount=(df_sh['amount']+df_sz['amount'])/10**5#上证深证总交易额（亿元）
 
     df_index=pro.index_dailybasic(trade_date=now, fields='ts_code,trade_date,pe')#查询指数pe
@@ -58,24 +61,34 @@ def statistics(pro,date='',ptf='NO'):
         print('上证涨幅：',df_sh['pct_chg'][0])
         print('深证涨幅：',df_sz['pct_chg'][0])
     return {'amount':amount[0],\
-            'pct_sh':df_sh['pct_chg'][0],\
-            'pct_sz':df_sz['pct_chg'][0],\
             'pe_sh':pe_sh.values[0],\
             'pe_sz':pe_sz.values[0],\
+            'close_sh':df_sh['close'][0],\
+            'pct_sh':df_sh['pct_chg'][0],\
             'PEttm000001':PEttm000001,\
             'PB000001':PB000001,\
+            'close_sz':df_sz['close'][0],\
+            'pct_sz':df_sz['pct_chg'][0],\
             'PEttm399001':PEttm399001,\
             'PB399001':PB399001,
+            'close_hs300':df_hs300['close'][0],\
+            'pct_hs300':df_hs300['pct_chg'][0],\
             'PEttm000300':PEttm000300,\
             'PB000300':PB000300,
+            'close_zz500':df_zz500['close'][0],\
+            'pct_zz500':df_zz500['pct_chg'][0],\
             'PEttm000905':PEttm000905,\
             'PB000905':PB000905,
 #            'PEttm000852':PEttm000852,\
 #            'PB000852':PB000852,
 #            'PEttm399303':PEttm399303,\
 #            'PB399303':PB399303,
+            'close_sz50':df_sz50['close'][0],\
+            'pct_sz50':df_sz50['pct_chg'][0],\
             'PEttm000016':PEttm000016,\
             'PB000016':PB000016,
+            'close_cyb':df_cyb['close'][0],\
+            'pct_cyb':df_cyb['pct_chg'][0],\
             'PEttm399006':PEttm399006,\
             'PB399006':PB399006,
         }

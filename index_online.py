@@ -19,12 +19,13 @@ def statistics(pro,date='',ptf='NO'):
         now=time.strftime("%Y%m%d") #当前日期
     else:
         now=date
-    df_sh=pro.index_daily(ts_code='000001.SH',trade_date=now,fields='close,pct_chg,amount')
-    df_sz=pro.index_daily(ts_code='399001.SZ',trade_date=now,fields='close,pct_chg,amount')
-    df_hs300=pro.index_daily(ts_code='000300.SH',trade_date=now,fields='close,pct_chg,amount')
-    df_zz500=pro.index_daily(ts_code='000905.SH',trade_date=now,fields='close,pct_chg,amount')
-    df_sz50=pro.index_daily(ts_code='000016.SH',trade_date=now,fields='close,pct_chg,amount')
-    df_cyb=pro.index_daily(ts_code='399006.SZ',trade_date=now,fields='close,pct_chg,amount')
+    previous=str(int(now)-100000)#换算到10年前
+    df_sh=pro.index_daily(ts_code='000001.SH',start_date=previous,end_date=now,fields='close,pct_chg,amount')
+    df_sz=pro.index_daily(ts_code='399001.SZ',start_date=previous,end_date=now,fields='close,pct_chg,amount')
+    df_hs300=pro.index_daily(ts_code='000300.SH',start_date=previous,end_data=now,fields='close,pct_chg,amount')
+    df_zz500=pro.index_daily(ts_code='000905.SH',start_date=previous,end_data=now,fields='close,pct_chg,amount')
+    df_sz50=pro.index_daily(ts_code='000016.SH',start_date=previous,end_data=now,fields='close,pct_chg,amount')
+    df_cyb=pro.index_daily(ts_code='399006.SZ',start_date=previous,end_data=now,fields='close,pct_chg,amount')
     amount=(df_sh['amount']+df_sz['amount'])/10**5#上证深证总交易额（亿元）
 
     df_index=pro.index_dailybasic(trade_date=now, fields='ts_code,trade_date,pe')#查询指数pe
@@ -33,15 +34,31 @@ def statistics(pro,date='',ptf='NO'):
     #上证
     PEttm000001=index_percent(pro,'000001.sh','PE_ttm')
     PB000001=index_percent(pro,'000001.sh','PB')
+    price_now_000001=df_sh['close'][0]#当日收盘价
+    price_range_000001=df_sh['close']#所有收盘价
+    percent=percentileofscore(price_range_000001,price_now_000001)#计算收盘价百分比
+    PP000001=round(percent,2)#PP=price percent
     #深成
     PEttm399001=index_percent(pro,'399001.sz','PE_ttm')
     PB399001=index_percent(pro,'399001.sz','PB')
+    price_now_399001=df_sz['close'][0]#当日收盘价
+    price_range_399001=df_sz['close']#所有收盘价
+    percent=percentileofscore(price_range_399001,price_now_399001)#计算收盘价百分比
+    PP399001=round(percent,2)#PP=price percent
     #沪深300
     PEttm000300=index_percent(pro,'000300.sh','PE_ttm')
     PB000300=index_percent(pro,'000300.sh','PB')
+    price_now_000300=df_hs300['close'][0]#当日收盘价
+    price_range_000300=df_hs300['close']#所有收盘价
+    percent=percentileofscore(price_range_000300,price_now_000300)#计算收盘价百分比
+    PP000300=round(percent,2)#PP=price percent
     #中证500
     PEttm000905=index_percent(pro,'000905.sh','PE_ttm')
     PB000905=index_percent(pro,'000905.sh','PB')
+    price_now_000905=df_zz500['close'][0]#当日收盘价
+    price_range_000905=df_zz500['close']#所有收盘价
+    percent=percentileofscore(price_range_000905,price_now_000905)#计算收盘价百分比
+    PP000905=round(percent,2)#PP=price percent
     #中证1000(暂无)
 #    PEttm000852=index_percent(pro,'000852.sh','PE_ttm')
 #    PB000852=index_percent(pro,'000852.sh','PB')
@@ -51,9 +68,17 @@ def statistics(pro,date='',ptf='NO'):
     #上证50
     PEttm000016=index_percent(pro,'000016.sh','PE_ttm')
     PB000016=index_percent(pro,'000016.sh','PB')
+    price_now_000016=df_sz50['close'][0]#当日收盘价
+    price_range_000016=df_sz50['close']#所有收盘价
+    percent=percentileofscore(price_range_000016,price_now_000016)#计算收盘价百分比
+    PP000016=round(percent,2)#PP=price percent
     #创业板
     PEttm399006=index_percent(pro,'399006.sz','PE_ttm')
     PB399006=index_percent(pro,'399006.sz','PB')
+    price_now_399006=df_cyb['close'][0]#当日收盘价
+    price_range_399006=df_cyb['close']#所有收盘价
+    percent=percentileofscore(price_range_399006,price_now_399006)#计算收盘价百分比
+    PP399006=round(percent,2)#PP=price percent
     if ptf=='YES':
         print('上证PE：',pe_sh)
         print('深证PE：',pe_sz)
@@ -63,32 +88,44 @@ def statistics(pro,date='',ptf='NO'):
     return {'amount':amount[0],\
             'pe_sh':pe_sh.values[0],\
             'pe_sz':pe_sz.values[0],\
+            #上证
             'close_sh':df_sh['close'][0],\
             'pct_sh':df_sh['pct_chg'][0],\
+            'PP000001':PP000001,\
             'PEttm000001':PEttm000001,\
             'PB000001':PB000001,\
+            #深证
             'close_sz':df_sz['close'][0],\
             'pct_sz':df_sz['pct_chg'][0],\
+            'PP399001':PP399001,\
             'PEttm399001':PEttm399001,\
             'PB399001':PB399001,
+            #沪深300
             'close_hs300':df_hs300['close'][0],\
             'pct_hs300':df_hs300['pct_chg'][0],\
+            'PP000300':PP000300,\
             'PEttm000300':PEttm000300,\
             'PB000300':PB000300,
+            #中证500
             'close_zz500':df_zz500['close'][0],\
             'pct_zz500':df_zz500['pct_chg'][0],\
+            'PP000905':PP000905,\
             'PEttm000905':PEttm000905,\
             'PB000905':PB000905,
 #            'PEttm000852':PEttm000852,\
 #            'PB000852':PB000852,
 #            'PEttm399303':PEttm399303,\
 #            'PB399303':PB399303,
+            #上证50
             'close_sz50':df_sz50['close'][0],\
             'pct_sz50':df_sz50['pct_chg'][0],\
+            'PP000016':PP000016,\
             'PEttm000016':PEttm000016,\
             'PB000016':PB000016,
+            #创业板
             'close_cyb':df_cyb['close'][0],\
             'pct_cyb':df_cyb['pct_chg'][0],\
+            'PP399006':PP399006,\
             'PEttm399006':PEttm399006,\
             'PB399006':PB399006,
         }

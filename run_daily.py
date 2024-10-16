@@ -38,6 +38,8 @@ def daily_index():
 #                message=f'全市成交量：{res["amount"]}亿,上证涨跌幅：{res["pct_sh"]}% PE:{res["PEttm000001"][0]} 10年百分位：{res["PEttm000001"][1]},PB:{res["PB000001"][0]} 10年百分位：{res["PB000001"][1]},深证涨跌幅：{res["pct_sz"]}% PE:{res["PEttm399001"][0]} 10年百分位：{res["PEttm399001"][1]},'#构造字符串用于推送
                 message=[
                         f'全市成交量：{res["amount"]}亿',
+                        f'全市总市值：{res["total_mv"]}万亿',
+#                        f'全市总市值：{res["total_mv"]}万亿--> {res["total_mv_pct"]}',
                         f'上证涨跌幅：{res["close_sh"]}-->{res["pct_sh"]}%-->PP 10年百分位{res["PP000001"]}',
                         f'PE:{res["PEttm000001"][0]}-->10年百分位：{res["PEttm000001"][1]}\nPB:{res["PB000001"][0]}-->10年百分位：{res["PB000001"][1]}',
                         '#'*25,
@@ -73,10 +75,12 @@ def index_now():
     message=[f'两市成交量：{res["total_vol"]}亿',
             f'上证：{res["sh"]},上证涨跌幅：{res["sh_pct"]}',
             f'深市：{res["sz"]},深市涨跌幅：{res["sz_pct"]}',
+            f'沪深300：{res["hs300"]},深市涨跌幅：{res["hs300_pct"]}',
              f'创业板：{res["cyb"]}创业板涨跌幅：{res["cyb_pct"]}',
              f'上证50: {res["sh50"]}, 涨跌幅：{res["sh50_pct"]}',
+             f'中证500: {res["zz500"]}涨跌幅：{res["zz500_pct"]}',
              f'中证1000: {res["zz1000"]}, 涨跌幅：{res["zz1000_pct"]}',
-             f'中证500: {res["zz500"]}涨跌幅：{res["zz500_pct"]}'
+             f'国证2000: {res["gz2000"]}, 涨跌幅：{res["gz2000_pct"]}',
             ]
     notify('post','简报',"\n".join(message))
 

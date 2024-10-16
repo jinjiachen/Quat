@@ -27,6 +27,8 @@ def statistics(pro,date='',ptf='NO'):
     df_sz50=pro.index_daily(ts_code='000016.SH',start_date=previous,end_data=now,fields='close,pct_chg,amount')
     df_cyb=pro.index_daily(ts_code='399006.SZ',start_date=previous,end_data=now,fields='close,pct_chg,amount')
     amount=(df_sh['amount']+df_sz['amount'])/10**5#上证深证总交易额（亿元）
+    total_mv=consult_total_mv(pro,date,ptf='NO')#两市总市值
+#    total_mv=index_percent(pro,'total_mv',date,ptf='NO')#两市总市值及百分比
 
     df_index=pro.index_dailybasic(trade_date=now, fields='ts_code,trade_date,pe')#查询指数pe
     pe_sh=df_index[df_index['ts_code']=='000001.SH']['pe']#上证PE
@@ -86,6 +88,9 @@ def statistics(pro,date='',ptf='NO'):
         print('上证涨幅：',df_sh['pct_chg'][0])
         print('深证涨幅：',df_sz['pct_chg'][0])
     return {'amount':amount[0],\
+            'total_mv':total_mv,\
+#            'total_mv':total_mv[0],\
+#            'total_mv_pct':total_mv[1],\
             'pe_sh':pe_sh.values[0],\
             'pe_sz':pe_sz.values[0],\
             #上证

@@ -52,9 +52,10 @@ def Driver():
     
 #    Chrome的驱动和路径
 #    path="C:\Program Files\Google\Chrome\Application\chrome.exe"
-#    driver=webdriver.Chrome(chrome_options=options,executable_path=path)
+    path="/usr/bin/chromedriver"
+#    driver=webdriver.Chrome(chrome_options=options,executable_path=path)#chrome_options旧版本用
 #    driver=webdriver.Chrome(path,chrome_options=options)
-    driver=webdriver.Chrome(options=options)
+    driver=webdriver.Chrome(options=options,excuteable_path=path)
     driver.maximize_window()
     #driver.set_page_load_timeout(10)
     #driver.set_script_timeout(10)

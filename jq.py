@@ -7,6 +7,7 @@ date:2023-10-10
 '''
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
@@ -51,11 +52,12 @@ def Driver():
     options.add_experimental_option('useAutomationExtension', False)
     
 #    Chrome的驱动和路径
+    ser=Service()
+    ser.path="/usr/bin/chromedriver"
 #    path="C:\Program Files\Google\Chrome\Application\chrome.exe"
-    path="/usr/bin/chromedriver"
 #    driver=webdriver.Chrome(chrome_options=options,executable_path=path)#chrome_options旧版本用
 #    driver=webdriver.Chrome(path,chrome_options=options)
-    driver=webdriver.Chrome(options=options,excuteable_path=path)
+    driver=webdriver.Chrome(options=options,service=ser)
     driver.maximize_window()
     #driver.set_page_load_timeout(10)
     #driver.set_script_timeout(10)

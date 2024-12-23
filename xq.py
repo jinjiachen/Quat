@@ -4,7 +4,7 @@ import requests
 import random
 from lxml import etree
 from configparser import ConfigParser
-import os
+import os,re
 import time
 import json,base64
 from function import cal_pcts
@@ -105,18 +105,38 @@ def login(login_cookies,combo):#雪球的登录
 
 
 def get_code(file_path):#提取致富代码
-#    file_path='/usr/local/src/tushare/result/Mbottom13_12_1_20220903loc.txt'#筛选出来的结果文件
+    '''
+    file_path(str):提取文件的路径
+    '''
     with open(file_path,'r') as f:
         res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
         f.close()
         stock_code=[] #构造空列表，用来存储股票代码
-        for i in res:#遍历所有的结果
-            if '\t' in i:
-                stock_code.append(i.split('\t')[0].split('.')[1]+i.split('\t')[0].split('.')[0])#提取结果中的致富代码并作简单处理，如'sz000001'
-            else:
-                i=i.replace('\n','')#去除换行符
-                i=i.split('.')[1]+i.split('.')[0]#转化成雪球的格式
-                stock_code.append(i)
+
+        #通过判断第一行的数据来确定数据来源
+        firstline=res[0]#获取第一行来判断数据来源
+        if re.search('\d{6}.XSH[GE]',firstline)!=None:
+            source='jq'
+        elif re.search('\d{6}.S[HZ]',firstline)!=None:
+            source='ts'
+
+        #根据不同的数据来源进行处理
+        if source=='ts':
+            for i in res:#遍历所有的结果
+                if '\t' in i:
+                    stock_code.append(i.split('\t')[0].split('.')[1]+i.split('\t')[0].split('.')[0])#提取结果中的致富代码并作简单处理，如'sz000001'
+                else:
+                    i=i.replace('\n','')#去除换行符
+                    i=i.split('.')[1]+i.split('.')[0]#转化成雪球的格式
+                    stock_code.append(i)
+        elif source=='jq':
+            for i in res:#遍历所有的结果
+                code_jq=re.search('\d{6}.XSH[GE]',i).group()#用正则提取股票代码
+                if 'XSHE' in code_jq:
+                    code_xq='SZ'+code_jq[:6]#转换成雪球代码
+                elif 'XSHG' in code_jq:
+                    code_xq='SH'+code_jq[:6]#转换成雪球代码
+                stock_code.append(code_xq)
     return stock_code 
 
 

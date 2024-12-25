@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from function import cal_pcts,range_pcts,average_pcts,pcts_list
 from function import get_code_ts 
 from xq import get_code as gc_xq
-import os
+import os,re
 
 
 def sql_consult(db, date):
@@ -132,6 +132,7 @@ if __name__=='__main__':
         stocklist=get_code_ts(file_path)
         pcts=range_pcts(pro,stocklist,start,end)
         print(pcts)
+        print('组合平均涨跌幅:',sum(pcts)/len(pcts))
     elif choice=='4':
         pro=Initial()
         file_path=input('请输入文件路径:')

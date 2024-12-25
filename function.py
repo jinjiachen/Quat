@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import easyquotation
 import tushare as ts
-import os
+import os,re
 import time
 from scipy.stats import percentileofscore
 
@@ -131,8 +131,26 @@ def get_code_ts(file_path):#提取致富代码,返回tushare格式
         res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
         f.close()
         stock_code=[] #构造空列表，用来存储股票代码
-        for i in res:#遍历所有的结果
-            stock_code.append(i.split('\t')[0])#提取结果中的致富代码
+
+        #通过判断第一行的数据来确定数据来源
+        firstline=res[0]#获取第一行来判断数据来源
+        if re.search('\d{6}.XSH[GE]',firstline)!=None:
+            source='jq'
+        elif re.search('\d{6}.S[HZ]',firstline)!=None:
+            source='ts'
+
+        #根据不同的数据来源进行处理
+        if source=='ts':
+            for i in res:#遍历所有的结果
+                stock_code.append(i.split('\t')[0])#提取结果中的致富代码
+        elif source=='jq':
+            for i in res:#遍历所有的结果
+                code_jq=re.search('\d{6}.XSH[GE]',i).group()#用正则提取股票代码
+                if 'XSHE' in code_jq:
+                    code_ts=code_jq[:6]+'.SZ'#转换成tushare代码
+                elif 'XSHG' in code_jq:
+                    code_ts=code_jq[:6]+'.SH'#转换成雪球代码
+                stock_code.append(code_ts)
     return stock_code 
 
 

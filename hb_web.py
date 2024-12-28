@@ -7,10 +7,12 @@ Date: 2023-11-24
 
 import urllib
 import requests
-import os,re,time
+import os,re,time,math
 import base64,json
+import easyquotation
 from lxml import etree
 from configparser import ConfigParser
+from function import get_code_ts
 
 
 def load_config():#加载配置文件
@@ -209,13 +211,27 @@ def Menu():
     elif choice=='revoke':
         code=input('请输入股票代码')
         revoke(code)
+    elif choice=='buys':
+        file_path=input('请输入文件路径:')
+        if os.name=='posix':
+            file_path=file_path.replace('\' ','')
+            file_path=file_path.replace('\'','')
+        stocklist=get_code_ts(file_path)
+        order_list('buy',stocklist,100000,'YES')
+    elif choice=='sells':
+        file_path=input('请输入文件路径:')
+        if os.name=='posix':
+            file_path=file_path.replace('\' ','')
+            file_path=file_path.replace('\'','')
+        stocklist=get_code_ts(file_path)
+        order_list('sell',stocklist,100000,'YES')
 
 
 ###构建买卖的股票基本信息并下单
 def order(act,stock_name,code,price,amount):
     '''
     act(str):买卖
-    stock_name(str):股票名称
+    stock_name(str):股票名称,可以为空
     code(str):代码
     price(float):价格
     amount(int):数量
@@ -242,6 +258,33 @@ def order(act,stock_name,code,price,amount):
     print(data)
     general('post',url,data)
 
+###等权重交易一组股票列表
+def order_list(act,stocklist,total_cash,ptf='NO'):
+    '''
+    act(str):买卖
+    stocklist(litst):一组股票列表代码
+    total_cash(float):总现金额
+    ptf(str):是否输出信息
+    '''
+    quotation=easyquotation.use('sina')
+    slip_pct=0.01#滑点百分比
+    slip=0.95#固定滑点
+    numbers=len(stocklist)#一组股票的数量
+    cash=total_cash/numbers#均分到每只股票上的购买额
+    
+    #遍历每只股票，查询价格并计算购买数量
+    for stock_code in stocklist:
+        stock_info=quotation.real(stock_code[:6])#查询股票的价格信息,easyquotation查股票只要6位数字
+        now=stock_info[stock_code[:6]]['now']#当前价格
+        if act=='buy':
+            price=now*(1+slip_pct)#买入价比当前价高，便于买入
+        elif act=='sell':
+            price=now*(1-slip_pct)#卖出价比当前价低，便于卖出
+        amount=math.floor(cash/price)#股票数量向下取整
+        amount=max(amount,100)#股票最小为100
+        #order(act,'',stock_code,price,amount)
+        if ptf=='YES':#调试用
+            print(f'总资金{total_cash},股票总数{numbers},每只股票金额{cash},正在{act} {stock_code},委托价格{price},数量{amount}')
 
 ###保持登录状态
 def keep_login():

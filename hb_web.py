@@ -258,7 +258,7 @@ def order(act,stock_name,code,price,amount):
     print(data)
     general('post',url,data)
 
-###等权重交易一组股票列表
+###等权重买入一组股票列表或者清仓列表中持有的股票
 def order_list(act,stocklist,total_cash,ptf='NO'):
     '''
     act(str):买卖
@@ -271,6 +271,9 @@ def order_list(act,stocklist,total_cash,ptf='NO'):
     slip=0.95#固定滑点
     numbers=len(stocklist)#一组股票的数量
     cash=total_cash/numbers#均分到每只股票上的购买额
+    amount=None#股票数量，默认为空
+    if act=='sell':#如果是卖出，需要用到持仓信息
+        positions=get_position()#获取持仓
     
     #遍历每只股票，查询价格并计算购买数量
     for stock_code in stocklist:
@@ -278,13 +281,25 @@ def order_list(act,stocklist,total_cash,ptf='NO'):
         now=stock_info[stock_code[:6]]['now']#当前价格
         if act=='buy':
             price=now*(1+slip_pct)#买入价比当前价高，便于买入
+            price=round(price,2)
+            amount=math.floor(cash/price)#股票数量向下取整
+            amount=max(amount,100)#股票最小为100
         elif act=='sell':
             price=now*(1-slip_pct)#卖出价比当前价低，便于卖出
-        amount=math.floor(cash/price)#股票数量向下取整
-        amount=max(amount,100)#股票最小为100
-        #order(act,'',stock_code,price,amount)
-        if ptf=='YES':#调试用
-            print(f'总资金{total_cash},股票总数{numbers},每只股票金额{cash},正在{act} {stock_code},委托价格{price},数量{amount}')
+            price=round(price,2)
+            #遍历每个持仓，比对所要卖出的股票是否在持仓中，如在，获取可卖数量
+            for pos in positions:
+                if stock_code==pos[1]:#pos[1]为股票代码
+                    amount=pos[6]#pos[6]为股票数量
+            if amount==None:
+                print(f'{stock_code}不在持仓中')
+        if amount!=None:
+            #order(act,'',stock_code,price,amount)
+            if ptf=='YES':#调试用
+                if act=='buy':
+                    print(f'总资金{total_cash},股票总数{numbers},每只股票金额{cash},正在{act} {stock_code},委托价格{price},数量{amount}')
+                elif act=='sell':
+                    print(f'正在{act} {stock_code},委托价格{price},数量{amount}')
 
 ###保持登录状态
 def keep_login():

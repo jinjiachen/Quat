@@ -168,7 +168,7 @@ def myorder(act,data):
 
 ###菜单
 def Menu():
-    choice=input('pos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nt:做T')
+    choice=input('pos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nt:做T\nbuys:等权重买入一组股票\nsells:清仓列明表中持有的股票')
     if choice=='pos':
 #        position_url=f'https://m.touker.com/trading/trade/trading-sub/position?_=1701162501444'#构建get请求的地址
         positions=get_position()
@@ -213,11 +213,12 @@ def Menu():
         revoke(code)
     elif choice=='buys':
         file_path=input('请输入文件路径:')
+        total_cash=input('请输入买入股票的总金额:')
         if os.name=='posix':
             file_path=file_path.replace('\' ','')
             file_path=file_path.replace('\'','')
         stocklist=get_code_ts(file_path)
-        order_list('buy',stocklist,100000,'YES')
+        order_list('buy',stocklist,float(total_cash),'YES')
     elif choice=='sells':
         file_path=input('请输入文件路径:')
         if os.name=='posix':

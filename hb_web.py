@@ -218,14 +218,14 @@ def Menu():
             file_path=file_path.replace('\' ','')
             file_path=file_path.replace('\'','')
         stocklist=get_code_ts(file_path)
-        order_list('buy',stocklist,float(total_cash),'YES')
+        order_list('BUY',stocklist,float(total_cash),'YES')
     elif choice=='sells':
         file_path=input('请输入文件路径:')
         if os.name=='posix':
             file_path=file_path.replace('\' ','')
             file_path=file_path.replace('\'','')
         stocklist=get_code_ts(file_path)
-        order_list('sell',stocklist,100000,'YES')
+        order_list('SELL',stocklist,100000,'YES')
 
 
 ###构建买卖的股票基本信息并下单
@@ -273,19 +273,20 @@ def order_list(act,stocklist,total_cash,ptf='NO'):
     numbers=len(stocklist)#一组股票的数量
     cash=total_cash/numbers#均分到每只股票上的购买额
     amount=None#股票数量，默认为空
-    if act=='sell':#如果是卖出，需要用到持仓信息
+    if act=='SELL':#如果是卖出，需要用到持仓信息
         positions=get_position()#获取持仓
     
     #遍历每只股票，查询价格并计算购买数量
     for stock_code in stocklist:
         stock_info=quotation.real(stock_code[:6])#查询股票的价格信息,easyquotation查股票只要6位数字
         now=stock_info[stock_code[:6]]['now']#当前价格
-        if act=='buy':
+        if act=='BUY':
             price=now*(1+slip_pct)#买入价比当前价高，便于买入
             price=round(price,2)
-            amount=math.floor(cash/price)#股票数量向下取整
-            amount=max(amount,100)#股票最小为100
-        elif act=='sell':
+#            amount=math.floor(cash/price)#股票数量向下取整
+            amount=cash/price//100#股票数量对100取整,可以理解为一手
+            amount=max(amount*100,100)#股票最小为100
+        elif act=='SELL':
             price=now*(1-slip_pct)#卖出价比当前价低，便于卖出
             price=round(price,2)
             #遍历每个持仓，比对所要卖出的股票是否在持仓中，如在，获取可卖数量
@@ -295,11 +296,11 @@ def order_list(act,stocklist,total_cash,ptf='NO'):
             if amount==None:
                 print(f'{stock_code}不在持仓中')
         if amount!=None:
-            #order(act,'',stock_code,price,amount)
+            order(act,'',stock_code,price,amount)
             if ptf=='YES':#调试用
-                if act=='buy':
+                if act=='BUY':
                     print(f'总资金{total_cash},股票总数{numbers},每只股票金额{cash},正在{act} {stock_code},委托价格{price},数量{amount}')
-                elif act=='sell':
+                elif act=='SELL':
                     print(f'正在{act} {stock_code},委托价格{price},数量{amount}')
 
 ###保持登录状态

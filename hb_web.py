@@ -303,6 +303,23 @@ def order_list(act,stocklist,total_cash,ptf='NO'):
                 elif act=='SELL':
                     print(f'正在{act} {stock_code},委托价格{price},数量{amount}')
 
+###同步jq组合的持仓
+def sync_jq(file_path,ptf='NO'):
+    '''
+    file_path(str):jq持仓信息的文件路径
+    '''
+    with open(file_path,'r') as f:
+        res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
+        f.close()
+    for line in res:
+        code_jq=re.search('\d{6}.XSH[GE]',line).group()#用正则提取股票代码
+        num_jq=re.search('\d+股',line).group()
+        num_jq=num_jq.replace('股','')
+        if ptf=='YES':
+            print(code_jq)
+            print(num_jq)
+    pass
+
 ###保持登录状态
 def keep_login():
     url='https://m.touker.com/trading/whetherNeedValidatePwd.json'

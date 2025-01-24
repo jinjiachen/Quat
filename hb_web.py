@@ -311,14 +311,39 @@ def sync_jq(file_path,ptf='NO'):
     with open(file_path,'r') as f:
         res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
         f.close()
+
+    codes_jq=[]
+    nums_jq=[]
     for line in res:
         code_jq=re.search('\d{6}.XSH[GE]',line).group()#用正则提取股票代码
         num_jq=re.search('\d+股',line).group()
         num_jq=num_jq.replace('股','')
+        if 'XSHE' in code_jq:
+            code_jq=code_jq[:6]+'.SZ'#转换成tushare,hb代码
+        elif 'XSHG' in code_jq:
+            code_jq=code_jq[:6]+'.SH'#转换成tushare,hb代码
+        codes_jq.append(code_jq)
+        nums_jq.append(num_jq)
         if ptf=='YES':
-            print(code_jq)
-            print(num_jq)
-    pass
+            print(f'从文件中提取的股票:{code_jq},对应的数量:{num_jq}')
+    positions=get_position()#获取持仓
+    final_num=[]
+    for code,num in zip(codes_jq,nums_jq):
+        amount=0#数量初始化0
+        for pos in positions:
+            if code==pos[1]:#比较股票代码，判断是否有持仓pos[1]为股票代码
+#                print('测试',pos[6])
+                amount=int(num)-int(pos[6])#如果有持仓,比较jq和hb的数量差pos[6]为股票数量
+                break
+        if amount==0:
+            final_num.append(num)
+        else:
+            final_num.append(amount)
+    if ptf=='YES':
+        for code,num in zip(codes_jq,final_num):
+            print(f'比较后的股票:{code},数量:{num}')
+
+
 
 ###保持登录状态
 def keep_login():

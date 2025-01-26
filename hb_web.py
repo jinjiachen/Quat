@@ -308,10 +308,12 @@ def sync_jq(file_path,ptf='NO'):
     '''
     file_path(str):jq持仓信息的文件路径
     '''
+    #读取文件内容
     with open(file_path,'r') as f:
         res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
         f.close()
 
+    #提取文件中的股票和数量信息
     codes_jq=[]
     nums_jq=[]
     for line in res:
@@ -326,22 +328,50 @@ def sync_jq(file_path,ptf='NO'):
         nums_jq.append(num_jq)
         if ptf=='YES':
             print(f'从文件中提取的股票:{code_jq},对应的数量:{num_jq}')
+
+    #获取持仓信息，和文件内容进行比对
     positions=get_position()#获取持仓
     final_num=[]
     for code,num in zip(codes_jq,nums_jq):
-        amount=0#数量初始化0
+        amount=None#数量初始化为空
         for pos in positions:
             if code==pos[1]:#比较股票代码，判断是否有持仓pos[1]为股票代码
-#                print('测试',pos[6])
                 amount=int(num)-int(pos[6])#如果有持仓,比较jq和hb的数量差pos[6]为股票数量
                 break
-        if amount==0:
+        if amount==None:
             final_num.append(num)
         else:
             final_num.append(amount)
     if ptf=='YES':
         for code,num in zip(codes_jq,final_num):
             print(f'比较后的股票:{code},数量:{num}')
+
+    #实际交易
+    slip_pct=0.01#滑点百分比
+    slip=0.95#固定滑点
+    quotation=easyquotation.use('sina')
+    for code,num in zip(codes_jq,final_num):
+        stock_info=quotation.real(code[:6])#查询股票的价格信息,easyquotation查股票只要6位数字
+        now=stock_info[code[:6]]['now']#当前价格
+        if num==0:
+            if ptf=='YES':
+                print(f'{code}数量为0，不做买卖')
+            pass#占位用，防止程序出错
+        elif '-' in str(num):#卖出
+#            num=num.replace('-','')
+            num=abs(num)
+            price=now*(1-slip_pct)#卖出价比当前价低，便于卖出
+            price=round(price,2)
+#            order('SELL','',code,price,num)
+            if ptf=='YES':
+                print(f'正在卖出股票{code},价格:{price},数量:{num}')
+        else:#买入
+            price=now*(1+slip_pct)#买入价比当前价高，便于买入
+            price=round(price,2)
+#            order('BUY','',code,price,num)
+            if ptf=='YES':
+                print(f'正在买入股票{code},价格:{price},数量:{num}')
+    
 
 
 

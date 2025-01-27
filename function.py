@@ -126,6 +126,7 @@ def average_pcts(pro,stock_list,start,end):#计算一段时间内的每一天的
     return ma_pcts
 
 
+###根据文件提取股票代码，自动判断jq和ts两种数据源，转换成ts或hb的形式
 def get_code_ts(file_path):#提取致富代码,返回tushare格式
     with open(file_path,'r') as f:
         res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
@@ -142,14 +143,14 @@ def get_code_ts(file_path):#提取致富代码,返回tushare格式
         #根据不同的数据来源进行处理
         if source=='ts':
             for i in res:#遍历所有的结果
-                stock_code.append(i.split('\t')[0])#提取结果中的致富代码
+                stock_code.append(i.split('\t')[0])#提取结果中的致富代码,ts与hb代码相同，不做转换
         elif source=='jq':
             for i in res:#遍历所有的结果
                 code_jq=re.search('\d{6}.XSH[GE]',i).group()#用正则提取股票代码
                 if 'XSHE' in code_jq:
-                    code_ts=code_jq[:6]+'.SZ'#转换成tushare代码
+                    code_ts=code_jq[:6]+'.SZ'#转换成tushare或hb代码
                 elif 'XSHG' in code_jq:
-                    code_ts=code_jq[:6]+'.SH'#转换成雪球代码
+                    code_ts=code_jq[:6]+'.SH'#转换成tushare或hb代码
                 stock_code.append(code_ts)
     return stock_code 
 
@@ -205,8 +206,8 @@ def pcts_list(path):
     return[files,pcts]#返回文件名和对应的综合涨跌幅
 
 
-###读取文件并提取股票代码，返回雪球格式的代码
-def get_code_xq(file_path):#提取致富代码
+###读取文件并提取股票代码，返回雪球格式的代码 (此函数和get_code_xq重复，老旧函数，弃用)
+def get_code_xq_old(file_path):#提取致富代码
     with open(file_path,'r') as f:
         res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
         f.close()
@@ -235,3 +236,39 @@ def Monotonicity(numbers,reverse='False'):
         return True
     else:
         return False
+
+###根据文件提取股票代码，自动判断jq和ts两种数据源，转换成雪球的形式
+def get_code_xq(file_path):#提取致富代码
+    '''
+    file_path(str):提取文件的路径
+    '''
+    with open(file_path,'r') as f:
+        res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
+        f.close()
+        stock_code=[] #构造空列表，用来存储股票代码
+
+        #通过判断第一行的数据来确定数据来源
+        firstline=res[0]#获取第一行来判断数据来源
+        if re.search('\d{6}.XSH[GE]',firstline)!=None:
+            source='jq'
+        elif re.search('\d{6}.S[HZ]',firstline)!=None:
+            source='ts'
+
+        #根据不同的数据来源进行处理
+        if source=='ts':
+            for i in res:#遍历所有的结果
+                if '\t' in i:
+                    stock_code.append(i.split('\t')[0].split('.')[1]+i.split('\t')[0].split('.')[0])#提取结果中的致富代码并作简单处理，如'sz000001'
+                else:
+                    i=i.replace('\n','')#去除换行符
+                    i=i.split('.')[1]+i.split('.')[0]#转化成雪球的格式
+                    stock_code.append(i)
+        elif source=='jq':
+            for i in res:#遍历所有的结果
+                code_jq=re.search('\d{6}.XSH[GE]',i).group()#用正则提取股票代码
+                if 'XSHE' in code_jq:
+                    code_xq='SZ'+code_jq[:6]#转换成雪球代码
+                elif 'XSHG' in code_jq:
+                    code_xq='SH'+code_jq[:6]#转换成雪球代码
+                stock_code.append(code_xq)
+    return stock_code 

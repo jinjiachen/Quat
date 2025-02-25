@@ -53,12 +53,34 @@ def Split_line(words,figure): #分割线
 
 #def FenHong(previous,post): #比较两个时间段间复权因子的变化，间接查找分红的股票
 
+###获取股票名字
+def get_name(stock_code):
+    '''
+    stock_code:股票代码
+    '''
+    quotation=easyquotation.use('sina')
+    stock_info=quotation.real(stock_code)#查询股票的价格信息
+    name=stock_info[stock_code]['name']#股票名称
+    return name
+
+###获取一组股票的名字
+def get_names(stock_list):
+    '''
+    stock_list:股票代码的列表
+    '''
+    names=[]
+    for stock in stock_list:
+        stock=re.search('\d{6}',stock).group()
+        names.append(get_name(stock))
+    return names 
+
 def cal_pct(stock_code):#计算单个股票涨跌幅
     '''
     stock_code:股票代码
     '''
     quotation=easyquotation.use('sina')
     stock_info=quotation.real(stock_code)#查询股票的价格信息
+    name=stock_info[stock_code]['name']#股票名称
     close=stock_info[stock_code]['close']#昨日收盘价
     now=stock_info[stock_code]['now']#当前价格
     pct=round((now/close-1)*100,2)#计算涨跌幅

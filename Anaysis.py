@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 #from sqlalchemy import create_engine 
-from function import cal_pcts,range_pcts,average_pcts,pcts_list
+from function import cal_pcts,range_pcts,average_pcts,pcts_list,get_names
 from function import get_code_ts 
 from xq import get_code as gc_xq
 import os,re
@@ -117,9 +117,13 @@ if __name__=='__main__':
             file_path=file_path.replace('\' ','')
             file_path=file_path.replace('\'','')
         stocklist=gc_xq(file_path)
+        names=get_names(stocklist)
         pcts=cal_pcts(stocklist)
-        for stock,pct in zip(stocklist,pcts):
-            print(stock,pct)
+        tmp=[]#临时列表，用于拼接股票名称和代码
+        for stock,name in zip(stocklist,names):
+            tmp.append(stock+ ' '+name)
+        for code,pct in zip(tmp,pcts):
+            print(code,pct)
         print('综合涨幅：',sum(pcts)/len(pcts))
     elif choice=='3':
         pro=Initial()
@@ -130,8 +134,13 @@ if __name__=='__main__':
         start=input('请输入开始时间')
         end=input('请输入结束时间')
         stocklist=get_code_ts(file_path)
+        names=get_names(stocklist)
         pcts=range_pcts(pro,stocklist,start,end)
-        print(pcts)
+        tmp=[]#临时列表，用于拼接股票名称和代码
+        for stock,name in zip(stocklist,names):
+            tmp.append(stock+ ' '+name)
+        for code,pct in zip(tmp,pcts):
+            print(code,pct)
         print('组合平均涨跌幅:',sum(pcts)/len(pcts))
     elif choice=='4':
         pro=Initial()

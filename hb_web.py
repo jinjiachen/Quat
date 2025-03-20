@@ -168,7 +168,7 @@ def myorder(act,data):
 
 ###菜单
 def Menu():
-    choice=input('pos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nt:做T\nbuys:等权重买入一组股票\nsells:清仓列明表中持有的股票\nsync:同步jq组合')
+    choice=input('pos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nt:做T\nbuys:等权重买入一组股票\nsells:清仓列明表中持有的股票\nsync:同步jq组合\ncs:检查状态')
     if choice=='pos':
 #        position_url=f'https://m.touker.com/trading/trade/trading-sub/position?_=1701162501444'#构建get请求的地址
         positions=get_position()
@@ -232,6 +232,8 @@ def Menu():
             file_path=file_path.replace('\' ','')
             file_path=file_path.replace('\'','')
         sync_jq(file_path,'YES')
+    elif choice=='cs':
+        check_status()
 
 
 
@@ -397,8 +399,9 @@ def keep_login():
 
 def check_status():
     while True:
-        keep_login()
-        time.sleep(2)
+#        keep_login()
+        consult('jrcj')
+        time.sleep(60)
     
 ###高买高卖做T
 def trade_T(code,price1,price2,amount,direction=None):

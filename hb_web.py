@@ -7,7 +7,7 @@ Date: 2023-11-24
 
 import urllib
 import requests
-import os,re,time,math
+import os,re,time,math,random
 import base64,json
 import easyquotation
 from lxml import etree
@@ -401,7 +401,7 @@ def check_status():
     while True:
 #        keep_login()
         consult('jrcj')
-        time.sleep(60)
+        time.sleep(random.randint(240,300))#4-5分钟内随机
     
 ###高买高卖做T
 def trade_T(code,price1,price2,amount,direction=None):

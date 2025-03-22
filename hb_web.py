@@ -13,6 +13,7 @@ import easyquotation
 from lxml import etree
 from configparser import ConfigParser
 from function import get_code_ts
+from notification import notify
 
 
 def load_config():#加载配置文件
@@ -400,8 +401,14 @@ def keep_login():
 def check_status():
     while True:
 #        keep_login()
-        consult('jrcj')
-        time.sleep(random.randint(240,300))#4-5分钟内随机
+        now=time.strftime("%Y-%m-%d %H:%M:%S")
+        try:
+            consult('jrcj')
+            print('当前时间：',now)
+            time.sleep(random.randint(240,300))#4-5分钟内随机
+        except:
+            print(f'server stopped at {now}')
+#            notify('post','HB status',f'server stopped at {now}')
     
 ###高买高卖做T
 def trade_T(code,price1,price2,amount,direction=None):

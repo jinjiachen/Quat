@@ -257,7 +257,7 @@ def order(act,stock_name,code,price,amount):
         market='SZ'
 #        print('市场为',market)
     #提取code中的数字部分
-    code=re.search('\d+',code).group()
+    code=re.search(r'\d+',code).group()
     #这个信息中包含了buy/sell的动作,1:buy,2:sell
     if act=='BUY':
         url='https://m.touker.com/trading/securitiesEntrust.json'
@@ -327,8 +327,8 @@ def sync_jq(file_path,ptf='NO'):
     codes_jq=[]
     nums_jq=[]
     for line in res:
-        code_jq=re.search('\d{6}.XSH[GE]',line).group()#用正则提取股票代码
-        num_jq=re.search('\d+股',line).group()
+        code_jq=re.search(r'\d{6}.XSH[GE]',line).group()#用正则提取股票代码
+        num_jq=re.search(r'\d+股',line).group()
         num_jq=num_jq.replace('股','')
         if 'XSHE' in code_jq:
             code_jq=code_jq[:6]+'.SZ'#转换成tushare,hb代码
@@ -462,7 +462,7 @@ def revoke(code):
         market='SZ'
 #        print('市场为',market)
     #提取code中的数字部分
-    code=re.search('\d+',code).group()
+    code=re.search(r'\d+',code).group()
     url='https://m.touker.com/trading/revokeCommit.json'
     entrustcode=input('请输入信任代码')
     data=f'exchange={market}&stockCode={code}&entrustCode={entrustcode}'

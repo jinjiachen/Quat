@@ -405,7 +405,7 @@ def check_status():
         try:
             consult('jrcj')
             print('当前时间：',now)
-            time.sleep(random.randint(240,300))#4-5分钟内随机
+            time.sleep(random.randint(180,240))#3-4分钟内随机
         except:
             print(f'server stopped at {now}')
 #            notify('post','HB status',f'server stopped at {now}')

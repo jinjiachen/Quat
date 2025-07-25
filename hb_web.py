@@ -63,8 +63,8 @@ def general(method,url,data=''):
                 }
 #        res=requests.get(url,headers=myheader,allow_redirects=False)#发送get请求
         res=s.get(url,headers=myheader,allow_redirects=False)#发送get请求
-        print(res.status_code)
-        print(res.url)
+#        print(res.status_code)
+#        print(res.url)
         #以下是获取cookie的尝试
 #        print([x.__dict__ for x in s.cookies])
 #        print(res.cookies)
@@ -169,8 +169,15 @@ def myorder(act,data):
 
 ###菜单
 def Menu():
-    choice=input('pos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nt:做T\nbuys:等权重买入一组股票\nsells:清仓列明表中持有的股票\nsync:同步jq组合\ncs:检查状态')
-    if choice=='pos':
+    choice=input('ap:acount & position\npos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nt:做T\nbuys:等权重买入一组股票\nsells:清仓列明表中持有的股票\nsync:同步jq组合\ncs:检查状态')
+    if choice=='ap':
+        base_info=get_account()
+        print(base_info)
+        positions=get_position()
+        for i,stock in enumerate(positions):
+            print(f'{i+1}-->{stock}')
+        pass
+    elif choice=='pos':
 #        position_url=f'https://m.touker.com/trading/trade/trading-sub/position?_=1701162501444'#构建get请求的地址
         positions=get_position()
         for i,stock in enumerate(positions):

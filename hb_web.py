@@ -460,8 +460,8 @@ def revoke(code):
             'x-requested-with': 'XMLHttpRequest',
             }
     #基于股票代码,判断市场类型
-    words_sh=['sh','XSHG']
-    words_sz=['sz','XSHG','XSHE']
+    words_sh=['sh','SH','XSHG']
+    words_sz=['sz','SZ','XSHE']
     if any(suffix in code for suffix in words_sh):
         market='SH'
 #        print('市场为',market)

@@ -367,27 +367,27 @@ def sync_jq(file_path,ptf='NO'):
     slip_pct=0.01#滑点百分比
     slip=0.95#固定滑点
     quotation=easyquotation.use('sina')
-    for code,num in zip(codes_jq,final_num):
-        stock_info=quotation.real(code[:6])#查询股票的价格信息,easyquotation查股票只要6位数字
-        now=stock_info[code[:6]]['now']#当前价格
-        if num==0:
-            if ptf=='YES':
-                print(f'{code}数量为0，不做买卖')
-            pass#占位用，防止程序出错
-        elif '-' in str(num):#卖出
-#            num=num.replace('-','')
-            num=abs(num)
-            price=now*(1-slip_pct)#卖出价比当前价低，便于卖出
-            price=round(price,2)
-#            order('SELL','',code,price,num)
-            if ptf=='YES':
-                print(f'正在卖出股票{code},价格:{price},数量:{num}')
-        else:#买入
-            price=now*(1+slip_pct)#买入价比当前价高，便于买入
-            price=round(price,2)
-#            order('BUY','',code,price,num)
-            if ptf=='YES':
-                print(f'正在买入股票{code},价格:{price},数量:{num}')
+    act=input('按任意键推出，Y/y继续下单！！！')
+    if act=='Y' or act== 'y':
+        for code,num in zip(codes_jq,final_num):
+            stock_info=quotation.real(code[:6])#查询股票的价格信息,easyquotation查股票只要6位数字
+            now=stock_info[code[:6]]['now']#当前价格
+            if num==0:
+                if ptf=='YES':
+                    print(f'{code}数量为0，不做买卖')
+            elif '-' in str(num):#卖出
+                num=abs(num)
+                price=now*(1-slip_pct)#卖出价比当前价低，便于卖出
+                price=round(price,2)
+                order('SELL','',code,price,num)
+                if ptf=='YES':
+                    print(f'正在卖出股票{code},价格:{price},数量:{num}')
+            else:#买入
+                price=now*(1+slip_pct)#买入价比当前价高，便于买入
+                price=round(price,2)
+                order('BUY','',code,price,num)
+                if ptf=='YES':
+                    print(f'正在买入股票{code},价格:{price},数量:{num}')
     
 
 

@@ -335,7 +335,7 @@ def sync_jq(file_path,ptf='NO'):
     nums_jq=[]
     for line in res:
         code_jq=re.search(r'\d{6}.XSH[GE]',line).group()#用正则提取股票代码
-        num_jq=re.search(r'\d+股',line).group()
+        num_jq=re.search(r'-?\d+股',line).group()
         num_jq=num_jq.replace('股','')
         if 'XSHE' in code_jq:
             code_jq=code_jq[:6]+'.SZ'#转换成tushare,hb代码

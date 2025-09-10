@@ -171,12 +171,11 @@ def myorder(act,data):
 def Menu():
     choice=input('ap:acount & position\npos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nt:做T\nbuys:等权重买入一组股票\nsells:清仓列明表中持有的股票\nsync:同步jq组合\ncs:检查状态')
     if choice=='ap':
-        base_info=get_account()
-        print(base_info)
         positions=get_position()
         for i,stock in enumerate(positions):
             print(f'{i+1}-->{stock}')
-        pass
+        base_info=get_account()
+        print(base_info)
     elif choice=='pos':
 #        position_url=f'https://m.touker.com/trading/trade/trading-sub/position?_=1701162501444'#构建get请求的地址
         positions=get_position()

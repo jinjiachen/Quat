@@ -77,6 +77,7 @@ def close_update(driver):
 
 
 def login(driver,username,passwd,dry_run='NO'):
+    print('='*10+f'{username}'+'='*10)
     url='https://joinquant.com/'
     driver.get(url)
     time.sleep(3)
@@ -114,7 +115,7 @@ def login(driver,username,passwd,dry_run='NO'):
                 f.close()
 
             driver.save_screenshot('shot.png')#屏幕截图,必须为png
-            print('截图成功')
+            #print('截图成功')
             picture_mark('shot.png')
             if os.name=='nt':
                 picture_scrot('shot.png',(760,240),(1230,455))
@@ -129,7 +130,7 @@ def login(driver,username,passwd,dry_run='NO'):
             action.move_by_offset(distance[0]+qk_width,0)
             time.sleep(1)
             action.release()
-            print('移动距离:',distance[0]+qk_width)
+            #print('移动距离:',distance[0]+qk_width)
         #    action.move_to_element(handle)
         #    action.drag_and_drop_by_offset(handle,10,0)
             action.perform()
@@ -176,11 +177,11 @@ def login(driver,username,passwd,dry_run='NO'):
             ###将base64编码写入文件
             with open ('./qk.jpg','wb') as f:
                 f.write(base64.b64decode(img_b64))#b64照片原理是将图片二进制文件经过base64编码处理，所以解码后就是二进制原码
-                print('base64码写入成功')
+                #print('base64码写入成功')
                 f.close()
 
             driver.save_screenshot('shot.png')#屏幕截图,必须为png
-            print('截图成功')
+            #print('截图成功')
             picture_mark('shot.png')
             if os.name=='nt':
                 picture_scrot('shot.png',(760,240),(1230,455))
@@ -195,7 +196,7 @@ def login(driver,username,passwd,dry_run='NO'):
             action.move_by_offset(distance[0]+qk_width,0)
             time.sleep(1)
             action.release()
-            print('移动距离:',distance[0]+qk_width)
+            #print('移动距离:',distance[0]+qk_width)
         #    action.move_to_element(handle)
         #    action.drag_and_drop_by_offset(handle,10,0)
             action.perform()

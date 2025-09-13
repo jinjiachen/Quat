@@ -405,6 +405,7 @@ def keep_login():
 
 
 def check_status():
+    flag=0
     while True:
 #        keep_login()
         now=time.strftime("%Y-%m-%d %H:%M:%S")
@@ -413,8 +414,12 @@ def check_status():
             print('当前时间：',now)
             time.sleep(random.randint(180,240))#3-4分钟内随机
         except:
-            print(f'server stopped at {now}')
-#            notify('post','HB status',f'server stopped at {now}')
+            flag=flag+1
+            time.sleep(10)
+            if flag==3:
+                print(f'server stopped at {now}')
+                notify('post','HB status',f'server stopped at {now}')
+                break
     
 ###高买高卖做T
 def trade_T(code,price1,price2,amount,direction=None):

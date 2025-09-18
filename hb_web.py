@@ -405,17 +405,17 @@ def keep_login():
 
 
 def check_status():
-    flag=0
     while True:
+    flag=0
 #        keep_login()
         now=time.strftime("%Y-%m-%d %H:%M:%S")
         try:
             consult('jrcj')
             print('当前时间：',now)
-            time.sleep(random.randint(180,240))#3-4分钟内随机
+            time.sleep(random.randint(120,180))#3-4分钟内随机
         except:
             flag=flag+1
-            time.sleep(10)
+            time.sleep(30)
             if flag==3:
                 print(f'server stopped at {now}')
                 notify('post','HB status',f'server stopped at {now}')

@@ -406,7 +406,7 @@ def keep_login():
 
 def check_status():
     while True:
-    flag=0
+        flag=0
 #        keep_login()
         now=time.strftime("%Y-%m-%d %H:%M:%S")
         try:

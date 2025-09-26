@@ -11,6 +11,7 @@ import time
 import easyquotation
 from stock_online import Initial
 from scipy.stats import percentileofscore
+from function import print_c
 
 
 ###统计沪深两大指数的涨跌幅和成交量
@@ -289,14 +290,65 @@ def Menu():
     elif choice=='3':
         res=live_index()
 #        print(res)
-        print(f"上证：{res['sh']}-->{res['sh_pct']}")
-        print(f"深证：{res['sz']}-->{res['sz_pct']}")
-        print(f"沪深300：{res['hs300']}-->{res['hs300_pct']}")
-        print(f"创业板：{res['cyb']}-->{res['cyb_pct']}")
-        print(f"上证50：{res['sh50']}-->{res['sh50_pct']}")
-        print(f"中证500：{res['zz500']}-->{res['zz500_pct']}")
-        print(f"中证1000：{res['zz1000']}-->{res['zz1000_pct']}")
+#        print(f"上证：{res['sh']}-->{res['sh_pct']}")
+#        print(f"深证：{res['sz']}-->{res['sz_pct']}")
+#        print(f"沪深300：{res['hs300']}-->{res['hs300_pct']}")
+#        print(f"创业板：{res['cyb']}-->{res['cyb_pct']}")
+#        print(f"上证50：{res['sh50']}-->{res['sh50_pct']}")
+#        print(f"中证500：{res['zz500']}-->{res['zz500_pct']}")
+#        print(f"中证1000：{res['zz1000']}-->{res['zz1000_pct']}")
         print(f"国证2000：{res['gz2000']}-->{res['gz2000_pct']}")
+
+        if res['sh_pct']>0:
+            data=f"上证：{res['sh']}-->{res['sh_pct']}"
+            print_c(data,'red')
+        elif res['sh_pct']<=0:
+            data=f"上证：{res['sh']}-->{res['sh_pct']}"
+            print_c(data,'green')
+        if res['sz_pct']>0:
+            data=f"深证：{res['sz']}-->{res['sz_pct']}"
+            print_c(data,'red')
+        elif res['sz_pct']<=0:
+            data=f"深证：{res['sz']}-->{res['sz_pct']}"
+            print_c(data,'green')
+        if res['hs300_pct']>0:
+            data=f"沪深300：{res['hs300']}-->{res['hs300_pct']}"
+            print_c(data,'red')
+        elif res['hs300_pct']<=0:
+            data=f"沪深300：{res['hs300']}-->{res['hs300_pct']}"
+            print_c(data,'green')
+        if res['cyb_pct']>0:
+            data=f"创业板：{res['cyb']}-->{res['cyb_pct']}"
+            print_c(data,'red')
+        elif res['cyb_pct']<=0:
+            data=f"创业板：{res['cyb']}-->{res['cyb_pct']}"
+            print_c(data,'green')
+        if res['sh50_pct']>0:
+            data=f"上证50：{res['sh50']}-->{res['sh50_pct']}"
+            print_c(data,'red')
+        elif res['sh50_pct']<=0:
+            data=f"上证50：{res['sh50']}-->{res['sh50_pct']}"
+            print_c(data,'green')
+        if res['zz500_pct']>0:
+            data=f"中证500：{res['zz500']}-->{res['zz500_pct']}"
+            print_c(data,'red')
+        elif res['zz500_pct']<=0:
+            data=f"中证500：{res['zz500']}-->{res['zz500_pct']}"
+            print_c(data,'green')
+        if res['zz1000_pct']>0:
+            data=f"中证1000：{res['zz1000']}-->{res['zz1000_pct']}"
+            print_c(data,'red')
+        elif res['zz1000_pct']<=0:
+            data=f"中证1000：{res['zz1000']}-->{res['zz1000_pct']}"
+            print_c(data,'green')
+        if res['gz2000_pct']>0:
+            data=f"国证2000：{res['gz2000']}-->{res['gz2000_pct']}"
+            print_c(data,'red')
+        elif res['gz2000_pct']<=0:
+            data=f"国证2000：{res['gz2000']}-->{res['gz2000_pct']}"
+            print_c(data,'green')
+
+
     elif choice=='4':
         date=input('请输入查询日期：')
         index=input('请输入查询的指数(000001.sh)：')

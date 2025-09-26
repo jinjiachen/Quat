@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 #from sqlalchemy import create_engine 
-from function import cal_pcts,range_pcts,average_pcts,pcts_list,get_names
+from function import cal_pcts,range_pcts,average_pcts,pcts_list,get_names,print_c
 from function import get_code_ts 
 from xq import get_code as gc_xq
 import os,re
@@ -160,7 +160,7 @@ if __name__=='__main__':
             path=path.replace('\'','')
         res=pcts_list(path)
         for filename,pct in zip(res[0],res[1]):
-            print(filename+'\t\t',pct)
+            print(filename+'\t\t\t\t\t\t\t',pct)
     elif choice=='6':
         stocks_change('20240103','20240607')
 

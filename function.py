@@ -7,6 +7,22 @@ import os,re
 import time
 from scipy.stats import percentileofscore
 
+def print_c(data,color):
+    '''
+    data(str):需要输出的字符串
+    color(str):red, green, blue and so on
+    '''
+    if color=='red':
+        print(f'\033[1;31m{data}\033[0m')
+    elif color=='green':
+        print(f'\033[1;32m{data}\033[0m')
+    elif color=='yellow':
+        print(f'\033[1;33m{data}\033[0m')
+    elif color=='blue':
+        print(f'\033[1;34m{data}\033[0m')
+    elif color=='purple':
+        print(f'\033[1;35m{data}\033[0m')
+
 def Average(data,ma,length): #输入单个股票的行情数据，返回对应均线数据
     '''
     data:行情数据

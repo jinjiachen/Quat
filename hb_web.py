@@ -405,16 +405,18 @@ def keep_login():
 
 
 def check_status():
+    flag=0#初始化
     while True:
-        flag=0
 #        keep_login()
         now=time.strftime("%Y-%m-%d %H:%M:%S")
         try:
             consult('jrcj')
             print('当前时间：',now)
             time.sleep(random.randint(120,180))#3-4分钟内随机
+            flag=0#如果运行成功，重置为0
         except:
             flag=flag+1
+            print(f'当前时间：{now},正在尝试{flag}/3')
             time.sleep(30)
             if flag==3:
                 print(f'server stopped at {now}')

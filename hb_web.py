@@ -416,11 +416,17 @@ def check_status():
             flag=0#如果运行成功，重置为0
         except:
             flag=flag+1
-            print(f'当前时间：{now},正在尝试{flag}/3')
+            print(f'当前时间：{now},正在尝试{flag}/40')
             time.sleep(30)
             if flag==3:
+                print(f'Caution: Three times failed at {now}')
+                notify('post','HB status_Caution',f'Caution: Three times failed at {now}')
+            elif flag==10:
+                print(f'Caution: Ten times failed at {now}')
+                notify('post','HB status_Warning',f'Caution: Ten times failed at {now}')
+            elif flag==40:
                 print(f'server stopped at {now}')
-                notify('post','HB status',f'server stopped at {now}')
+                notify('post','HB status_Error',f'server stopped at {now}')
                 break
     
 ###高买高卖做T

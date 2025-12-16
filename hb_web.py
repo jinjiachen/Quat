@@ -352,7 +352,8 @@ def sync_jq(file_path,ptf='NO'):
         amount=None#数量初始化为空
         for pos in positions:
             if code==pos[1]:#比较股票代码，判断是否有持仓pos[1]为股票代码
-                amount=int(num)-int(pos[6])#如果有持仓,比较jq和hb的数量差pos[6]为股票数量
+                #amount=int(num)-int(pos[6])#如果有持仓,比较jq和hb的数量差pos[6]为可卖股票数量,pos[5]为持有数量
+                amount=int(num)-int(pos[5])#如果有持仓,比较jq和hb的数量差pos[6]为可卖股票数量,pos[5]为持有数量
                 break
         if amount==None:
             final_num.append(num)

@@ -9,6 +9,7 @@ from index_online import statistics,live_index
 from notification import notify
 from jq import auto_check
 from xq import my_stocks,xq_post,load_config,get_code
+from hb_web import get_account
 
 def daily_combo():
     pro=Initial()
@@ -105,6 +106,13 @@ def xq_sync(login_cookies):
     except:
         notify('post','同步持仓','同步失败，可能是cookie过期')
 
+
+###获取账户基本信息
+def my_account():
+    now=time.strftime("%Y%m%d") #当前日期
+    res=get_account()
+    notify('post',f'base info {now}',res)
+
 if __name__=='__main__':
     conf=load_config()
     login_cookies=conf.get('cookies','xq')
@@ -132,6 +140,8 @@ if __name__=='__main__':
         xq_sync(login_cookies)#同步当天结果到雪球自选
     elif sys.argv[1]=="sync":
         xq_sync(login_cookies)#同步当天结果到雪球自选
+    elif sys.argv[1]=="act":
+        my_account()
 
 #    schedule(daily_index,'15:15:00')
 #    schedule(daily_combo,'15:15:00')

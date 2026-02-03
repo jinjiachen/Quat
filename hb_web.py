@@ -427,7 +427,7 @@ def check_status():
             elif flag==40:
                 print(f'server stopped at {now}')
                 notify('post','HB status_Error',f'server stopped at {now}')
-                break
+                #break
     
 ###高买高卖做T
 def trade_T(code,price1,price2,amount,direction=None):

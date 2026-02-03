@@ -61,7 +61,7 @@ def Driver():
     driver.maximize_window()
     #driver.set_page_load_timeout(10)
     #driver.set_script_timeout(10)
-    print('starting')
+#    print('starting')
     return driver
 
 
@@ -111,7 +111,7 @@ def login(driver,username,passwd,dry_run='NO'):
             ###将base64编码写入文件
             with open ('./qk.jpg','wb') as f:
                 f.write(base64.b64decode(img_b64))#b64照片原理是将图片二进制文件经过base64编码处理，所以解码后就是二进制原码
-                print('base64码写入成功')
+                #print('base64码写入成功')
                 f.close()
 
             driver.save_screenshot('shot.png')#屏幕截图,必须为png
@@ -226,7 +226,7 @@ def auto_check():
 #    print(accounts)#调试用
     for item in accounts:
         driver=Driver()
-        print(f'正在处理{item}')
+        #print(f'正在处理{item}')
         token=conf.get('jq',item)
         string=base64.b64decode(token).decode('ascii')
         string=string.split(' ')

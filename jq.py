@@ -89,6 +89,44 @@ def login(driver,username,passwd,dry_run='NO'):
     driver.find_element(By.XPATH,'//input[@id="agreementBox"]').click()#勾选协议
     driver.find_element(By.XPATH,'//button[@class="login-submit btnPwdSubmit"]').click()
     time.sleep(1)
+    verification=driver.find_element(By.XPATH,'//div[@class="bootstrap-dialog-title"]')#捕捉验证
+    if verification.text=='':
+        print('检测到验证码！')
+        time.sleep(2)
+        img_qk=driver.find_element(By.XPATH,'//div[@id="xy_img"]').get_attribute('style')#验证图片中的缺口
+        img_b64=re.search('\,.*\"',img_qk).group()
+        img_b64=img_b64.replace(',','')
+        img_b64=img_b64.replace('\"','')
+#            print(img_b64)
+        ###将base64编码写入文件
+        with open ('./qk.jpg','wb') as f:
+            f.write(base64.b64decode(img_b64))#b64照片原理是将图片二进制文件经过base64编码处理，所以解码后就是二进制原码
+            #print('base64码写入成功')
+            f.close()
+
+        driver.save_screenshot('shot.png')#屏幕截图,必须为png
+        #print('截图成功')
+        picture_mark('shot.png')
+        if os.name=='nt':
+            picture_scrot('shot.png',(760,240),(1230,455))
+        elif os.name=='posix':
+            picture_scrot('shot.png',(550,170),(865,310))
+        qk_width=50#缺口的宽度
+        distance=identify_gap('scrot.png','qk.jpg')
+#        handle=driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div[2]//div[@id="drag"]/div[3]')#滑块位置
+        handle=driver.find_element(By.XPATH,'//div[@class="valid-code__drag-bg drag_bg"]')#拖动的滑块,此法无效
+        #click and hold方法可行，drag and hold不行，不知为何
+        action.click_and_hold(handle)
+        action.move_by_offset(distance[0]+qk_width,0)
+        time.sleep(1)
+        action.release()
+        #print('移动距离:',distance[0]+qk_width)
+    #    action.move_to_element(handle)
+    #    action.drag_and_drop_by_offset(handle,10,0)
+        action.perform()
+
+#    print('文本：',title.get_attribute('outerHTML'))
+#    print('文本：',title.text)
     #driver.switch_to.default_content()
 #    slider=driver.find_element(By.XPATH,'//div[@id="drag"]')
 #    ActionChains(slider).drag_and_drop_by_offset(slider,100,0)

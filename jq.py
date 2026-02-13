@@ -11,6 +11,8 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 #import pyautogui
 from lxml import etree
 import urllib
@@ -89,10 +91,63 @@ def login(driver,username,passwd,dry_run='NO'):
     driver.find_element(By.XPATH,'//input[@id="agreementBox"]').click()#勾选协议
     driver.find_element(By.XPATH,'//button[@class="login-submit btnPwdSubmit"]').click()
     time.sleep(1)
-    verification=driver.find_element(By.XPATH,'//div[@class="bootstrap-dialog-title"]')#捕捉验证
-    if verification.text=='':
+
+    find_slider_js = '''
+        function findElementInShadowDOM(selector) {
+            const elements = document.querySelectorAll('*');
+            for (let elem of elements) {
+                // 检查元素本身
+                if (elem.matches(selector)) return elem;
+                // 检查Shadow DOM
+                if (elem.shadowRoot) {
+                    const shadowElem = elem.shadowRoot.querySelector(selector);
+                    if (shadowElem) return shadowElem;
+                }
+            }
+            return null;
+        }
+        // 查找滑块（匹配包含handler或valid-code__drag-handle的div）
+        return findElementInShadowDOM('div.handler, div.valid-code__drag-handle');
+        '''
+        # 执行JS，强制获取滑块元素
+    handle = driver.execute_script(find_slider_js)
+
+    if not handle:
+            # 降级方案：遍历所有div，打印class含handler的元素（调试用）
+        print("⚠️ JS直接查找失败，打印所有含handler的元素：")
+        all_handler_elems = driver.execute_script('''
+                const elems = [];
+                document.querySelectorAll('div[class*="handler"], div[class*="drag-handle"]').forEach(elem => {
+                    elems.push({
+                        class: elem.className,
+                        id: elem.id,
+                        text: elem.textContent.trim()
+                    });
+                });
+                return elems;
+            ''')
+        print(f"🔍 页面中找到的相关元素：{all_handler_elems}")
+        raise Exception("未找到滑块元素，请根据上面的打印信息调整selector")
+
+    print("✅ 成功找到滑块元素（JS穿透Shadow DOM）")
+
+
+
+    '''
+    wait = WebDriverWait(driver, 15)
+    slider_container = wait.until(EC.presence_of_element_located((By.ID, "slideVerifyDragControl")))
+    handle = wait.until(EC.element_to_be_clickable(
+                (By.XPATH, './/div[contains(@class, "valid-code__drag-handle") or contains(@class, "handler")]'),
+                # 传入滑块容器作为上下文，只在容器内查找，更精准
+                root=slider_container
+            )
+        )
+    print("✅ 成功找到滑块元素")
+    '''
+
+    if handle.text=='':
         print('检测到验证码！')
-        time.sleep(2)
+        time.sleep(5)
         img_qk=driver.find_element(By.XPATH,'//div[@id="xy_img"]').get_attribute('style')#验证图片中的缺口
         img_b64=re.search('\,.*\"',img_qk).group()
         img_b64=img_b64.replace(',','')
@@ -114,7 +169,7 @@ def login(driver,username,passwd,dry_run='NO'):
         qk_width=50#缺口的宽度
         distance=identify_gap('scrot.png','qk.jpg')
 #        handle=driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div[2]//div[@id="drag"]/div[3]')#滑块位置
-        handle=driver.find_element(By.XPATH,'//div[@class="valid-code__drag-bg drag_bg"]')#拖动的滑块,此法无效
+        handle=driver.find_element(By.XPATH,'//div[@id="slideVerifyDragControl"]/div[3]')#拖动的滑块,此法无效
         #click and hold方法可行，drag and hold不行，不知为何
         action.click_and_hold(handle)
         action.move_by_offset(distance[0]+qk_width,0)
@@ -133,7 +188,6 @@ def login(driver,username,passwd,dry_run='NO'):
 #    ActionChains(slider).perform()
 #    driver.find_element(By.XPATH,'//div[@class="bootstrap-dialog-close-button"]/button').click()
     time.sleep(10)
-
 
     if dry_run=='NO':
         try:

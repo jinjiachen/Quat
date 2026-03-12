@@ -103,65 +103,66 @@ def stocks_change(start_date,end_date):
 
 if __name__=='__main__':
     from stock_online import Initial#防止循环引用模块的错误
-    choice=input('1.结果文件分析\n2.一组股票的当日涨跌幅\n3.一组股票一段时间内的涨跌幅\n4.计算一段时间内每一天的平均涨跌幅\n5.计算一组文件的涨跌幅')
-    if choice=='1':
-        file_path=input('请输入文件路径:')
-        if os.name=='posix':
-            file_path=file_path.replace('\' ','')
-            file_path=file_path.replace('\'','')
-        res=summary(file_path,'YES')
-        print(res)
-    elif choice=='2':
-        file_path=input('请输入文件路径:')
-        if os.name=='posix':
-            file_path=file_path.replace('\' ','')
-            file_path=file_path.replace('\'','')
-        stocklist=gc_xq(file_path)
-        names=get_names(stocklist)
-        pcts=cal_pcts(stocklist)
-        tmp=[]#临时列表，用于拼接股票名称和代码
-        for stock,name in zip(stocklist,names):
-            tmp.append(stock+ ' '+name)
-        for code,pct in zip(tmp,pcts):
-            print(code,pct)
-        print('综合涨幅：',sum(pcts)/len(pcts))
-    elif choice=='3':
-        pro=Initial()
-        file_path=input('请输入文件路径:')
-        if os.name=='posix':
-            file_path=file_path.replace('\' ','')
-            file_path=file_path.replace('\'','')
-        start=input('请输入开始时间')
-        end=input('请输入结束时间')
-        stocklist=get_code_ts(file_path)
-        names=get_names(stocklist)
-        pcts=range_pcts(pro,stocklist,start,end)
-        tmp=[]#临时列表，用于拼接股票名称和代码
-        for stock,name in zip(stocklist,names):
-            tmp.append(stock+ ' '+name)
-        for code,pct in zip(tmp,pcts):
-            print(code,pct)
-        print('组合平均涨跌幅:',sum(pcts)/len(pcts))
-    elif choice=='4':
-        pro=Initial()
-        file_path=input('请输入文件路径:')
-        if os.name=='posix':
-            file_path=file_path.replace('\' ','')
-            file_path=file_path.replace('\'','')
-        start=input('请输入开始时间')
-        end=input('请输入结束时间')
-        stocklist=get_code_ts(file_path)
-        pcts=average_pcts(pro,stocklist,start,end)
-        print(pcts)
-    elif choice=='5':
-        path=input('请输入文件夹路径:')
-        if os.name=='posix':
-            path=path.replace('\' ','')
-            path=path.replace('\'','')
-        res=pcts_list(path)
-        for filename,pct in zip(res[0],res[1]):
-            print(filename+'\t\t\t\t\t\t\t',pct)
-    elif choice=='6':
-        stocks_change('20240103','20240607')
+    while True:
+        choice=input('1.结果文件分析\n2.一组股票的当日涨跌幅\n3.一组股票一段时间内的涨跌幅\n4.计算一段时间内每一天的平均涨跌幅\n5.计算一组文件的涨跌幅')
+        if choice=='1':
+            file_path=input('请输入文件路径:')
+            if os.name=='posix':
+                file_path=file_path.replace('\' ','')
+                file_path=file_path.replace('\'','')
+            res=summary(file_path,'YES')
+            print(res)
+        elif choice=='2':
+            file_path=input('请输入文件路径:')
+            if os.name=='posix':
+                file_path=file_path.replace('\' ','')
+                file_path=file_path.replace('\'','')
+            stocklist=gc_xq(file_path)
+            names=get_names(stocklist)
+            pcts=cal_pcts(stocklist)
+            tmp=[]#临时列表，用于拼接股票名称和代码
+            for stock,name in zip(stocklist,names):
+                tmp.append(stock+ ' '+name)
+            for code,pct in zip(tmp,pcts):
+                print(code,pct)
+            print('综合涨幅：',sum(pcts)/len(pcts))
+        elif choice=='3':
+            pro=Initial()
+            file_path=input('请输入文件路径:')
+            if os.name=='posix':
+                file_path=file_path.replace('\' ','')
+                file_path=file_path.replace('\'','')
+            start=input('请输入开始时间')
+            end=input('请输入结束时间')
+            stocklist=get_code_ts(file_path)
+            names=get_names(stocklist)
+            pcts=range_pcts(pro,stocklist,start,end)
+            tmp=[]#临时列表，用于拼接股票名称和代码
+            for stock,name in zip(stocklist,names):
+                tmp.append(stock+ ' '+name)
+            for code,pct in zip(tmp,pcts):
+                print(code,pct)
+            print('组合平均涨跌幅:',sum(pcts)/len(pcts))
+        elif choice=='4':
+            pro=Initial()
+            file_path=input('请输入文件路径:')
+            if os.name=='posix':
+                file_path=file_path.replace('\' ','')
+                file_path=file_path.replace('\'','')
+            start=input('请输入开始时间')
+            end=input('请输入结束时间')
+            stocklist=get_code_ts(file_path)
+            pcts=average_pcts(pro,stocklist,start,end)
+            print(pcts)
+        elif choice=='5':
+            path=input('请输入文件夹路径:')
+            if os.name=='posix':
+                path=path.replace('\' ','')
+                path=path.replace('\'','')
+            res=pcts_list(path)
+            for filename,pct in zip(res[0],res[1]):
+                print(filename+'\t\t\t\t\t\t\t',pct)
+        elif choice=='6':
+            stocks_change('20240103','20240607')
 
 

@@ -10,6 +10,19 @@ from xq import get_code as gc_xq
 import os,re
 
 
+# 定义需要查询的指数代码 + 名称映射
+INDEX_MAP = {
+    '000001.SH': '上证指数',
+    '399001.SZ': '深证成指',
+    '000016.SH': '上证50',
+    '000300.SH': '沪深300',
+    '000905.SH': '中证500',
+    '000852.SH': '中证1000',
+    '000857.SH': '中证2000',
+    '399006.SZ': '创业板指',
+    '000688.SH': '科创50'
+}
+
 def sql_consult(db, date):
     sql="SELECT DISTINCT ts_code,trade_date,close FROM Daily WHERE trade_date="+date; #构建SQL查询语句
     engine_ts = create_engine('mysql://root:administrator@127.0.0.1:3306/'+db+'?charset=utf8&use_unicode=1') ##数据库初始化
@@ -100,11 +113,62 @@ def stocks_change(start_date,end_date):
     print(len(codes))
     print(codes_start)
 
+###获取一段时间内主要指数涨跌幅
+def get_index_range_change(start_date: str, end_date: str):
+    """
+    查询指数区间涨跌幅
+    :param start_date: 开始日期，YYYYMMDD
+    :param end_date: 结束日期，YYYYMMDD
+    :return: 涨跌幅结果DataFrame
+    """
+    pro=Initial()
+    result_list = []
+    
+    print(f"正在查询 {start_date} 至 {end_date} 指数涨跌幅...\n")
+    
+    # 遍历所有指数
+    for ts_code, name in INDEX_MAP.items():
+        try:
+            # 获取指数日线数据
+            df = pro.index_daily(
+                ts_code=ts_code,
+                start_date=start_date,
+                end_date=end_date
+            )
+            
+            if df.empty:
+                print(f"{name} 无数据")
+                continue
+            
+            # 排序：按日期升序（确保第一个是起始日，最后一个是结束日）
+            df = df.sort_values('trade_date')
+            
+            # 计算核心数据
+            start_close = df.iloc[0]['close']  # 区间起始收盘价
+            end_close = df.iloc[-1]['close']   # 区间结束收盘价
+            change_pct = (end_close - start_close) / start_close * 100  # 涨跌幅(%)
+            
+            result_list.append({
+                '指数名称': name,
+                '指数代码': ts_code,
+                '起始价': round(start_close, 2),
+                '收盘价': round(end_close, 2),
+                '涨跌幅(%)': round(change_pct, 2)
+            })
+            
+        except Exception as e:
+            print(f"{name} 查询失败：{str(e)}")
+    
+    # 转换为DataFrame并按涨跌幅降序排序
+    result_df = pd.DataFrame(result_list)
+    #result_df = result_df.sort_values('涨跌幅(%)', ascending=False).reset_index(drop=True)
+    
+    return result_df
 
 if __name__=='__main__':
     from stock_online import Initial#防止循环引用模块的错误
     while True:
-        choice=input('1.结果文件分析\n2.一组股票的当日涨跌幅\n3.一组股票一段时间内的涨跌幅\n4.计算一段时间内每一天的平均涨跌幅\n5.计算一组文件的涨跌幅')
+        choice=input('1.结果文件分析\n2.一组股票的当日涨跌幅\n3.一组股票一段时间内的涨跌幅\n4.计算一段时间内每一天的平均涨跌幅\n5.计算一组文件的涨跌幅\n6.查询主要指数一段时间内涨跌幅')
         if choice=='1':
             file_path=input('请输入文件路径:')
             if os.name=='posix':
@@ -163,6 +227,20 @@ if __name__=='__main__':
             for filename,pct in zip(res[0],res[1]):
                 print(filename+'\t\t\t\t\t\t\t',pct)
         elif choice=='6':
+            # 1. 查询日期
+            START_DATE = input('请输入开始日期，如YYMMDD：')  # 开始日期
+            END_DATE =  input('请输入结束日期，如YYMMDD：')   # 结束日期
+            
+            # 2. 执行查询
+            result = get_index_range_change(START_DATE, END_DATE)
+            
+            # 3. 打印结果
+            print("="*80)
+            print(f"【{START_DATE} - {END_DATE} 核心指数区间涨跌幅】")
+            print("="*80)
+            print(result.to_string(index=False))
+            print("="*80)
+        elif choice=='7':
             stocks_change('20240103','20240607')
 
 

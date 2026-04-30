@@ -29,10 +29,12 @@ def order(sig):
 
 
 def main(conf):
+    host=conf.get('redis','host')
+    port=conf.get('redis','port')
     token=conf.get('redis','token')
     r = redis.Redis(
-        host='redis-16873.c294.ap-northeast-1-2.ec2.cloud.redislabs.com',
-        port=16873,
+        host=host,
+        port=port,
         password=token)
     ps = r.pubsub()
     ps.subscribe('xq')

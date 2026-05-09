@@ -369,6 +369,7 @@ def sync_jq(file_path,ptf='NO'):
     quotation=easyquotation.use('sina')
     act=input('按任意键推出，Y/y继续下单！！！')
     if act=='Y' or act== 'y':
+        #先卖出
         for code,num in zip(codes_jq,final_num):
             stock_info=quotation.real(code[:6])#查询股票的价格信息,easyquotation查股票只要6位数字
             now=stock_info[code[:6]]['now']#当前价格
@@ -382,7 +383,12 @@ def sync_jq(file_path,ptf='NO'):
                 order('SELL','',code,price,num)
                 if ptf=='YES':
                     print(f'正在卖出股票{code},价格:{price},数量:{num}')
-            else:#买入
+
+        #再买入
+        for code,num in zip(codes_jq,final_num):
+            stock_info=quotation.real(code[:6])#查询股票的价格信息,easyquotation查股票只要6位数字
+            now=stock_info[code[:6]]['now']#当前价格
+            if '-' not in str(num):#买入
                 price=now*(1+slip_pct)#买入价比当前价高，便于买入
                 price=round(price,2)
                 order('BUY','',code,price,num)

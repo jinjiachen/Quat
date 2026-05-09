@@ -11,6 +11,8 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 #import pyautogui
 from lxml import etree
 import urllib
@@ -88,14 +90,9 @@ def login(driver,username,passwd,dry_run='NO'):
     driver.find_element(By.XPATH,'//input[@name="pwd"]').send_keys(passwd)
     driver.find_element(By.XPATH,'//input[@id="agreementBox"]').click()#勾选协议
     driver.find_element(By.XPATH,'//button[@class="login-submit btnPwdSubmit"]').click()
-    time.sleep(1)
-    #driver.switch_to.default_content()
-#    slider=driver.find_element(By.XPATH,'//div[@id="drag"]')
-#    ActionChains(slider).drag_and_drop_by_offset(slider,100,0)
-#    ActionChains(slider).perform()
-#    driver.find_element(By.XPATH,'//div[@class="bootstrap-dialog-close-button"]/button').click()
     time.sleep(10)
 
+    #可以换个角度检测是否有验证码，不一定非要识别
 
     if dry_run=='NO':
         try:

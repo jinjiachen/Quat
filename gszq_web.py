@@ -38,6 +38,8 @@ phone=conf.get("gszq","phone")
 phone=base64.b64decode(phone).decode('ascii')#base64解码
 password=conf.get("gszq","password")
 wid=conf.get("gszq","wid")
+stock_A=conf.get("gszq","stock_A")
+stock_S=conf.get("gszq","stock_S")
 # ==================================================================
 
 # ===================== 请求头（固定不变） =====================
@@ -115,7 +117,8 @@ def build_post_data(bizcode, param):
 
 ###保持会话cookie
 def keep_alive():
-    # 业务码：301509=今日查询 | 301001=买入 | 301002=卖出 | 301504=账户信息 | 301503=持仓明细 | 301511=历史成交
+    # 业务码：301509=今日成交 | 301001=买入 | 301002=卖出 | 301504=账户信息 | 301503=持仓明细 | 301511=历史成交 |301508=当日委托
+    #301510=历史委托
     BIZCODE = "301504"
     
 
@@ -154,7 +157,7 @@ def keep_alive():
 
 ###菜单
 def Menu():
-    choice=input('ap:acount & position\npos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nt:做T\nbuys:等权重买入一组股票\nsells:清仓列明表中持有的股票\nsync:同步jq组合\ncs:检查状态')
+    choice=input('ap:acount & position\npos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nlswt:历史委托\nt:做T\nbuys:等权重买入一组股票\nsells:清仓列明表中持有的股票\nsync:同步jq组合\ncs:检查状态')
     if choice=='ap':
         pass
     elif choice=='pos':
@@ -180,7 +183,7 @@ def Menu():
         for i in res.keys():
             print(i,res[i])
     elif choice=='jrcj':
-#        BIZCODE = "301501"
+        BIZCODE = "301509"
         post_data = build_post_data(BIZCODE, PARAM)
         response = requests.post(url, headers=HEADERS, data=post_data)
         print("状态码:", response.status_code)
@@ -198,11 +201,46 @@ def Menu():
         for i in res.keys():
             print(i,res[i])
     elif choice=='buy':
-        pass
+        stock_code=''
+        price=''
+        amount=''
+        exchange_type=''
+        entrust_bs="0"
+        stock_account=''
+        PARAM = {
+        "entrust_way": "6",
+        "branch_no": "301",
+        "fund_account": account,  # 替换成你的资金账号
+        "cust_code": account,     # 替换成你的客户代码
+        "password": password,
+        "session_id": "",
+        "entrust_bs":entrust_bs,#买卖不同，好像买是0,卖是1
+        "exchange_type": "0"            # 2=沪市 0=深市
+        "stock_account":stock_account,#沪市深市帐号不同
+        "stock_code":stock_code,
+        "entrust_price":price,
+        "entrust_amount":amount,
+        "userID":"DID",
+        "business_version":"2",
+        "wid": wid,
+        "sysnode_id": "2",
+        "op_station": f"2| | | | |{phone}| |wechat|2.0.1| | | | | |Android| | | ",
+        "_t":str(int(time.time()))
+        }
     elif choice=='sell':
         pass
     elif choice=='jrwt':
-        pass
+        BIZCODE = "301508"
+        post_data = build_post_data(BIZCODE, PARAM)
+        response = requests.post(url, headers=HEADERS, data=post_data)
+        print("状态码:", response.status_code)
+        print("返回内容:", response.text)
+    elif choice=='lswt':
+        BIZCODE = "301510"
+        post_data = build_post_data(BIZCODE, PARAM)
+        response = requests.post(url, headers=HEADERS, data=post_data)
+        print("状态码:", response.status_code)
+        print("返回内容:", response.text)
     elif choice=='t':
         pass
     elif choice=='revoke':

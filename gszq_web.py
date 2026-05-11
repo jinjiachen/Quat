@@ -186,6 +186,8 @@ def order(act,stock_code,price,amount):
     }
     post_data = build_post_data(BIZCODE, ORDER_PARAM)
     response = requests.post(url, headers=HEADERS, data=post_data)
+    print("状态码:", response.status_code)
+    print("返回内容:", response.text)
     return response
 
 
@@ -203,18 +205,18 @@ def orders(act,data):
     slip=0.95#固定滑点
     if act=='buy':
         for code,amount in zip(stock_codes,amounts):
-        stock_info=quotation.real(stock_code[:6])#查询股票的价格信息,easyquotation查股票只要6位数字
-        price=stock_info[stock_code[:6]]['now']#当前价格
-        price=now*(1+slip_pct)#买入价比当前价高，便于买入
-        price=round(price,2)
-        order('buy',code,price,amount)
+            stock_info=quotation.real(code[:6])#查询股票的价格信息,easyquotation查股票只要6位数字
+            price=stock_info[code[:6]]['now']#当前价格
+            price=price*(1+slip_pct)#买入价比当前价高，便于买入
+            price=round(price,2)
+            order('buy',code,price,amount)
     elif act=='sell':
         for code,amount in zip(stock_codes,amounts):
-        stock_info=quotation.real(stock_code[:6])#查询股票的价格信息,easyquotation查股票只要6位数字
-        price=stock_info[stock_code[:6]]['now']#当前价格
-        price=now*(1-slip_pct)#买入价比当前价高，便于买入
-        price=round(price,2)
-        order('sell',code,price,amount)
+            stock_info=quotation.real(code[:6])#查询股票的价格信息,easyquotation查股票只要6位数字
+            price=stock_info[code[:6]]['now']#当前价格
+            price=price*(1-slip_pct)#买入价比当前价高，便于买入
+            price=round(price,2)
+            order('sell',code,price,amount)
 
 
 ###同步jq组合的持仓

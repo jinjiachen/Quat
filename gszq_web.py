@@ -1,4 +1,4 @@
-import json,os,base64,time,random
+import json,os,base64,time,random,re
 import uuid
 import hashlib
 import base64
@@ -115,6 +115,163 @@ def build_post_data(bizcode, param):
     return final_str
 
 
+###获取文件信息
+def get_data(file_path,ptf='NO'):
+    '''
+    file_path(str):jq持仓信息的文件路径
+    '''
+    #读取文件内容
+    with open(file_path,'r') as f:
+        res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
+        f.close()
+
+    #提取文件中的股票和数量信息
+    codes_jq=[]
+    nums_jq=[]
+    for line in res:
+        code_jq=re.search(r'\d{6}.XSH[GE]',line).group()#用正则提取股票代码
+        num_jq=re.search(r'-?\d+股',line).group()
+        num_jq=num_jq.replace('股','')
+        if 'XSHE' in code_jq:
+            code_jq=code_jq[:6]+'.SZ'#转换成tushare,hb代码
+        elif 'XSHG' in code_jq:
+            code_jq=code_jq[:6]+'.SH'#转换成tushare,hb代码
+        codes_jq.append(code_jq)
+        nums_jq.append(num_jq)
+        if ptf=='YES':
+            print(f'从文件中提取的股票:{code_jq},对应的数量:{num_jq}')
+    return [codes_jq,nums_jq]
+
+
+###构建买卖的股票基本信息并下单
+def order(act,stock_code,price,amount):
+    '''
+    act(str):买卖
+    code(str):代码
+    price(float):价格
+    amount(int):数量
+    '''
+    if act=='buy':
+        entrust_bs="0"
+        BIZCODE = "301501"
+    elif act=='sell':
+        entrust_bs="1"
+        BIZCODE = "301502"
+    if 'sz' in stock_code.lower():
+        stock_account=stock_S
+        exchange_type="0"
+    elif 'sh' in stock_code.lower():
+        stock_account=stock_A
+        exchange_type="2"
+    ORDER_PARAM = {
+    "entrust_way": "6",
+    "branch_no": "301",
+    "fund_account": account,  # 替换成你的资金账号
+    "cust_code": account,     # 替换成你的客户代码
+    "password": password,
+    "session_id": "",
+    "entrust_bs":entrust_bs,#买卖不同，好像买是0,卖是1
+    "exchange_type":exchange_type,            # 2=沪市 0=深市
+    "stock_account":stock_account,#沪市深市帐号不同
+    "stock_code":stock_code,#大小写不敏感
+    "entrust_price":price,
+    "entrust_amount":amount,
+    "userID":"DID",
+    "business_version":"2",
+    "wid": wid,
+    "sysnode_id": "2",
+    "op_station": f"2| | | | |{phone}| |wechat|2.0.1| | | | | |Android| | | ",
+    "_t":str(int(time.time()))
+    }
+    post_data = build_post_data(BIZCODE, ORDER_PARAM)
+    response = requests.post(url, headers=HEADERS, data=post_data)
+    return response
+
+
+
+###根据get_data获取的信息进行批量的买卖
+def orders(act,lists):
+    pass
+
+
+###同步jq组合的持仓
+def sync_jq(file_path,ptf='NO'):
+    '''
+    file_path(str):jq持仓信息的文件路径
+    '''
+    #读取文件内容
+    with open(file_path,'r') as f:
+        res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
+        f.close()
+
+    #提取文件中的股票和数量信息
+    codes_jq=[]
+    nums_jq=[]
+    for line in res:
+        code_jq=re.search(r'\d{6}.XSH[GE]',line).group()#用正则提取股票代码
+        num_jq=re.search(r'-?\d+股',line).group()
+        num_jq=num_jq.replace('股','')
+        if 'XSHE' in code_jq:
+            code_jq=code_jq[:6]+'.SZ'#转换成tushare,hb代码
+        elif 'XSHG' in code_jq:
+            code_jq=code_jq[:6]+'.SH'#转换成tushare,hb代码
+        codes_jq.append(code_jq)
+        nums_jq.append(num_jq)
+        if ptf=='YES':
+            print(f'从文件中提取的股票:{code_jq},对应的数量:{num_jq}')
+
+    #获取持仓信息，和文件内容进行比对
+    positions=get_position()#获取持仓
+    final_num=[]
+    for code,num in zip(codes_jq,nums_jq):
+        amount=None#数量初始化为空
+        for pos in positions:
+            if code==pos[1]:#比较股票代码，判断是否有持仓pos[1]为股票代码
+                #amount=int(num)-int(pos[6])#如果有持仓,比较jq和hb的数量差pos[6]为可卖股票数量,pos[5]为持有数量
+                amount=int(num)-int(pos[5])#如果有持仓,比较jq和hb的数量差pos[6]为可卖股票数量,pos[5]为持有数量
+                break
+        if amount==None:
+            final_num.append(num)
+        else:
+            final_num.append(amount)
+    if ptf=='YES':
+        for code,num in zip(codes_jq,final_num):
+            print(f'比较后的股票:{code},数量:{num}')
+
+    #实际交易
+    slip_pct=0.01#滑点百分比
+    slip=0.95#固定滑点
+    quotation=easyquotation.use('sina')
+    act=input('按任意键推出，Y/y继续下单！！！')
+    if act=='Y' or act== 'y':
+        #先卖出
+        for code,num in zip(codes_jq,final_num):
+            stock_info=quotation.real(code[:6])#查询股票的价格信息,easyquotation查股票只要6位数字
+            now=stock_info[code[:6]]['now']#当前价格
+            if num==0:
+                if ptf=='YES':
+                    print(f'{code}数量为0，不做买卖')
+            elif '-' in str(num):#卖出
+                num=abs(num)
+                price=now*(1-slip_pct)#卖出价比当前价低，便于卖出
+                price=round(price,2)
+                order('SELL','',code,price,num)
+                if ptf=='YES':
+                    print(f'正在卖出股票{code},价格:{price},数量:{num}')
+
+        #再买入
+        for code,num in zip(codes_jq,final_num):
+            stock_info=quotation.real(code[:6])#查询股票的价格信息,easyquotation查股票只要6位数字
+            now=stock_info[code[:6]]['now']#当前价格
+            if '-' not in str(num):#买入
+                price=now*(1+slip_pct)#买入价比当前价高，便于买入
+                price=round(price,2)
+                order('BUY','',code,price,num)
+                if ptf=='YES':
+                    print(f'正在买入股票{code},价格:{price},数量:{num}')
+    
+
+
 ###保持会话cookie
 def keep_alive():
     # 业务码：301509=今日成交 | 301501=买入 | 301502=卖出 | 301504=账户信息 | 301503=持仓明细 | 301511=历史成交 |301508=当日委托
@@ -178,7 +335,7 @@ def Menu():
         print("状态码:", response.status_code)
 #        print("返回内容:", response.json())#调试用
 #        print(type(response.json()))#调试用
-        res=response.json()#转化为dick
+        res=response.json()#转化为dict
         res=res['results'][0]
         print('='*20+'output'+'='*20)
         for i in res.keys():
@@ -187,6 +344,10 @@ def Menu():
         stock_code=input('请输入股票代码：')
         price=input('请输入价格：')
         amount=input('请输入数量：')
+        response=order('buy',stock_code,price,amount)
+        print("状态码:", response.status_code)
+        print("返回内容:", response.text)
+        """
         exchange_type=''
         entrust_bs="0"
         if 'sz' in stock_code.lower():
@@ -218,13 +379,15 @@ def Menu():
         }
         post_data = build_post_data(BIZCODE, BUY_PARAM)
         response = requests.post(url, headers=HEADERS, data=post_data)
-        print("状态码:", response.status_code)
-        print("返回内容:", response.text)
+        """
     elif choice=='sell':
         stock_code=input('请输入股票代码：')
         price=input('请输入价格：')
         amount=input('请输入数量：')
-        exchange_type=''
+        response=order('buy',stock_code,price,amount)
+        print("状态码:", response.status_code)
+        print("返回内容:", response.text)
+        """
         entrust_bs="1"#卖出
         if 'sz' in stock_code.lower():
             stock_account=stock_S
@@ -257,6 +420,7 @@ def Menu():
         response = requests.post(url, headers=HEADERS, data=post_data)
         print("状态码:", response.status_code)
         print("返回内容:", response.text)
+        """
     elif choice=='jrwt':
         BIZCODE = "301508"
         post_data = build_post_data(BIZCODE, PARAM)
@@ -281,6 +445,10 @@ def Menu():
         passs
     elif choice=='cs':
         keep_alive()
+    elif choice=='gd':
+        file=input('请输入文件路径:')
+        file=file.replace('\'','')
+        get_data(file,'YES')
 
 
 # ------------------------- 调用示例：自由查询/买卖 -------------------------

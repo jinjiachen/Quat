@@ -189,10 +189,10 @@ def Menu():
         amount=input('请输入数量：')
         exchange_type=''
         entrust_bs="0"
-        if 'sz' in stock_code:
+        if 'sz' in stock_code.lower():
             stock_account=stock_S
             exchange_type="0"
-        elif 'sh' in stock_code:
+        elif 'sh' in stock_code.lower():
             stock_account=stock_A
             exchange_type="2"
         BIZCODE = "301501"
@@ -206,7 +206,7 @@ def Menu():
         "entrust_bs":entrust_bs,#买卖不同，好像买是0,卖是1
         "exchange_type":exchange_type,            # 2=沪市 0=深市
         "stock_account":stock_account,#沪市深市帐号不同
-        "stock_code":stock_code,
+        "stock_code":stock_code,#大小写不敏感
         "entrust_price":price,
         "entrust_amount":amount,
         "userID":"DID",
@@ -226,10 +226,10 @@ def Menu():
         amount=input('请输入数量：')
         exchange_type=''
         entrust_bs="1"#卖出
-        if 'sz' in stock_code:
+        if 'sz' in stock_code.lower():
             stock_account=stock_S
             exchange_type="0"
-        elif 'sh' in stock_code:
+        elif 'sh' in stock_code.lower():
             stock_account=stock_A
             exchange_type="2"
         BIZCODE = "301502"
@@ -243,7 +243,7 @@ def Menu():
         "entrust_bs":entrust_bs,#买卖不同，好像买是0,卖是1
         "exchange_type":exchange_type,            # 2=沪市 0=深市
         "stock_account":stock_account,#沪市深市帐号不同
-        "stock_code":stock_code,
+        "stock_code":stock_code,#大小写不敏感
         "entrust_price":price,
         "entrust_amount":amount,
         "userID":"DID",

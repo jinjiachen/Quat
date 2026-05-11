@@ -4,6 +4,7 @@ import hashlib
 import base64
 import requests
 from configparser import ConfigParser
+import easyquotation
 
 def load_config():#加载配置文件
     conf=ConfigParser()
@@ -190,8 +191,30 @@ def order(act,stock_code,price,amount):
 
 
 ###根据get_data获取的信息进行批量的买卖
-def orders(act,lists):
-    pass
+def orders(act,data):
+    '''
+    act(str):买卖
+    data(list):get_data的结果
+    '''
+    stock_codes=data[0]
+    amounts=data[1]
+    quotation=easyquotation.use('sina')
+    slip_pct=0.01#滑点百分比
+    slip=0.95#固定滑点
+    if act=='buy':
+        for code,amount in zip(stock_codes,amounts):
+        stock_info=quotation.real(stock_code[:6])#查询股票的价格信息,easyquotation查股票只要6位数字
+        price=stock_info[stock_code[:6]]['now']#当前价格
+        price=now*(1+slip_pct)#买入价比当前价高，便于买入
+        price=round(price,2)
+        order('buy',code,price,amount)
+    elif act=='sell':
+        for code,amount in zip(stock_codes,amounts):
+        stock_info=quotation.real(stock_code[:6])#查询股票的价格信息,easyquotation查股票只要6位数字
+        price=stock_info[stock_code[:6]]['now']#当前价格
+        price=now*(1-slip_pct)#买入价比当前价高，便于买入
+        price=round(price,2)
+        order('sell',code,price,amount)
 
 
 ###同步jq组合的持仓
@@ -438,9 +461,15 @@ def Menu():
     elif choice=='revoke':
         pass
     elif choice=='buys':
-        pass
+        file=input('请输入文件路径:')
+        file=file.replace('\'','')
+        data=get_data(file,'YES')
+        orders('buy',data)
     elif choice=='sells':
-        pass
+        file=input('请输入文件路径:')
+        file=file.replace('\'','')
+        data=get_data(file,'YES')
+        orders('sell',data)
     elif choice=='sync':
         passs
     elif choice=='cs':

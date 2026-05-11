@@ -122,23 +122,6 @@ def keep_alive():
     BIZCODE = "301504"
     
 
-    # 业务参数（填你的资金账号）
-    PARAM = {
-    "entrust_way": "6",
-    "branch_no": "301",
-    "fund_account": account,  # 替换成你的资金账号
-    "cust_code": account,     # 替换成你的客户代码
-    "password": password,
-    "session_id": "",
-    "money_type": "",
-    "flag": "0",
-    "wid": wid,
-    "sysnode_id": "2",
-    "op_station": f"2| | | | |{phone}| |wechat|2.0.1| | | | | |Android| | | ",
-    "_t":str(int(time.time()))
-#    "stock_code": "600000",         # 股票代码（查询可随便填）
-#    "exchange_type": "1"            # 1=沪市 2=深市
-}
     # 生成合法post data
     post_data = build_post_data(BIZCODE, PARAM)
     print("✅ 生成合法post data成功")
@@ -207,7 +190,7 @@ def Menu():
         exchange_type=''
         entrust_bs="0"
         stock_account=''
-        PARAM = {
+        BUY_PARAM = {
         "entrust_way": "6",
         "branch_no": "301",
         "fund_account": account,  # 替换成你的资金账号
@@ -215,7 +198,7 @@ def Menu():
         "password": password,
         "session_id": "",
         "entrust_bs":entrust_bs,#买卖不同，好像买是0,卖是1
-        "exchange_type": "0"            # 2=沪市 0=深市
+        "exchange_type": "0",            # 2=沪市 0=深市
         "stock_account":stock_account,#沪市深市帐号不同
         "stock_code":stock_code,
         "entrust_price":price,

@@ -343,10 +343,12 @@ def Menu():
         print("状态码:", response.status_code)
 #        print("返回内容:", response.text)
         res=response.json()#转化为dick
-        res=res['results'][0]
+        res=res['results']
         print('='*20+'output'+'='*20)
-        for i in res.keys():
-            print(i,res[i])
+        for i in res:
+            print(i)
+#            print(f'entrust_date:{i["entrust_date"]},entrust_time:{i["entrust_time"]},entrust_name:{i["entrust_name"]},stock_name:{i["stock_name"]},entrust_price:{i["entrust_price"]},entrust_amount:{i["entrust_amount"]},entrust_state_name:{i["entrust_state_name"]},entrust_no:{i["entrust_no"]}')
+            print('-'*50)
     elif choice=='jrcj':
         BIZCODE = "301509"
         post_data = build_post_data(BIZCODE, PARAM)
@@ -372,39 +374,6 @@ def Menu():
         response=order('buy',stock_code,price,amount)
         print("状态码:", response.status_code)
         print("返回内容:", response.text)
-        """
-        exchange_type=''
-        entrust_bs="0"
-        if 'sz' in stock_code.lower():
-            stock_account=stock_S
-            exchange_type="0"
-        elif 'sh' in stock_code.lower():
-            stock_account=stock_A
-            exchange_type="2"
-        BIZCODE = "301501"
-        BUY_PARAM = {
-        "entrust_way": "6",
-        "branch_no": "301",
-        "fund_account": account,  # 替换成你的资金账号
-        "cust_code": account,     # 替换成你的客户代码
-        "password": password,
-        "session_id": "",
-        "entrust_bs":entrust_bs,#买卖不同，好像买是0,卖是1
-        "exchange_type":exchange_type,            # 2=沪市 0=深市
-        "stock_account":stock_account,#沪市深市帐号不同
-        "stock_code":stock_code,#大小写不敏感
-        "entrust_price":price,
-        "entrust_amount":amount,
-        "userID":"DID",
-        "business_version":"2",
-        "wid": wid,
-        "sysnode_id": "2",
-        "op_station": f"2| | | | |{phone}| |wechat|2.0.1| | | | | |Android| | | ",
-        "_t":str(int(time.time()))
-        }
-        post_data = build_post_data(BIZCODE, BUY_PARAM)
-        response = requests.post(url, headers=HEADERS, data=post_data)
-        """
     elif choice=='sell':
         stock_code=input('请输入股票代码：')
         price=input('请输入价格：')
@@ -412,52 +381,29 @@ def Menu():
         response=order('buy',stock_code,price,amount)
         print("状态码:", response.status_code)
         print("返回内容:", response.text)
-        """
-        entrust_bs="1"#卖出
-        if 'sz' in stock_code.lower():
-            stock_account=stock_S
-            exchange_type="0"
-        elif 'sh' in stock_code.lower():
-            stock_account=stock_A
-            exchange_type="2"
-        BIZCODE = "301502"
-        SELL_PARAM = {
-        "entrust_way": "6",
-        "branch_no": "301",
-        "fund_account": account,  # 替换成你的资金账号
-        "cust_code": account,     # 替换成你的客户代码
-        "password": password,
-        "session_id": "",
-        "entrust_bs":entrust_bs,#买卖不同，好像买是0,卖是1
-        "exchange_type":exchange_type,            # 2=沪市 0=深市
-        "stock_account":stock_account,#沪市深市帐号不同
-        "stock_code":stock_code,#大小写不敏感
-        "entrust_price":price,
-        "entrust_amount":amount,
-        "userID":"DID",
-        "business_version":"2",
-        "wid": wid,
-        "sysnode_id": "2",
-        "op_station": f"2| | | | |{phone}| |wechat|2.0.1| | | | | |Android| | | ",
-        "_t":str(int(time.time()))
-        }
-        post_data = build_post_data(BIZCODE, SELL_PARAM)
-        response = requests.post(url, headers=HEADERS, data=post_data)
-        print("状态码:", response.status_code)
-        print("返回内容:", response.text)
-        """
     elif choice=='jrwt':
         BIZCODE = "301508"
         post_data = build_post_data(BIZCODE, PARAM)
         response = requests.post(url, headers=HEADERS, data=post_data)
         print("状态码:", response.status_code)
-        print("返回内容:", response.text)
+        #print("返回内容:", response.text)
+        res=response.json()#转化为dick
+        res=res['results']
+        print('='*20+'output'+'='*20)
+        for i in res:
+            print(f'entrust_date:{i["entrust_date"]},entrust_time:{i["entrust_time"]},entrust_name:{i["entrust_name"]},stock_name:{i["stock_name"]},entrust_price:{i["entrust_price"]},entrust_amount:{i["entrust_amount"]},entrust_state_name:{i["entrust_state_name"]},entrust_no:{i["entrust_no"]}')
+            print('-'*50)
     elif choice=='lswt':
         BIZCODE = "301510"
         post_data = build_post_data(BIZCODE, PARAM)
         response = requests.post(url, headers=HEADERS, data=post_data)
+        res=response.json()#转化为dick
+        res=res['results']
         print("状态码:", response.status_code)
-        print("返回内容:", response.text)
+#        print("返回内容:", response.text)
+        for i in res:
+            print(f'entrust_date:{i["entrust_date"]},entrust_time:{i["entrust_time"]},entrust_name:{i["entrust_name"]},stock_name:{i["stock_name"]},entrust_price:{i["entrust_price"]},entrust_amount:{i["entrust_amount"]},entrust_state_name:{i["entrust_state_name"]},entrust_no:{i["entrust_no"]}')
+            print('-'*50)
     elif choice=='t':
         pass
     elif choice=='revoke':

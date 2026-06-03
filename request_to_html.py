@@ -1,5 +1,5 @@
 import requests
-import os
+import os,time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -30,6 +30,7 @@ def save_with_selenium(url, save_name="page_selenium.html"):
 
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
+    time.sleep(3)
     html = driver.page_source
     driver.quit()
 

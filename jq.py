@@ -80,11 +80,10 @@ def close_update(driver):
 
 def login(driver,username,passwd,dry_run='NO'):
     print('='*10+f'{username}'+'='*10)
-    url='https://joinquant.com/'
+    url='https://www.joinquant.com/user/login/index?type=login'
     driver.get(url)
     time.sleep(3)
     #进行登录
-    driver.find_element(By.XPATH,'//button[@class="banner-login show-dialog-login"]').click()#点击登录
     time.sleep(1)
     driver.find_element(By.XPATH,'//input[@name="username"]').send_keys(username)
     driver.find_element(By.XPATH,'//input[@name="pwd"]').send_keys(passwd)
@@ -138,7 +137,7 @@ def login(driver,username,passwd,dry_run='NO'):
             
     #获取阅读文章积分
     center='https://joinquant.com/view/user/floor?type=creditsdesc'
-    driver.get(center)#回到积分中心
+    driver.find_elements(By.XPATH,'//div[@class="floor-items__menu"]')[0].click()
     time.sleep(1)
     try:
         driver.find_element(By.XPATH,'//a[@href="/./view/community/list?listType=1"]/button').click()#去看看
@@ -156,9 +155,9 @@ def login(driver,username,passwd,dry_run='NO'):
         print(f'主题总数：{num},阅读随机文章{i}')
         time.sleep(1)
         driver.find_elements(By.XPATH,'//div[@class="jq-c-list_community__text"]')[i-1].click()#随机点击文章查看
-        time.sleep(9)
-        driver=close_update(driver)
-        driver.get(center)#回到积分中心
+        time.sleep(10)
+        driver.switch_to.window(windows[0])#切换第一个标签
+        driver.refresh()#刷新
         time.sleep(3)
     else:
         print('只有一个标签')

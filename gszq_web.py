@@ -322,7 +322,7 @@ def keep_alive():
 
 ###菜单
 def Menu():
-    choice=input('ap:acount & position\npos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nlswt:历史委托\nt:做T\nbuys:等权重买入一组股票\nsells:清仓列明表中持有的股票\nsync:同步jq组合\ncs:检查状态')
+    choice=input('ap:acount & position\npos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nlswt:历史委托\nt:做T\nbuys:按照文件列表买入一组股票\nsells:清仓列明表中持有的股票\nsync:同步jq组合\ncs:检查状态')
     if choice=='ap':
         pass
     elif choice=='pos':
@@ -412,6 +412,7 @@ def Menu():
         file=input('请输入文件路径:')
         file=file.replace('\'','')
         data=get_data(file,'YES')
+#        print(data)
         orders('buy',data)
     elif choice=='sells':
         file=input('请输入文件路径:')
@@ -419,7 +420,11 @@ def Menu():
         data=get_data(file,'YES')
         orders('sell',data)
     elif choice=='sync':
-        passs
+        file_path=input('请输入文件路径:')
+        if os.name=='posix':
+            file_path=file_path.replace('\' ','')
+            file_path=file_path.replace('\'','')
+        sync_jq(file_path,'YES')
     elif choice=='cs':
         keep_alive()
     elif choice=='gd':

@@ -117,22 +117,30 @@ def build_post_data(bizcode, param):
 
 
 ###获取文件信息
-def get_data(file_path,ptf='NO'):
+def get_data(file_path,portion=1.0,ptf='NO'):
     '''
     file_path(str):jq持仓信息的文件路径
+    portion(float):比例系数，默认为1,和文件中数量保持一致
     '''
     #读取文件内容
     with open(file_path,'r') as f:
         res=f.readlines()#按行读取文件中的内容，每一行为一个字符串，返回以字符串为元素的列表
-        f.close()
 
     #提取文件中的股票和数量信息
     codes_jq=[]
     nums_jq=[]
     for line in res:
-        code_jq=re.search(r'\d{6}.XSH[GE]',line).group()#用正则提取股票代码
-        num_jq=re.search(r'-?\d+股',line).group()
+        code_match = re.search(r'\d{6}\.XSH[GE]', line)
+        num_match = re.search(r'-?\d+股', line)
+        if not code_match or not num_match:
+            continue
+
+        code_jq = code_match.group()#股票代码
+        num_jq = num_match.group()#股票数量
         num_jq=num_jq.replace('股','')
+        num_jq_int=int(num_jq)#转化为整数
+        num_jq_int=num_jq_int*portion//100*100#股票数量按比例调整后转化成100的整数倍
+        num_jq=max(num_jq_int,100)#最小100股
         if 'XSHE' in code_jq:
             code_jq=code_jq[:6]+'.SZ'#转换成tushare,hb代码
         elif 'XSHG' in code_jq:
@@ -322,7 +330,7 @@ def keep_alive():
 
 ###菜单
 def Menu():
-    choice=input('ap:acount & position\npos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nlswt:历史委托\nt:做T\nbuys:按照文件列表买入一组股票\nsells:清仓列明表中持有的股票\nsync:同步jq组合\ncs:检查状态')
+    choice=input('ap:acount & position\npos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nlswt:历史委托\nt:做T\nbuys:按照文件列表买入一组股票\nsells:清仓列明表中持有的股票\nsync:同步jq组合\ncs:检查状态\nMbuys:根据文件列表按比例买入')
     if choice=='ap':
         pass
     elif choice=='pos':
@@ -411,14 +419,27 @@ def Menu():
     elif choice=='buys':
         file=input('请输入文件路径:')
         file=file.replace('\'','')
-        data=get_data(file,'YES')
-#        print(data)
-        orders('buy',data)
+        data=get_data(file,ptf='YES')
+        print(data)
+        act=input('按任意键推出，Y/y继续下单！！！')
+        if act=='Y' or act== 'y':
+            orders('buy',data)
     elif choice=='sells':
         file=input('请输入文件路径:')
         file=file.replace('\'','')
-        data=get_data(file,'YES')
-        orders('sell',data)
+        data=get_data(file,ptf='YES')
+        act=input('按任意键推出，Y/y继续下单！！！')
+        if act=='Y' or act== 'y':
+            orders('sell',data)
+    elif choice=='Mbuys':
+        file=input('请输入文件路径:')
+        file=file.replace('\'','')
+        portion=input('请输入调整的比例系数:')
+        data=get_data(file,portion=float(portion),ptf='YES')
+        print(data)
+        act=input('按任意键推出，Y/y继续下单！！！')
+        if act=='Y' or act== 'y':
+            orders('buy',data)
     elif choice=='sync':
         file_path=input('请输入文件路径:')
         if os.name=='posix':
@@ -430,7 +451,7 @@ def Menu():
     elif choice=='gd':
         file=input('请输入文件路径:')
         file=file.replace('\'','')
-        get_data(file,'YES')
+        get_data(file,ptf='YES')
 
 
 # ------------------------- 调用示例：自由查询/买卖 -------------------------

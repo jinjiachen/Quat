@@ -307,6 +307,7 @@ def sync_jq(file_path,ptf='NO'):
 
 ###保持会话cookie
 def keep_alive():
+    flag=0#初始化
     # 业务码：301509=今日成交 | 301501=买入 | 301502=卖出 | 301504=账户信息 | 301503=持仓明细 | 301511=历史成交 |301508=当日委托
     #301510=历史委托
     BIZCODE = "301504"
@@ -321,12 +322,29 @@ def keep_alive():
 
     count=1
     while True:
-        count+=1
-        response = requests.post(url, headers=HEADERS, data=post_data)
-        print('count:',count)
-        print("状态码:", response.status_code)
-        print("返回内容:", response.text)
-        time.sleep(random.randint(120,180))#3-4分钟内随机
+        now=time.strftime("%Y-%m-%d %H:%M:%S")
+        try:
+            print('当前时间：',now)
+            count+=1
+            response = requests.post(url, headers=HEADERS, data=post_data)
+            print('count:',count)
+            print("状态码:", response.status_code)
+            print("返回内容:", response.text)
+            time.sleep(random.randint(120,180))#3-4分钟内随机
+            flag=0#如果运行成功，重置为0
+        except:
+            flag=flag+1
+            print(f'当前时间：{now},正在尝试{flag}/40')
+            if flag==3:
+                print(f'Caution: Three times failed at {now}')
+                notify('post','GSZQ status_Caution',f'Caution: Three times failed at {now}')
+            elif flag==10:
+                print(f'Caution: Ten times failed at {now}')
+                notify('post','GSZQ status_Warning',f'Caution: Ten times failed at {now}')
+            elif flag==40:
+                print(f'server stopped at {now}')
+                notify('post',' status_Error',f'server stopped at {now}')
+                break
 
 ###菜单
 def Menu():

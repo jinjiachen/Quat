@@ -358,10 +358,14 @@ def Menu():
         print("状态码:", response.status_code)
 #        print("返回内容:", response.text)
         res=response.json()#转化为dick
-        res=res['results'][0]
-        print('='*20+'output'+'='*20)
-        for i in res.keys():
-            print(i,res[i])
+        res=res['results']#一个列表，元素为字典
+#        print(res)
+        count=1
+        for r in res:
+            print('='*20+f'output {count}'+'='*20)
+            count=count+1
+            for i in ['stock_code','stock_name','market_value','cost_amount','cost_price','last_price']:#提取有用的字段
+                print(i,r[i])
     elif choice=='lscj':
         BIZCODE = "301511"
         post_data = build_post_data(BIZCODE, PARAM)

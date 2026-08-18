@@ -5,6 +5,7 @@ import base64
 import requests
 from configparser import ConfigParser
 import easyquotation
+from function import print_c
 
 def load_config():#加载配置文件
     conf=ConfigParser()
@@ -363,8 +364,14 @@ def Menu():
         count=1
         final=[]
         for r in res:
+            if float(r['cost_price'])==0:
+                pct=0#用0代替na，方便后续计算和判断
+            else:
+                pct=round((float(r['last_price'])/float(r['cost_price'])-1)*100,2)# 计算百分比,保留两位小数
+            r['pct']=pct
+#            print(pct)
             tmp=[]
-            for i in ['stock_code','stock_name','market_value','cost_amount','cost_price','last_price']:#提取有用的字段
+            for i in ['stock_code','stock_name','market_value','cost_amount','cost_price','last_price','pct']:#提取有用的字段
                 tmp.append(i)
                 tmp.append(r[i])
 #                print(i,r[i])
@@ -372,7 +379,10 @@ def Menu():
         for item in final:
             print('='*20+f'output {count}'+'='*20)
             count=count+1
-            print(item)
+            if item[-1]>0:
+                print_c(item,'red')
+            elif item[-1]<=0:
+                print_c(item,'green')
 #        print(final)
     elif choice=='lscj':
         BIZCODE = "301511"

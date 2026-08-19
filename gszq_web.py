@@ -376,13 +376,11 @@ def Menu():
                 tmp.append(r[i])
 #                print(i,r[i])
             final.append(tmp)
-        for item in final:
-            print('='*20+f'output {count}'+'='*20)
-            count=count+1
+        for idx,item in enumerate(final):
             if item[-1]>0:
-                print_c(item,'red')
+                print_c(f'{idx+1}-->{item}','red')
             elif item[-1]<=0:
-                print_c(item,'green')
+                print_c(f'{idx+1}-->{item}','green')
 #        print(final)
     elif choice=='lscj':
         BIZCODE = "301511"

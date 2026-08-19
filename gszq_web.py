@@ -407,8 +407,22 @@ def Menu():
         BIZCODE = "301509"
         post_data = build_post_data(BIZCODE, PARAM)
         response = requests.post(url, headers=HEADERS, data=post_data)
+        res=response.json()#转化为dick
+        res=res['results']#所有的结果
         print("状态码:", response.status_code)
-        print("返回内容:", response.text)
+#        print("返回内容:", response.text)
+
+        ###清洗数据
+        final=[]
+        for r in res:
+            tmp=[]
+            for i in ['business_date','business_time','stock_code','stock_name','business_price','business_amount','business_balance','real_status_name','fare0','fare1','fare2']:#提取有用的字段
+                tmp.append(i)
+                tmp.append(r[i])
+            final.append(tmp)
+        for idx,item in enumerate(final):
+            print(f'{idx+1}-->{item}')
+            print('-'*100)
     elif choice=='act':
         BIZCODE = "301504"
         post_data = build_post_data(BIZCODE, PARAM)

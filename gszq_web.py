@@ -371,7 +371,7 @@ def Menu():
 #            print(pct)
             tmp=[]
             for i in ['stock_code','stock_name','market_value','cost_amount','cost_price','last_price','pct']:#提取有用的字段
-                tmp.append(i)
+#                tmp.append(i)
                 tmp.append(r[i])
 #                print(i,r[i])
             final.append(tmp)

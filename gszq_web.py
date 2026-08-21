@@ -255,14 +255,14 @@ def sync_jq(file_path,ptf='NO'):
             print(f'从文件中提取的股票:{code_jq},对应的数量:{num_jq}')
 
     #获取持仓信息，和文件内容进行比对
-    positions=get_position()#获取持仓
+    positions=get_positions()#获取持仓
     final_num=[]
     for code,num in zip(codes_jq,nums_jq):
         amount=None#数量初始化为空
         for pos in positions:
-            if code==pos[1]:#比较股票代码，判断是否有持仓pos[1]为股票代码
+            if code[:6]==pos[0]:#比较股票代码，判断是否有持仓pos[0]为股票代码
                 #amount=int(num)-int(pos[6])#如果有持仓,比较jq和hb的数量差pos[6]为可卖股票数量,pos[5]为持有数量
-                amount=int(num)-int(pos[5])#如果有持仓,比较jq和hb的数量差pos[6]为可卖股票数量,pos[5]为持有数量
+                amount=int(num)-int(pos[3])#如果有持仓,比较jq和hb的数量差,pos[3]为持有数量
                 break
         if amount==None:
             final_num.append(num)
@@ -289,7 +289,7 @@ def sync_jq(file_path,ptf='NO'):
                 num=abs(num)
                 price=now*(1-slip_pct)#卖出价比当前价低，便于卖出
                 price=round(price,2)
-                order('SELL','',code,price,num)
+                order('sell',code,price,num)
                 if ptf=='YES':
                     print(f'正在卖出股票{code},价格:{price},数量:{num}')
 
@@ -300,9 +300,47 @@ def sync_jq(file_path,ptf='NO'):
             if '-' not in str(num):#买入
                 price=now*(1+slip_pct)#买入价比当前价高，便于买入
                 price=round(price,2)
-                order('BUY','',code,price,num)
+                order('buy',code,price,num)
                 if ptf=='YES':
                     print(f'正在买入股票{code},价格:{price},数量:{num}')
+
+
+
+###获取持仓
+def get_positions(ptf='NO'):
+    '''
+    返回一个列表
+    '''
+    BIZCODE = "301503"
+    post_data = build_post_data(BIZCODE, PARAM)
+    response = requests.post(url, headers=HEADERS, data=post_data)
+    print("状态码:", response.status_code)
+#        print("返回内容:", response.text)
+    res=response.json()#转化为dick
+#        print(res)
+    res=res['results']#一个列表，元素为字典
+#        print(res)
+    final=[]
+    for r in res:
+        if ptf=='YES':
+            print(r)
+        if float(r['cost_price'])==0:
+            pct=0#用0代替na，方便后续计算和判断
+            profit=0
+        else:
+            pct=round((float(r['last_price'])/float(r['cost_price'])-1)*100,2)# 计算百分比,保留两位小数
+            profit=round((float(r['last_price'])-float(r['cost_price']))*float(r['cost_amount']),2)#计算收益
+        r['pct']=pct
+        r['profit']=profit
+#            print(pct)
+        tmp=[]
+        for i in ['stock_code','stock_name','market_value','cost_amount','cost_price','last_price','profit','pct']:#提取有用的字段
+#                tmp.append(i)
+            tmp.append(r[i])
+#                print(i,r[i])
+        final.append(tmp)
+    return final
+
     
 
 
@@ -353,38 +391,12 @@ def Menu():
     if choice=='ap':
         pass
     elif choice=='pos':
-        BIZCODE = "301503"
-        post_data = build_post_data(BIZCODE, PARAM)
-        response = requests.post(url, headers=HEADERS, data=post_data)
-        print("状态码:", response.status_code)
-#        print("返回内容:", response.text)
-        res=response.json()#转化为dick
-#        print(res)
-        res=res['results']#一个列表，元素为字典
-#        print(res)
-        final=[]
-        for r in res:
-            if float(r['cost_price'])==0:
-                pct=0#用0代替na，方便后续计算和判断
-                profit=0
-            else:
-                pct=round((float(r['last_price'])/float(r['cost_price'])-1)*100,2)# 计算百分比,保留两位小数
-                profit=round((float(r['last_price'])-float(r['cost_price']))*float(r['cost_amount']),2)#计算收益
-            r['pct']=pct
-            r['profit']=profit
-#            print(pct)
-            tmp=[]
-            for i in ['stock_code','stock_name','market_value','cost_amount','cost_price','last_price','profit','pct']:#提取有用的字段
-#                tmp.append(i)
-                tmp.append(r[i])
-#                print(i,r[i])
-            final.append(tmp)
+        final=get_positions('NO')#获取持仓信息
         for idx,item in enumerate(final):
             if item[-1]>0:
                 print_c(f'{idx+1}-->{item}','red')
             elif item[-1]<=0:
                 print_c(f'{idx+1}-->{item}','green')
-#        print(final)
     elif choice=='lscj':
         BIZCODE = "301511"
         post_data = build_post_data(BIZCODE, PARAM)

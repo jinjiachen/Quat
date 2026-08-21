@@ -349,7 +349,7 @@ def keep_alive():
 
 ###菜单
 def Menu():
-    choice=input('ap:acount & position\npos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nlswt:历史委托\nt:做T\nbuys:按照文件列表买入一组股票\nsells:清仓列明表中持有的股票\nsync:同步jq组合\ncs:检查状态\nMbuys:根据文件列表按比例买入')
+    choice=input('ap:acount & position\npos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nlswt:历史委托\nt:做T\nbuys:按照文件列表买入一组股票\nsells:按照文件列表卖出一组股票\nsync:同步jq组合\ncs:检查状态\nMbuys:根据文件列表按比例买入\nMsells:根据文件列表按比例卖出')
     if choice=='ap':
         pass
     elif choice=='pos':
@@ -366,12 +366,15 @@ def Menu():
         for r in res:
             if float(r['cost_price'])==0:
                 pct=0#用0代替na，方便后续计算和判断
+                profit=0
             else:
                 pct=round((float(r['last_price'])/float(r['cost_price'])-1)*100,2)# 计算百分比,保留两位小数
+                profit=round((float(r['last_price'])-float(r['cost_price']))*float(r['cost_amount']),2)#计算收益
             r['pct']=pct
+            r['profit']=profit
 #            print(pct)
             tmp=[]
-            for i in ['stock_code','stock_name','market_value','cost_amount','cost_price','last_price','pct']:#提取有用的字段
+            for i in ['stock_code','stock_name','market_value','cost_amount','cost_price','last_price','profit','pct']:#提取有用的字段
 #                tmp.append(i)
                 tmp.append(r[i])
 #                print(i,r[i])
@@ -483,14 +486,14 @@ def Menu():
         file=file.replace('\'','')
         data=get_data(file,ptf='YES')
         print(data)
-        act=input('按任意键推出，Y/y继续下单！！！')
+        act=input('按任意键退出，Y/y继续买入！！！')
         if act=='Y' or act== 'y':
             orders('buy',data)
     elif choice=='sells':
         file=input('请输入文件路径:')
         file=file.replace('\'','')
         data=get_data(file,ptf='YES')
-        act=input('按任意键推出，Y/y继续下单！！！')
+        act=input('按任意键退出，Y/y继续卖出！！！')
         if act=='Y' or act== 'y':
             orders('sell',data)
     elif choice=='Mbuys':
@@ -499,9 +502,18 @@ def Menu():
         portion=input('请输入调整的比例系数:')
         data=get_data(file,portion=float(portion),ptf='YES')
         print(data)
-        act=input('按任意键推出，Y/y继续下单！！！')
+        act=input('按任意键退出，Y/y继续买入！！！')
         if act=='Y' or act== 'y':
             orders('buy',data)
+    elif choice=='Msells':
+        file=input('请输入文件路径:')
+        file=file.replace('\'','')
+        portion=input('请输入调整的比例系数:')
+        data=get_data(file,portion=float(portion),ptf='YES')
+        print(data)
+        act=input('按任意键退出，Y/y继续卖出！！！')
+        if act=='Y' or act== 'y':
+            orders('sell',data)
     elif choice=='sync':
         file_path=input('请输入文件路径:')
         if os.name=='posix':

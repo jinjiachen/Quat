@@ -359,6 +359,7 @@ def Menu():
         print("状态码:", response.status_code)
 #        print("返回内容:", response.text)
         res=response.json()#转化为dick
+#        print(res)
         res=res['results']#一个列表，元素为字典
 #        print(res)
         final=[]
@@ -431,6 +432,7 @@ def Menu():
 #        print("返回内容:", response.json())#调试用
 #        print(type(response.json()))#调试用
         res=response.json()#转化为dict
+#        print(res)
         res=res['results'][0]
         print('='*20+'output'+'='*20)
         for i in res.keys():

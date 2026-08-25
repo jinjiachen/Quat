@@ -463,7 +463,7 @@ def Menu():
         stock_code=input('请输入股票代码：')
         price=input('请输入价格：')
         amount=input('请输入数量：')
-        response=order('buy',stock_code,price,amount)
+        response=order('sell',stock_code,price,amount)
         print("状态码:", response.status_code)
         print("返回内容:", response.text)
     elif choice=='jrwt':

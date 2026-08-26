@@ -166,7 +166,8 @@ def order(act,stock_code,price,amount):
         BIZCODE = "301501"
     elif act=='sell':
         entrust_bs="1"
-        BIZCODE = "301502"
+#        BIZCODE = "301502"#可能是委托撤单
+        BIZCODE = "301501"
     if 'sz' in stock_code.lower():
         stock_account=stock_S
         exchange_type="0"
@@ -347,7 +348,7 @@ def get_positions(ptf='NO'):
 ###保持会话cookie
 def keep_alive():
     flag=0#初始化
-    # 业务码：301509=今日成交 | 301501=买入 | 301502=卖出 | 301504=账户信息 | 301503=持仓明细 | 301511=历史成交 |301508=当日委托
+    # 业务码：301509=今日成交 | 301501=买入/卖出 | 301502=撤单? | 301504=账户信息 | 301503=持仓明细 | 301511=历史成交 |301508=当日委托
     #301510=历史委托
     BIZCODE = "301504"
     

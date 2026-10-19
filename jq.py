@@ -116,14 +116,15 @@ def login(driver,username,passwd,dry_run='NO'):
             if os.name=='nt':
                 picture_scrot('shot.png',(760,240),(1230,455))
             elif os.name=='posix':
-                picture_scrot('shot.png',(550,170),(865,310))
+#                picture_scrot('shot.png',(550,170),(865,310))#小笔电archlinux专用
+                picture_scrot('shot.png',(590,191),(901,332))#台式debian专用
             qk_width=50#缺口的宽度
             distance=identify_gap('scrot.png','qk.jpg')
             handle=driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div[2]//div[@id="drag"]/div[3]')#滑块位置
 #            handle=driver.find_element(By.XPATH,'//div[@class="valid-code__drag"]')#拖动的滑块,此法无效
             #click and hold方法可行，drag and hold不行，不知为何
             action.click_and_hold(handle)
-            action.move_by_offset(distance[0]+qk_width,0)
+            action.move_by_offset(distance[0]+qk_width,0)#移动距离为间距＋缺口宽度
             time.sleep(1)
             action.release()
             #print('移动距离:',distance[0]+qk_width)
@@ -182,7 +183,8 @@ def login(driver,username,passwd,dry_run='NO'):
             if os.name=='nt':
                 picture_scrot('shot.png',(760,240),(1230,455))
             elif os.name=='posix':
-                picture_scrot('shot.png',(550,170),(865,310))
+#                picture_scrot('shot.png',(550,170),(865,310))#小笔电archlinux专用
+                picture_scrot('shot.png',(590,191),(901,332))#台式debian专用
             qk_width=50#缺口的宽度
             distance=identify_gap('scrot.png','qk.jpg')
             handle=driver.find_element(By.XPATH,'//div[@aria-label="完成拼图验证"]/div[2]//div[@id="drag"]/div[3]')#滑块位置
@@ -276,13 +278,21 @@ def picture_mark(pic):
         pt4=(1230,455)
         cv2.rectangle(img,pt3,pt4,(0,255,0),2)
     elif os.name=='posix':
-        pt1=(477,98)
-        pt2=(890,400)
-        cv2.rectangle(img,pt1,pt2,(0,0,255),2)
-        pt3=(550,170)
-        pt4=(865,310)
-        cv2.rectangle(img,pt3,pt4,(0,255,0),2)
+#以下是小笔电archlinux专用
+#        pt1=(477,98)
+#        pt2=(890,400)
+#        cv2.rectangle(img,pt1,pt2,(0,0,255),2)
+#        pt3=(550,170)
+#        pt4=(865,310)
+#        cv2.rectangle(img,pt3,pt4,(0,255,0),2)
 #    print('图片修改')
+#以下是台式debian专用
+        pt1=(513,117)
+        pt2=(923,420)
+        cv2.rectangle(img,pt1,pt2,(0,0,255),2)
+        pt3=(590,191)
+        pt4=(901,332)
+        cv2.rectangle(img,pt3,pt4,(0,255,0),2)
     cv2.imwrite('shot_revise.png',img)
 #    print('图片保存')
 

@@ -167,7 +167,8 @@ def order(act,stock_code,price,amount):
         BIZCODE = "301501"
     elif act=='sell':
         entrust_bs="1"
-        BIZCODE = "301502"
+#        BIZCODE = "301502"#可能是委托撤单
+        BIZCODE = "301501"
     if 'sz' in stock_code.lower():
         stock_account=stock_S
         exchange_type="0"
@@ -256,14 +257,14 @@ def sync_jq(file_path,ptf='NO'):
             print(f'从文件中提取的股票:{code_jq},对应的数量:{num_jq}')
 
     #获取持仓信息，和文件内容进行比对
-    positions=get_position()#获取持仓
+    positions=get_positions()#获取持仓
     final_num=[]
     for code,num in zip(codes_jq,nums_jq):
         amount=None#数量初始化为空
         for pos in positions:
-            if code==pos[1]:#比较股票代码，判断是否有持仓pos[1]为股票代码
+            if code[:6]==pos[0]:#比较股票代码，判断是否有持仓pos[0]为股票代码
                 #amount=int(num)-int(pos[6])#如果有持仓,比较jq和hb的数量差pos[6]为可卖股票数量,pos[5]为持有数量
-                amount=int(num)-int(pos[5])#如果有持仓,比较jq和hb的数量差pos[6]为可卖股票数量,pos[5]为持有数量
+                amount=int(num)-int(pos[3])#如果有持仓,比较jq和hb的数量差,pos[3]为持有数量
                 break
         if amount==None:
             final_num.append(num)
@@ -290,7 +291,7 @@ def sync_jq(file_path,ptf='NO'):
                 num=abs(num)
                 price=now*(1-slip_pct)#卖出价比当前价低，便于卖出
                 price=round(price,2)
-                order('SELL','',code,price,num)
+                order('sell',code,price,num)
                 if ptf=='YES':
                     print(f'正在卖出股票{code},价格:{price},数量:{num}')
 
@@ -301,16 +302,54 @@ def sync_jq(file_path,ptf='NO'):
             if '-' not in str(num):#买入
                 price=now*(1+slip_pct)#买入价比当前价高，便于买入
                 price=round(price,2)
-                order('BUY','',code,price,num)
+                order('buy',code,price,num)
                 if ptf=='YES':
                     print(f'正在买入股票{code},价格:{price},数量:{num}')
+
+
+
+###获取持仓
+def get_positions(ptf='NO'):
+    '''
+    返回一个列表
+    '''
+    BIZCODE = "301503"
+    post_data = build_post_data(BIZCODE, PARAM)
+    response = requests.post(url, headers=HEADERS, data=post_data)
+    print("状态码:", response.status_code)
+#        print("返回内容:", response.text)
+    res=response.json()#转化为dick
+#        print(res)
+    res=res['results']#一个列表，元素为字典
+#        print(res)
+    final=[]
+    for r in res:
+        if ptf=='YES':
+            print(r)
+        if float(r['cost_price'])==0:
+            pct=0#用0代替na，方便后续计算和判断
+            profit=0
+        else:
+            pct=round((float(r['last_price'])/float(r['cost_price'])-1)*100,2)# 计算百分比,保留两位小数
+            profit=round((float(r['last_price'])-float(r['cost_price']))*float(r['cost_amount']),2)#计算收益
+        r['pct']=pct
+        r['profit']=profit
+#            print(pct)
+        tmp=[]
+        for i in ['stock_code','stock_name','market_value','cost_amount','cost_price','last_price','profit','pct']:#提取有用的字段
+#                tmp.append(i)
+            tmp.append(r[i])
+#                print(i,r[i])
+        final.append(tmp)
+    return final
+
     
 
 
 ###保持会话cookie
 def keep_alive():
     flag=0#初始化
-    # 业务码：301509=今日成交 | 301501=买入 | 301502=卖出 | 301504=账户信息 | 301503=持仓明细 | 301511=历史成交 |301508=当日委托
+    # 业务码：301509=今日成交 | 301501=买入/卖出 | 301502=撤单? | 301504=账户信息 | 301503=持仓明细 | 301511=历史成交 |301508=当日委托
     #301510=历史委托
     BIZCODE = "301504"
     
@@ -350,41 +389,16 @@ def keep_alive():
 
 ###菜单
 def Menu():
-    choice=input('ap:acount & position\npos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nlswt:历史委托\nt:做T\nbuys:按照文件列表买入一组股票\nsells:清仓列明表中持有的股票\nsync:同步jq组合\ncs:检查状态\nMbuys:根据文件列表按比例买入')
+    choice=input('ap:acount & position\npos:position\nlscj:历史成交\njrcj:今日成交\nact.帐户信息\njrwt:今日委托\nlswt:历史委托\nt:做T\nbuys:按照文件列表买入一组股票\nsells:按照文件列表卖出一组股票\nsync:同步jq组合\ncs:检查状态\nMbuys:根据文件列表按比例买入\nMsells:根据文件列表按比例卖出')
     if choice=='ap':
         pass
     elif choice=='pos':
-        BIZCODE = "301503"
-        post_data = build_post_data(BIZCODE, PARAM)
-        response = requests.post(url, headers=HEADERS, data=post_data)
-        print("状态码:", response.status_code)
-#        print("返回内容:", response.text)
-        res=response.json()#转化为dick
-        res=res['results']#一个列表，元素为字典
-#        print(res)
-        count=1
-        final=[]
-        for r in res:
-            if float(r['cost_price'])==0:
-                pct=0#用0代替na，方便后续计算和判断
-            else:
-                pct=round((float(r['last_price'])/float(r['cost_price'])-1)*100,2)# 计算百分比,保留两位小数
-            r['pct']=pct
-#            print(pct)
-            tmp=[]
-            for i in ['stock_code','stock_name','market_value','cost_amount','cost_price','last_price','pct']:#提取有用的字段
-                tmp.append(i)
-                tmp.append(r[i])
-#                print(i,r[i])
-            final.append(tmp)
-        for item in final:
-            print('='*20+f'output {count}'+'='*20)
-            count=count+1
+        final=get_positions('NO')#获取持仓信息
+        for idx,item in enumerate(final):
             if item[-1]>0:
-                print_c(item,'red')
+                print_c(f'{idx+1}-->{item}','red')
             elif item[-1]<=0:
-                print_c(item,'green')
-#        print(final)
+                print_c(f'{idx+1}-->{item}','green')
     elif choice=='lscj':
         BIZCODE = "301511"
         post_data = build_post_data(BIZCODE, PARAM)
@@ -392,18 +406,41 @@ def Menu():
         print("状态码:", response.status_code)
 #        print("返回内容:", response.text)
         res=response.json()#转化为dick
-        res=res['results']
+        res=res['results']#所有的结果
+#        print(res)
         print('='*20+'output'+'='*20)
-        for i in res:
-            print(i)
-#            print(f'entrust_date:{i["entrust_date"]},entrust_time:{i["entrust_time"]},entrust_name:{i["entrust_name"]},stock_name:{i["stock_name"]},entrust_price:{i["entrust_price"]},entrust_amount:{i["entrust_amount"]},entrust_state_name:{i["entrust_state_name"]},entrust_no:{i["entrust_no"]}')
-            print('-'*50)
+
+        ###清洗数据
+        final=[]
+        for r in res:
+            tmp=[]
+            for i in ['business_date','business_time','stock_code','stock_name','business_price','business_amount','business_balance','business_name','real_status_name','fare0','fare1','fare2']:#提取有用的字段
+                tmp.append(i)
+                tmp.append(r[i])
+            final.append(tmp)
+        for idx,item in enumerate(final):
+            print(f'{idx+1}-->{item}')
+            print('-'*100)
     elif choice=='jrcj':
         BIZCODE = "301509"
         post_data = build_post_data(BIZCODE, PARAM)
         response = requests.post(url, headers=HEADERS, data=post_data)
+        res=response.json()#转化为dick
+        res=res['results']#所有的结果
         print("状态码:", response.status_code)
-        print("返回内容:", response.text)
+#        print("返回内容:", response.text)
+
+        ###清洗数据
+        final=[]
+        for r in res:
+            tmp=[]
+            for i in ['business_date','business_time','stock_code','stock_name','business_price','business_amount','business_balance','real_status_name','fare0','fare1','fare2']:#提取有用的字段
+                tmp.append(i)
+                tmp.append(r[i])
+            final.append(tmp)
+        for idx,item in enumerate(final):
+            print(f'{idx+1}-->{item}')
+            print('-'*100)
     elif choice=='act':
         BIZCODE = "301504"
         post_data = build_post_data(BIZCODE, PARAM)
@@ -412,6 +449,7 @@ def Menu():
 #        print("返回内容:", response.json())#调试用
 #        print(type(response.json()))#调试用
         res=response.json()#转化为dict
+#        print(res)
         res=res['results'][0]
         print('='*20+'output'+'='*20)
         for i in res.keys():
@@ -421,13 +459,13 @@ def Menu():
         price=input('请输入价格：')
         amount=input('请输入数量：')
         response=order('buy',stock_code,price,amount)
-        print("状态码:", response.status_code)
-        print("返回内容:", response.text)
+#        print("状态码:", response.status_code)
+#        print("返回内容:", response.text)
     elif choice=='sell':
         stock_code=input('请输入股票代码：')
         price=input('请输入价格：')
         amount=input('请输入数量：')
-        response=order('buy',stock_code,price,amount)
+        response=order('sell',stock_code,price,amount)
         print("状态码:", response.status_code)
         print("返回内容:", response.text)
     elif choice=='jrwt':
@@ -462,14 +500,14 @@ def Menu():
         file=file.replace('\'','')
         data=get_data(file,ptf='YES')
         print(data)
-        act=input('按任意键推出，Y/y继续下单！！！')
+        act=input('按任意键退出，Y/y继续买入！！！')
         if act=='Y' or act== 'y':
             orders('buy',data)
     elif choice=='sells':
         file=input('请输入文件路径:')
         file=file.replace('\'','')
         data=get_data(file,ptf='YES')
-        act=input('按任意键推出，Y/y继续下单！！！')
+        act=input('按任意键退出，Y/y继续卖出！！！')
         if act=='Y' or act== 'y':
             orders('sell',data)
     elif choice=='Mbuys':
@@ -478,9 +516,18 @@ def Menu():
         portion=input('请输入调整的比例系数:')
         data=get_data(file,portion=float(portion),ptf='YES')
         print(data)
-        act=input('按任意键推出，Y/y继续下单！！！')
+        act=input('按任意键退出，Y/y继续买入！！！')
         if act=='Y' or act== 'y':
             orders('buy',data)
+    elif choice=='Msells':
+        file=input('请输入文件路径:')
+        file=file.replace('\'','')
+        portion=input('请输入调整的比例系数:')
+        data=get_data(file,portion=float(portion),ptf='YES')
+        print(data)
+        act=input('按任意键退出，Y/y继续卖出！！！')
+        if act=='Y' or act== 'y':
+            orders('sell',data)
     elif choice=='sync':
         file_path=input('请输入文件路径:')
         if os.name=='posix':
@@ -497,4 +544,6 @@ def Menu():
 
 # ------------------------- 调用示例：自由查询/买卖 -------------------------
 if __name__ == "__main__":
-    Menu()
+    while True:
+        Menu()
+        input('按任意键继续')

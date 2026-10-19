@@ -99,7 +99,10 @@ def cal_pct(stock_code):#计算单个股票涨跌幅
     name=stock_info[stock_code]['name']#股票名称
     close=stock_info[stock_code]['close']#昨日收盘价
     now=stock_info[stock_code]['now']#当前价格
-    pct=round((now/close-1)*100,2)#计算涨跌幅
+    if now==0:#停牌时
+        pct=0
+    else:
+        pct=round((now/close-1)*100,2)#计算涨跌幅
     return pct
 
 

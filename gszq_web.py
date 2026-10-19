@@ -6,6 +6,7 @@ import requests
 from configparser import ConfigParser
 import easyquotation
 from function import print_c
+from notification import notify
 
 def load_config():#加载配置文件
     conf=ConfigParser()

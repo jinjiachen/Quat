@@ -279,7 +279,7 @@ def consult_total_mv(pro,date,ptf='NO'):
 
 ###菜单
 def Menu():
-    choice=input('请选择功能：\n1.查询两市总市值\n2.查询GDP\n3.查询实时指数\n4.查询指数PE,PB,PE_ttm百分比')
+    choice=input('请选择功能：\n1.查询两市总市值\n2.查询GDP\n3.查询实时指数\n4.查询单个指数PE,PB,PE_ttm百分比\n5.查询常用指数PE, PB, PE_ttm百分比')
     if choice=='1':
         date=input('请输入查询日期：')
         res=consult_total_mv(pro,date,ptf='YES')
@@ -357,6 +357,23 @@ def Menu():
         for style in styles:
             res[style]=index_percent(pro,index,style,date,ptf='NO')
         print(res)
+    elif choice=='5':
+        scope=['000001.sh','399001.sz','000300.sh','000905.sh','000852.sh','399006.sz']
+        styles=['PE','PE_ttm','PB','total_mv']
+        date=input('请输入查询日期：')
+        total_res=[]#所有scope内的pe pb信息
+        for index in scope:
+            res={}#记录一个指数的pe pb等
+            print(f'正在处理{index}')
+            for style in styles:
+                res[style]=index_percent(pro,index,style,date,ptf='NO')
+            print(res)#输出每个指数的数据
+            total_res.append(res)
+
+        ###输出结果
+#        print('-'*60)
+#        print(total_res)
+        return total_res
 
 
 

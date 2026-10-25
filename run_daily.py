@@ -22,6 +22,7 @@ def daily_combo():
             break
 #        elif is_updated(pro,'stock',now)=='NO':#非交易日
         elif df['is_open'][0]==0:#非交易日
+            print('非交易日，退出')
             break
 
 def daily_index():
